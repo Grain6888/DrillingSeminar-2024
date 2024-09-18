@@ -1,0 +1,4 @@
+﻿  CStudent.cpp
+C:\git\SEMI-2024\lec02\lec02\demo\CStudent.cpp(7,12): warning C4305: '=': 'int' から 'char' へ切り詰めます。
+C:\git\SEMI-2024\lec02\lec02\demo\CStudent.cpp(7,12): warning C4309: '=': 定数値が切り捨てられました。
+  demo.vcxproj -> C:\git\SEMI-2024\lec02\lec02\x64\Debug\demo.exe

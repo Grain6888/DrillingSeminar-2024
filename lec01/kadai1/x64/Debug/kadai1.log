@@ -1,0 +1,4 @@
+﻿  kadai1.cpp
+C:\git\SEMI-2024\lec01\kadai1\kadai1.cpp(15,15): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\git\SEMI-2024\lec01\kadai1\kadai1.cpp(18,16): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+  kadai1.vcxproj -> C:\git\SEMI-2024\lec01\x64\Debug\kadai1.exe
