@@ -1,4 +1,8 @@
-﻿  WinOGL.cpp
-  WinOGLView.cpp
-  コードを生成中...
+﻿  WinOGLView.cpp
+C:\git\SEMI-2024\WinOGL\WinOGL\WinOGLView.cpp(167,35): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル '/WinOGLView.cpp' をコンパイルしています)
+  
+C:\git\SEMI-2024\WinOGL\WinOGL\WinOGLView.cpp(173,35): warning C4244: '=': 'double' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル '/WinOGLView.cpp' をコンパイルしています)
+  
   WinOGL.vcxproj -> C:\git\SEMI-2024\WinOGL\x64\Debug\WinOGL.exe

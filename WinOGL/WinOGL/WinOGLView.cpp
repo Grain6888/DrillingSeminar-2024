@@ -160,7 +160,19 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
 
-    //glOrtho(-1.0, 1.0, -1.0, 1.0, -100.0, 100.0); // 課題1
+    float aspect_ratio = 0.0;
+    //ウィンドウが横長の場合
+    if (cx > cy)
+    {
+        aspect_ratio = (double)cx / cy;
+        glOrtho (-1.0 * aspect_ratio, 1.0 * aspect_ratio, -1.0, 1.0, -100.0, 100.0); // 課題1
+    }
+    //ウィンドウが縦長の場合
+    else
+    {
+        aspect_ratio = (double)cy / cx;
+        glOrtho (-1.0, 1.0, -1.0 * aspect_ratio, 1.0 * aspect_ratio, -100.0, 100.0); // 課題1
+    }
 
     glMatrixMode (GL_MODELVIEW);
     RedrawWindow ();
