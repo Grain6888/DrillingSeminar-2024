@@ -46,6 +46,11 @@ public:
     afx_msg void OnDestroy ();
     afx_msg BOOL OnEraseBkgnd (CDC* pDC);
     afx_msg void OnSize (UINT nType, int cx, int cy);
+private:
+    // 左クリックしたx座標
+    float x_Ldown;
+    // 左クリックしたy座標
+    float y_Ldown;
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
