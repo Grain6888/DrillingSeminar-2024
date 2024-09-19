@@ -62,11 +62,7 @@ void CWinOGLView::OnDraw (CDC* pDC)
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
 
-    glColor3f (1.0, 1.0, 1.0);
-    glPointSize (5.0);
-    glBegin (GL_POINTS);
-    glVertex2f (x_Ldown, y_Ldown);
-    glEnd ();
+    AC.Draw ();
 
     glFlush ();
     SwapBuffers (pDC->m_hDC);

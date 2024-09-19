@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\git\\SEMI-2024\\WinOGL\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\WinOGLView.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\WinOGLView.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\CAdminControl.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,6 +51,32 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "WinOGLView.cpp",
+              "DocumentMoniker": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\WinOGLView.cpp",
+              "RelativeDocumentMoniker": "WinOGL\\WinOGLView.cpp",
+              "ToolTip": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\WinOGLView.cpp",
+              "RelativeToolTip": "WinOGL\\WinOGLView.cpp",
+              "ViewState": "AgIAACcAAADo//////8gwEAAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-19T07:45:19.277Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CAdminControl.cpp",
+              "DocumentMoniker": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.cpp",
+              "RelativeDocumentMoniker": "WinOGL\\CAdminControl.cpp",
+              "ToolTip": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.cpp",
+              "RelativeToolTip": "WinOGL\\CAdminControl.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-09-19T07:35:56.526Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -4,6 +4,7 @@
 
 #pragma once
 #include <gl/GL.h>
+#include "CAdminControl.h"
 
 
 class CWinOGLView : public CView {
@@ -51,6 +52,7 @@ private:
     float x_Ldown;
     // 左クリックしたy座標
     float y_Ldown;
+    CAdminControl AC;
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
