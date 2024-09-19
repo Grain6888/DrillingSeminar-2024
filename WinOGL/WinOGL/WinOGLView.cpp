@@ -27,6 +27,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_CREATE ()
     ON_WM_DESTROY ()
     ON_WM_ERASEBKGND ()
+    ON_WM_SIZE ()
 END_MESSAGE_MAP ()
 
 // CWinOGLView コンストラクション/デストラクション
@@ -60,6 +61,15 @@ void CWinOGLView::OnDraw (CDC* pDC)
     wglMakeCurrent (pDC->m_hDC, m_hRC);
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
+
+    glColor3f (1.0, 1.0, 1.0); // 色を設定
+    glBegin (GL_LINE_STRIP);   // 描画の開始
+    glVertex2f (-1.0, 0.5);    // 1点目の座標
+    glVertex2f (0.0, -0.5);    // 2点目の座標
+    glVertex2f (1.0, 0.5);     // 3点目の座標
+    glVertex2f (-1.0, 0.5);    // 4点目の座標(始点に戻る)
+    glEnd ();                  // 描画の終了
+
     glFlush ();
     SwapBuffers (pDC->m_hDC);
     wglMakeCurrent (pDC->m_hDC, NULL);
@@ -137,4 +147,22 @@ void CWinOGLView::OnDestroy ()
 BOOL CWinOGLView::OnEraseBkgnd (CDC* pDC)
 {
     return true;
+}
+
+
+void CWinOGLView::OnSize (UINT nType, int cx, int cy)
+{
+    CView::OnSize (nType, cx, cy);
+
+    CClientDC clientDC (this);
+    wglMakeCurrent (clientDC.m_hDC, m_hRC);
+    glViewport (0, 0, cx, cy);
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+
+    //glOrtho(-1.0, 1.0, -1.0, 1.0, -100.0, 100.0); // 課題1
+
+    glMatrixMode (GL_MODELVIEW);
+    RedrawWindow ();
+    wglMakeCurrent (clientDC.m_hDC, NULL);
 }
