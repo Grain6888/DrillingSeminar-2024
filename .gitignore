@@ -4,3 +4,4 @@ WinOGL/.vs/WinOGL/v17/Browse.VC.opendb
 WinOGL/.vs/WinOGL/v17/ipch/a7d47ed120942003.ipch
 *.vsidx
 /WinOGL/.vs/WinOGL/v17/Browse.VC.db-wal
+*.db
