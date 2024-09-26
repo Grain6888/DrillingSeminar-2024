@@ -4,7 +4,7 @@
 class CVertex {
 public:
     CVertex ();
-    CVertex (float new_x, float new_y, CVertex* new_next, CVertex* new_pre);
+    CVertex (float new_x, float new_y, CVertex* new_next);
     ~CVertex ();
 private:
     // x座標
@@ -12,12 +12,13 @@ private:
     // y座標
     float y;
     // 前のリストを指すポインタ
-    CVertex* pre_vertex;
+    //CVertex* pre_vertex;
     // 次のリストを指すポインタ
     CVertex* next_vertex;
+
 public:
     // 頂点のxy座標を書き込む
-    void SetXY (int new_x, int new_y);
+    void SetXY (float new_x, float new_y);
 
     // x座標をセルから取得する
     float GetX ();
@@ -27,12 +28,12 @@ public:
     // 次のセルを指すポインタを書き込む
     void SetNext (CVertex* new_next);
     // 前のセルを指すポインタを書き込む
-    void SetPre (CVertex* new_pre);
+    //void SetPre (CVertex* new_pre);
 
     // 次のセルを指すポインタを取得する
     CVertex* GetNext ();
     // 前のセルを指すポインタを取得する
-    CVertex* GetPre ();
+    //CVertex* GetPre ();
 
     // リストを解放する
     void FreeVertex ();

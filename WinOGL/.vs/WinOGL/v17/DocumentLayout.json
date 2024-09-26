@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\CAdminControl.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\CVertex.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\CVertex.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\CAdminControl.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4A68437A-0E11-43BF-A309-4A995BA5A01E}|WinOGL\\WinOGL.vcxproj|solutionrelative:WinOGL\\CVertex.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -68,46 +68,49 @@
               "RelativeDocumentMoniker": "WinOGL\\CAdminControl.cpp",
               "ToolTip": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.cpp",
               "RelativeToolTip": "WinOGL\\CAdminControl.cpp",
-              "ViewState": "AgIAABUAAAAAPDMzMzP7vx4AAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-09-19T08:49:46.089Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "CAdminControl.h",
               "DocumentMoniker": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.h",
               "RelativeDocumentMoniker": "WinOGL\\CAdminControl.h",
               "ToolTip": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CAdminControl.h",
               "RelativeToolTip": "WinOGL\\CAdminControl.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-19T08:46:43.155Z"
+              "WhenOpened": "2024-09-19T08:46:43.155Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "CVertex.cpp",
               "DocumentMoniker": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.cpp",
               "RelativeDocumentMoniker": "WinOGL\\CVertex.cpp",
               "ToolTip": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.cpp",
               "RelativeToolTip": "WinOGL\\CVertex.cpp",
-              "ViewState": "AgIAADcAAADAAAAAAAAhwE0AAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAACAZmZmZmYkwBQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-09-19T08:07:52.952Z"
+              "WhenOpened": "2024-09-19T08:07:52.952Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "CVertex.h",
               "DocumentMoniker": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.h",
               "RelativeDocumentMoniker": "WinOGL\\CVertex.h",
               "ToolTip": "C:\\git\\SEMI-2024\\WinOGL\\WinOGL\\CVertex.h",
               "RelativeToolTip": "WinOGL\\CVertex.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-09-19T08:04:52.913Z"
+              "WhenOpened": "2024-09-19T08:04:52.913Z",
+              "EditorCaption": ""
             }
           ]
         }

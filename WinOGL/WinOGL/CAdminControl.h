@@ -12,10 +12,10 @@ private:
     // 点リストのヘッド
     CVertex* vertex_head;
     // 点リストの最後
-    CVertex* vertex_tail;
+    //CVertex* vertex_tail;
 public:
     // 左クリックでリストに点を追加
-    void AddVertex (int new_x, int new_y);
+    void AddVertex (float new_x, float new_y);
     // 右クリックで最新の点を削除
     void DeleteVertex ();
 };
