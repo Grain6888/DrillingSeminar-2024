@@ -15,4 +15,3 @@ public:
     // •`‰æƒƒCƒ“ŠÖ”
     void Draw (HDC hdc, CVertex* vertex_head);
 };
-

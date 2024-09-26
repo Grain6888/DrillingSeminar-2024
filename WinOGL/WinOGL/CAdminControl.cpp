@@ -106,20 +106,50 @@ void CAdminControl::DeleteVertex ()
 // “_‚Ì•`‰æ
 void CAdminControl::DrawPoint (CVertex* vertex)
 {
-    glColor3f (1.0, 1.0, 1.0);
+    // —\‘ª“_
+    if (vertex->GetNext () == NULL)
+    {
+        glColor3f (1.0, 1.0, 1.0);
+    }
+    // “ü—ÍÏ‚İ‚Ì“_
+    else
+    {
+        glColor3f (1.0, 0.0, 1.0);
+    }
     glPointSize (10.0);
     glBegin (GL_POINTS);
     glVertex2f (vertex->GetX (), vertex->GetY ());
     glEnd ();
+
+    return;
 }
 
 // ü‚Ì•`‰æ
 void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
-    glColor3f (1.0, 1.0, 1.0);
-    glLineWidth (2.0);
-    glBegin (GL_LINE_STRIP);
-    glVertex2f (start->GetX (), start->GetY ());
-    glVertex2f (end->GetX (), end->GetY ());
-    glEnd ();
+    // —\‘ªü
+    if (end->GetNext () == NULL)
+    {
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
+        glColor3f (1.0, 1.0, 1.0);
+        glLineWidth (2.0);
+        glBegin (GL_LINE_STRIP);
+        glVertex2f (start->GetX (), start->GetY ());
+        glVertex2f (end->GetX (), end->GetY ());
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
+    }
+    // “ü—ÍÏ‚İ‚Ìü
+    else
+    {
+        glColor3f (1.0, 0.0, 1.0);
+        glLineWidth (2.0);
+        glBegin (GL_LINE_STRIP);
+        glVertex2f (start->GetX (), start->GetY ());
+        glVertex2f (end->GetX (), end->GetY ());
+        glEnd ();
+    }
+
+    return;
 }

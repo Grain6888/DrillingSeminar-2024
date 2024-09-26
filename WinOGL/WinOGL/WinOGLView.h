@@ -53,6 +53,8 @@ private:
     // 左クリックしたy座標
     float y_Ldown;
     CAdminControl AC;
+public:
+    afx_msg void OnMouseMove (UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
