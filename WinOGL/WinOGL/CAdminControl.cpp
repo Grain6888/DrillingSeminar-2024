@@ -16,25 +16,27 @@ CAdminControl::~CAdminControl ()
 
 void CAdminControl::Draw ()
 {
-    // “_‚Ì•`‰æ
-    glColor3f (1.0, 1.0, 1.0);
-    glPointSize (10.0);
-    glBegin (GL_POINTS);
-    glVertex2f (-1.0, 0.5);
-    glVertex2f (0.0, -0.5);
-    glVertex2f (1.0, 0.5);
-    glVertex2f (-1.0, 0.5);
-    glEnd ();
+    if (vertex_head != NULL)
+    {
+        // ƒŠƒXƒg‚Ì“à—e‚ğ•`‰æ‚·‚é 
+        for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
+        {
+            DrawPoint (vp);
 
-    // ü‚Ì•`‰æ;
-    glColor3f (1.0, 1.0, 1.0);
-    glLineWidth (2.0);
-    glBegin (GL_LINE_STRIP);
-    glVertex2f (-1.0, 0.5);
-    glVertex2f (0.0, -0.5);
-    glVertex2f (1.0, 0.5);
-    glVertex2f (-1.0, 0.5);
-    glEnd ();
+            //I—¹“_‚Ìê‡
+            if (vp->GetNext () == NULL)
+            {
+                break;
+            }
+            //’†ŠÔ“_‚Ìê‡
+            else
+            {
+                DrawLine (vp, vp->GetNext ());
+            }
+        }
+    }
+
+    return;
 }
 
 
@@ -99,4 +101,25 @@ void CAdminControl::DeleteVertex ()
             pre_vp = vp;
         }
     }
+}
+
+// “_‚Ì•`‰æ
+void CAdminControl::DrawPoint (CVertex* vertex)
+{
+    glColor3f (1.0, 1.0, 1.0);
+    glPointSize (10.0);
+    glBegin (GL_POINTS);
+    glVertex2f (vertex->GetX (), vertex->GetY ());
+    glEnd ();
+}
+
+// ü‚Ì•`‰æ
+void CAdminControl::DrawLine (CVertex* start, CVertex* end)
+{
+    glColor3f (1.0, 1.0, 1.0);
+    glLineWidth (2.0);
+    glBegin (GL_LINE_STRIP);
+    glVertex2f (start->GetX (), start->GetY ());
+    glVertex2f (end->GetX (), end->GetY ());
+    glEnd ();
 }

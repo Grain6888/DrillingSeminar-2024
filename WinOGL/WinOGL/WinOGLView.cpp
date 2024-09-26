@@ -125,6 +125,8 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
         y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
     }
 
+    AC.AddVertex (x_Ldown, y_Ldown);
+
     RedrawWindow ();
     CView::OnLButtonDown (nFlags, point);
 }
