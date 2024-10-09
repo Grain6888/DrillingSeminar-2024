@@ -4,6 +4,7 @@
 
 #pragma once
 #include <gl/GL.h>
+#include "CAdminControl.h"
 
 
 class CWinOGLView : public CView {
@@ -39,6 +40,8 @@ protected:
     DECLARE_MESSAGE_MAP ()
 public:
     afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
+    afx_msg void OnMouseMove (UINT nFlags, CPoint point);
+    afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
 private:
     HGLRC m_hRC;
 public:
@@ -51,6 +54,10 @@ private:
     float x_Ldown;
     // 左クリックしたy座標
     float y_Ldown;
+    CAdminControl AC;
+private:
+    // デバイス座標系→ワールド座標系
+    void DeviceP2WorldP (CPoint point);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
