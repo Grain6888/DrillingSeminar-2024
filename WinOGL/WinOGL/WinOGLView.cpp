@@ -18,7 +18,7 @@
 #endif
 
 
-// CWinOGLView
+// ここから CWinOGLView
 
 IMPLEMENT_DYNCREATE (CWinOGLView, CView)
 
@@ -33,7 +33,6 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
 END_MESSAGE_MAP ()
 
 // CWinOGLView コンストラクション/デストラクション
-
 CWinOGLView::CWinOGLView () noexcept
 {
     x_Ldown = 0.0;
@@ -53,7 +52,6 @@ BOOL CWinOGLView::PreCreateWindow (CREATESTRUCT& cs)
 }
 
 // CWinOGLView 描画
-
 void CWinOGLView::OnDraw (CDC* pDC)
 {
     CWinOGLDoc* pDoc = GetDocument ();
@@ -74,7 +72,6 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
 
 // CWinOGLView の診断
-
 #ifdef _DEBUG
 void CWinOGLView::AssertValid () const
 {
@@ -94,9 +91,7 @@ CWinOGLDoc* CWinOGLView::GetDocument () const // デバッグ以外のバージ�
 #endif //_DEBUG
 
 
-// CWinOGLView メッセージ ハンドラー
-
-
+// ここから CWinOGLView メッセージ ハンドラー
 void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
