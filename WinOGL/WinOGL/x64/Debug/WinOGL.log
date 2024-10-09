@@ -1,2 +1,7 @@
-﻿  WinOGLView.cpp
+﻿  CAdminControl.cpp
+  CVertex.cpp
+  MainFrm.cpp
+  WinOGL.cpp
+  コードを生成中...
+  LINK : 前回のインクリメンタル リンクで C:\git\SEMI-2024\WinOGL\x64\Debug\WinOGL.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
   WinOGL.vcxproj -> C:\git\SEMI-2024\WinOGL\x64\Debug\WinOGL.exe
