@@ -55,6 +55,10 @@ private:
     CAdminControl AC;
 public:
     afx_msg void OnMouseMove (UINT nFlags, CPoint point);
+    afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
+private:
+    // デバイス座標系→ワールド座標系
+    float DeviceP2WorldP (float x, float y);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

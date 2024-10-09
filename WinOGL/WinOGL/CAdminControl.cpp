@@ -5,6 +5,7 @@
 CAdminControl::CAdminControl ()
 {
     vertex_head = NULL;
+    vertex_tail = NULL;
 }
 
 // デストラクタ
@@ -12,13 +13,14 @@ CAdminControl::~CAdminControl ()
 {
     vertex_head->FreeVertex ();
     vertex_head = NULL;
+    vertex_tail = NULL;
 }
 
 void CAdminControl::Draw ()
 {
     if (vertex_head != NULL)
     {
-        // リストの内容を描画する 
+        // リストの内容を描画する
         for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
         {
             DrawPoint (vp);
@@ -46,8 +48,9 @@ void CAdminControl::AddVertex (float new_x, float new_y)
 {
     CVertex* new_v = new CVertex;
     new_v->SetXY (new_x, new_y);
+    CVertex* pre_v = vertex_tail;
 
-    // 開始点かつ終了点（リストが空）の場合
+    // リストが空の場合
     if (vertex_head == NULL)
     {
         vertex_head = new_v;
@@ -55,15 +58,10 @@ void CAdminControl::AddVertex (float new_x, float new_y)
     // 中間点または終了点（リストが空でない）の場合
     else
     {
-        for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
-        {
-            if (vp->GetNext () == NULL)
-            {
-                vp->SetNext (new_v);
-                break;
-            }
-        }
+        vertex_tail->SetNext (new_v);
+        new_v->SetPre (pre_v);
     }
+    vertex_tail = new_v;
 
     return;
 }
@@ -74,7 +72,6 @@ void CAdminControl::AddVertex (float new_x, float new_y)
 void CAdminControl::DeleteVertex ()
 {
     CVertex* pre_vp = new CVertex;
-    CVertex* latest_v = new CVertex;
 
     //開始点かつ終了点（リストが空）の場合
     if (vertex_head == NULL)
@@ -82,24 +79,19 @@ void CAdminControl::DeleteVertex ()
         return;
     }
     //リストの要素が１つの場合
-    else if (vertex_head->GetNext () == NULL)
+    else if (vertex_head == vertex_tail)
     {
         vertex_head->FreeVertex ();
         vertex_head = NULL;
+        vertex_tail = NULL;
     }
     //中間点または終了点（リストが空でない）の場合
     else
     {
-        for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
-        {
-            if (vp->GetNext () == NULL)
-            {
-                pre_vp->SetNext (NULL);
-                vp->FreeVertex ();
-                return;
-            }
-            pre_vp = vp;
-        }
+        pre_vp = vertex_tail->GetPre ();
+        pre_vp->SetNext (NULL);
+        vertex_tail->FreeVertex ();
+        vertex_tail = pre_vp;
     }
 }
 

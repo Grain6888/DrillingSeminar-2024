@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_ERASEBKGND ()
     ON_WM_SIZE ()
     ON_WM_MOUSEMOVE ()
+    ON_WM_RBUTTONDOWN ()
 END_MESSAGE_MAP ()
 
 // CWinOGLView コンストラクション/デストラクション
@@ -37,6 +38,7 @@ CWinOGLView::CWinOGLView () noexcept
 {
     x_Ldown = 0.0;
     y_Ldown = 0.0;
+    m_hRC = NULL;
 }
 
 CWinOGLView::~CWinOGLView ()
@@ -243,4 +245,51 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     RedrawWindow ();
 
     CView::OnMouseMove (nFlags, point);
+}
+
+
+void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
+{
+    // 描画領域の大きさを取得
+    CRect rect;
+    GetClientRect (rect);
+
+    //デバイス座標系
+    x_Ldown = (float)point.x;
+    y_Ldown = (float)point.y;
+
+    //デバイス座標系→正規化座標系
+    x_Ldown = x_Ldown / rect.Width ();
+    y_Ldown = 1 - (y_Ldown / rect.Height ());
+
+    //正規化座標系→ワールド座標系
+    float aspect_ratio = 0.0;
+    //ウィンドウが横長の場合
+    if (rect.Width () > rect.Height ())
+    {
+        aspect_ratio = (float)rect.Width () / rect.Height ();
+        x_Ldown = (x_Ldown - (float)(1.0 - x_Ldown)) * aspect_ratio;
+        y_Ldown -= (float)(1.0 - y_Ldown);
+    }
+    //ウィンドウが縦長の場合
+    else
+    {
+        aspect_ratio = (float)rect.Height () / rect.Width ();
+        x_Ldown = x_Ldown - (float)(1.0 - x_Ldown);
+        y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
+    }
+
+    AC.DeleteVertex ();
+
+    RedrawWindow ();
+
+    CView::OnRButtonDown (nFlags, point);
+}
+
+
+// デバイス座標系→ワールド座標系
+float CWinOGLView::DeviceP2WorldP (float x, float y)
+{
+    // TODO: ここに実装コードを追加します.
+    return 0.0f;
 }

@@ -12,7 +12,7 @@ private:
     // 点リストのヘッド
     CVertex* vertex_head;
     // 点リストの最後
-    //CVertex* vertex_tail;
+    CVertex* vertex_tail;
     // 点の描画
     void DrawPoint (CVertex* vertex);
     // 線の描画
