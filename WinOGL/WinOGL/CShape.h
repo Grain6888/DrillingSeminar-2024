@@ -15,9 +15,12 @@ private:
     CVertex* vertex_tail;
 
     // 前のリストを指すポインタ
-    CShape* pre_vertex;
+    CShape* pre_shape;
     // 次のリストを指すポインタ
-    CShape* next_vertex;
+    CShape* next_shape;
+
+    // 形状に含まれる点の数
+    int vertex_num;
 
 public:
     // 次のセルを指すポインタを書き込む
@@ -29,6 +32,9 @@ public:
     CShape* GetNext ();
     // 前のセルを指すポインタを取得する
     CShape* GetPre ();
+
+    // 形状に含まれる点の数を取得する
+    int GetVertexNum ();
 
     // 形状の vertex_head を指すポインタを取得する
     CVertex* CShape::GetHead ();

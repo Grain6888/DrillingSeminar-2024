@@ -6,8 +6,9 @@ CShape::CShape ()
 {
     vertex_head = NULL;
     vertex_tail = NULL;
-    next_vertex = NULL;
-    pre_vertex = NULL;
+    next_shape = NULL;
+    pre_shape = NULL;
+    vertex_num = 0;
 };
 CShape::CShape (CShape* new_next, CShape* new_pre)
 {
@@ -27,24 +28,31 @@ CShape::~CShape ()
 // 次のセルを指すポインタを書き込む
 void CShape::SetNext (CShape* new_next)
 {
-    next_vertex = new_next;
+    next_shape = new_next;
 }
 // 前のセルを指すポインタを書き込む
 void CShape::SetPre (CShape* new_pre)
 {
-    pre_vertex = new_pre;
+    pre_shape = new_pre;
 }
 
 
 // 次のセルを指すポインタを取得する
 CShape* CShape::GetNext ()
 {
-    return next_vertex;
+    return next_shape;
 }
 // 前のセルを指すポインタを取得する
 CShape* CShape::GetPre ()
 {
-    return pre_vertex;
+    return pre_shape;
+}
+
+
+// 形状に含まれる点の数を取得する
+int CShape::GetVertexNum ()
+{
+    return vertex_num;
 }
 
 
@@ -92,6 +100,7 @@ void CShape::AddVertex (float new_x, float new_y)
         new_v->SetPre (pre_v);
     }
     vertex_tail = new_v;
+    vertex_num++;
 
     return;
 }
@@ -111,6 +120,7 @@ void CShape::DeleteVertex ()
         vertex_head->FreeVertex ();
         vertex_head = NULL;
         vertex_tail = NULL;
+        vertex_num--;
     }
     //中間点または終了点（リストが空でない）の場合
     else
@@ -119,5 +129,6 @@ void CShape::DeleteVertex ()
         pre_vp->SetNext (NULL);
         vertex_tail->FreeVertex ();
         vertex_tail = pre_vp;
+        vertex_num--;
     }
 }

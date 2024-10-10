@@ -50,7 +50,7 @@ void CAdminControl::Draw ()
 void CAdminControl::DrawPoint (CVertex* vertex)
 {
     // 予測点
-    if (vertex->GetNext () == NULL)
+    if (vertex == shape_tail->GetTail ())
     {
         glColor3f (1.0, 1.0, 1.0);
     }
@@ -70,7 +70,7 @@ void CAdminControl::DrawPoint (CVertex* vertex)
 void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     // 予測線
-    if (end->GetNext () == NULL)
+    if (end == shape_tail->GetTail ())
     {
         glEnable (GL_LINE_STIPPLE);
         glLineStipple (2, 0xF0F0);
@@ -149,13 +149,30 @@ void CAdminControl::DeleteShape ()
 // 形状リストに点を追加する
 void CAdminControl::AddList (float new_x, float new_y)
 {
-    CVertex* now_vertex_head = new CVertex;
-    CVertex* now_vertex_tail = new CVertex;
-
     // 形状リストが空の場合
-    if (shape_head == NULL)
+    if (shape_tail == NULL)
     {
         AddShape ();
     }
-    shape_head->AddVertex (new_x, new_y);
+
+    // 形状リストが空でない場合
+    // 点が3以下の場合
+    if (shape_tail->GetVertexNum () < 3)
+    {
+        shape_tail->AddVertex (new_x, new_y);
+    }
+    // 最後の点が vertex_head と近い場合
+    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) <= 0.1)
+    {
+        shape_tail->AddVertex (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
+
+        AddShape ();
+    }
+    // 最後の点が vertex_head から離れている場合
+    else
+    {
+        shape_tail->AddVertex (new_x, new_y);
+    }
+
+
 }

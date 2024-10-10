@@ -2,6 +2,7 @@
 #include "pch.h"
 #include <gl/GL.h>
 #include "CShape.h"
+#include "CMath.h"
 
 class CAdminControl {
 public:
@@ -14,6 +15,8 @@ private:
     CShape* shape_head;
     // 形状リストの最後
     CShape* shape_tail;
+
+    CMath CM;
 
 public:
     // 点の描画
