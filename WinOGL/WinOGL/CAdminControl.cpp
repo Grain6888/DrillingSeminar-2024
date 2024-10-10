@@ -159,11 +159,39 @@ void CAdminControl::AddList (float new_x, float new_y)
         shape_tail->AddVertex (new_x, new_y);
     }
     // 最後の点が vertex_head と近い場合
-    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) <= 0.1)
+    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
     {
         shape_tail->AddVertex (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
 
         AddShape ();
+    }
+    // 最後の点が vertex_head から離れている場合
+    else
+    {
+        shape_tail->AddVertex (new_x, new_y);
+    }
+}
+
+
+// 形状リストに予測点を追加する
+void CAdminControl::AddTmpList (float new_x, float new_y)
+{
+    // 形状リストが空の場合のみ実行
+    if (shape_tail == NULL)
+    {
+        AddShape ();
+    }
+
+    shape_tail->DeleteVertex ();
+    // 点が3以下の場合
+    if (shape_tail->GetVertexNum () < 3)
+    {
+        shape_tail->AddVertex (new_x, new_y);
+    }
+    // 最後の点が vertex_head と近い場合
+    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
+    {
+        shape_tail->AddVertex (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
     // 最後の点が vertex_head から離れている場合
     else
