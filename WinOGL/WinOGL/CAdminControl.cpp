@@ -209,17 +209,15 @@ void CAdminControl::SubList ()
     {
         return;
     }
-    // 形状リストが空でない場合
+    // 形状リスト内の点が1つの場合
+    else if (shape_tail->GetHead () == shape_tail->GetTail ())
+    {
+        shape_tail->DeleteVertex ();
+        DeleteShape ();
+    }
+    // 形状リスト内の点が2つ以上の場合
     else
     {
-        if (shape_tail->GetHead () == shape_tail->GetTail ())
-        {
-            shape_tail->DeleteVertex ();
-            DeleteShape ();
-        }
-        else
-        {
-            shape_tail->DeleteVertex ();
-        }
+        shape_tail->DeleteVertex ();
     }
 }
