@@ -1,6 +1,0 @@
-﻿  CVertex.cpp
-  main.cpp
-  コードを生成中...
-C:\git\SEMI-2024\lec02\extra\main.cpp(9,25): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\git\SEMI-2024\lec02\extra\main.cpp(12,13): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-  extra.vcxproj -> C:\git\SEMI-2024\lec02\x64\Debug\extra.exe
