@@ -107,8 +107,6 @@ void CShape::AddVertex (float new_x, float new_y)
 // 右クリックで最新の点を削除
 void CShape::DeleteVertex ()
 {
-    CVertex* pre_vp = new CVertex;
-
     //開始点かつ終了点（リストが空）の場合
     if (vertex_head == NULL)
     {
@@ -125,7 +123,7 @@ void CShape::DeleteVertex ()
     //中間点または終了点（リストが空でない）の場合
     else
     {
-        pre_vp = vertex_tail->GetPre ();
+        CVertex* pre_vp = vertex_tail->GetPre ();
         pre_vp->SetNext (NULL);
         vertex_tail->FreeVertex ();
         vertex_tail = pre_vp;

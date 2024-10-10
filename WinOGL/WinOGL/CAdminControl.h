@@ -31,4 +31,6 @@ public:
 
     // 形状リストに点を追加する
     void AddList (float new_x, float new_y);
+    // 形状リストから点を削除する
+    void SubList ();
 };

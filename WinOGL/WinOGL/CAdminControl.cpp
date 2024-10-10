@@ -121,8 +121,6 @@ void CAdminControl::AddShape ()
 // 右クリックで最新の形状を削除
 void CAdminControl::DeleteShape ()
 {
-    CShape* pre_sp = new CShape;
-
     // 形状リストが空の場合
     if (shape_head == NULL)
     {
@@ -138,7 +136,7 @@ void CAdminControl::DeleteShape ()
     // 中間点または終了点（リストが空でない）の場合
     else
     {
-        pre_sp = shape_tail->GetPre ();
+        CShape* pre_sp = shape_tail->GetPre ();
         pre_sp->SetNext (NULL);
         shape_tail->FreeShape ();
         shape_tail = pre_sp;
@@ -149,13 +147,12 @@ void CAdminControl::DeleteShape ()
 // 形状リストに点を追加する
 void CAdminControl::AddList (float new_x, float new_y)
 {
-    // 形状リストが空の場合
+    // 形状リストが空の場合のみ実行
     if (shape_tail == NULL)
     {
         AddShape ();
     }
 
-    // 形状リストが空でない場合
     // 点が3以下の場合
     if (shape_tail->GetVertexNum () < 3)
     {
@@ -173,6 +170,28 @@ void CAdminControl::AddList (float new_x, float new_y)
     {
         shape_tail->AddVertex (new_x, new_y);
     }
+}
 
 
+// 形状リストから点を削除する
+void CAdminControl::SubList ()
+{
+    // 形状リストが空の場合
+    if (shape_tail == NULL)
+    {
+        return;
+    }
+    // 形状リストが空でない場合
+    else
+    {
+        if (shape_tail->GetHead () == shape_tail->GetTail ())
+        {
+            shape_tail->DeleteVertex ();
+            DeleteShape ();
+        }
+        else
+        {
+            shape_tail->DeleteVertex ();
+        }
+    }
 }

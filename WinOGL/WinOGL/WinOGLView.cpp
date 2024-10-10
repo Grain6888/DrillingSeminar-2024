@@ -191,7 +191,7 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
-    //AC.DeleteVertex ();
+    AC.SubList ();
 
     RedrawWindow ();
 
