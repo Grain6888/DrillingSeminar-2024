@@ -8,14 +8,13 @@ CVertex::CVertex ()
     next_vertex = NULL;
     pre_vertex = NULL;
 };
-
-
 CVertex::CVertex (float new_x, float new_y, CVertex* new_next, CVertex* new_pre)
 {
     SetXY (new_x, new_y);
     SetNext (new_next);
     SetPre (new_pre);
 };
+
 
 CVertex::~CVertex ()
 { };

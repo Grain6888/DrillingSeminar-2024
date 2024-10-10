@@ -1,39 +1,43 @@
 #include "pch.h"
 #include "CAdminControl.h"
+#include "CShape.h"
 
 // コンストラクタ
 CAdminControl::CAdminControl ()
 {
-    vertex_head = NULL;
-    vertex_tail = NULL;
+    shape_head = NULL;
+    shape_tail = NULL;
 }
 
 // デストラクタ
 CAdminControl::~CAdminControl ()
 {
-    vertex_head->FreeVertex ();
-    vertex_head = NULL;
-    vertex_tail = NULL;
+    shape_head->FreeShape ();
+    shape_head = NULL;
+    shape_tail = NULL;
 }
 
 void CAdminControl::Draw ()
 {
-    if (vertex_head != NULL)
+    if (shape_head != NULL)
     {
-        // リストの内容を描画する
-        for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
+        for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
         {
-            DrawPoint (vp);
+            // リストの内容を描画する
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                DrawPoint (vp);
 
-            //終了点の場合
-            if (vp->GetNext () == NULL)
-            {
-                break;
-            }
-            //中間点の場合
-            else
-            {
-                DrawLine (vp, vp->GetNext ());
+                //終了点の場合
+                if (vp->GetNext () == NULL)
+                {
+                    break;
+                }
+                //中間点の場合
+                else
+                {
+                    DrawLine (vp, vp->GetNext ());
+                }
             }
         }
     }
@@ -41,59 +45,6 @@ void CAdminControl::Draw ()
     return;
 }
 
-
-
-// 左クリックでリストに点を追加
-void CAdminControl::AddVertex (float new_x, float new_y)
-{
-    CVertex* new_v = new CVertex;
-    new_v->SetXY (new_x, new_y);
-    CVertex* pre_v = vertex_tail;
-
-    // リストが空の場合
-    if (vertex_head == NULL)
-    {
-        vertex_head = new_v;
-    }
-    // 中間点または終了点（リストが空でない）の場合
-    else
-    {
-        vertex_tail->SetNext (new_v);
-        new_v->SetPre (pre_v);
-    }
-    vertex_tail = new_v;
-
-    return;
-}
-
-
-
-// 右クリックで最新の点を削除
-void CAdminControl::DeleteVertex ()
-{
-    CVertex* pre_vp = new CVertex;
-
-    //開始点かつ終了点（リストが空）の場合
-    if (vertex_head == NULL)
-    {
-        return;
-    }
-    //リストの要素が１つの場合
-    else if (vertex_head == vertex_tail)
-    {
-        vertex_head->FreeVertex ();
-        vertex_head = NULL;
-        vertex_tail = NULL;
-    }
-    //中間点または終了点（リストが空でない）の場合
-    else
-    {
-        pre_vp = vertex_tail->GetPre ();
-        pre_vp->SetNext (NULL);
-        vertex_tail->FreeVertex ();
-        vertex_tail = pre_vp;
-    }
-}
 
 // 点の描画
 void CAdminControl::DrawPoint (CVertex* vertex)
@@ -115,7 +66,6 @@ void CAdminControl::DrawPoint (CVertex* vertex)
 
     return;
 }
-
 // 線の描画
 void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
@@ -144,4 +94,68 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
     }
 
     return;
+}
+
+
+// 左クリックでリストに形状を追加
+void CAdminControl::AddShape ()
+{
+    CShape* new_s = new CShape;
+    CShape* pre_s = shape_tail;
+
+    // 形状リストが空の場合
+    if (shape_head == NULL)
+    {
+        shape_head = new_s;
+    }
+    // 中間点または終了点（リストが空でない）の場合
+    else
+    {
+        shape_tail->SetNext (new_s);
+        new_s->SetPre (pre_s);
+    }
+    shape_tail = new_s;
+
+    return;
+}
+// 右クリックで最新の形状を削除
+void CAdminControl::DeleteShape ()
+{
+    CShape* pre_sp = new CShape;
+
+    // 形状リストが空の場合
+    if (shape_head == NULL)
+    {
+        return;
+    }
+    // 形状リストの要素が１つの場合
+    else if (shape_head == shape_tail)
+    {
+        shape_head->FreeShape ();
+        shape_head = NULL;
+        shape_tail = NULL;
+    }
+    // 中間点または終了点（リストが空でない）の場合
+    else
+    {
+        pre_sp = shape_tail->GetPre ();
+        pre_sp->SetNext (NULL);
+        shape_tail->FreeShape ();
+        shape_tail = pre_sp;
+    }
+}
+
+
+// 形状リストに点を追加する
+void CAdminControl::AddList (float new_x, float new_y)
+{
+    CVertex* now_vertex_head = new CVertex;
+    CVertex* now_vertex_tail = new CVertex;
+
+    // 形状リストが空の場合
+    if (shape_head == NULL)
+    {
+        AddShape ();
+    }
+    shape_head->AddVertex (new_x, new_y);
 }
