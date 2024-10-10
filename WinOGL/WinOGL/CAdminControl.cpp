@@ -91,7 +91,6 @@ void CAdminControl::DeleteVertex ()
         pre_vp->SetNext (NULL);
         vertex_tail->FreeVertex ();
         vertex_tail = pre_vp;
-        pre_vp->FreeVertex ();
     }
 }
 
