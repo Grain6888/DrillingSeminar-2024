@@ -19,7 +19,7 @@ private:
     // 次のリストを指すポインタ
     CShape* next_shape;
 
-    // 形状に含まれる点の数
+    // 形状リストのセルに含まれる点の数
     int vertex_num;
 
 public:
@@ -32,21 +32,20 @@ public:
     CShape* GetNext ();
     // 前のセルを指すポインタを取得する
     CShape* GetPre ();
-
-    // 形状に含まれる点の数を取得する
+    // 形状リストのセルに含まれる点の数を取得する
     int GetVertexNum ();
 
-    // 形状の vertex_head を指すポインタを取得する
+    // 形状リストのセルに含まれる点リストの先頭を指すポインタを取得する
     CVertex* CShape::GetHead ();
-    // 形状の vertex_tail を指すポインタを取得する
+    // 形状リストのセルに含まれる点リストの最後を指すポインタを取得する
     CVertex* CShape::GetTail ();
 
-    // リストを解放する
+    // 形状リストを解放する
     void FreeShape ();
 
-    // 左クリックでリストに点を追加
+    // 点リストにセルを追加
     void AddVertex (float new_x, float new_y);
-    // 右クリックで最新の点を削除
+    // 点リストの最新の点を削除
     void DeleteVertex ();
 };
 

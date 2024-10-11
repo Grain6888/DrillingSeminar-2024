@@ -28,43 +28,43 @@ void CVertex::SetXY (float new_x, float new_y)
 }
 
 
-// x座標をセルから取得する
+// 点リストのセルのX座標を取得する
 float CVertex::GetX ()
 {
     return x;
 }
-// y座標をセルから取得する
+// 点リストのセルのY座標を取得する
 float CVertex::GetY ()
 {
     return y;
 }
 
 
-// 次のセルを指すポインタを書き込む
+// 点リストの次のセルを指すポインタを書き込む
 void CVertex::SetNext (CVertex* new_next)
 {
     next_vertex = new_next;
 }
-// 前のセルを指すポインタを書き込む
+// 点リストの前のセルを指すポインタを書き込む
 void CVertex::SetPre (CVertex* new_pre)
 {
     pre_vertex = new_pre;
 }
 
 
-// 次のセルを指すポインタを取得する
+// 点リストの次のセルを指すポインタを取得する
 CVertex* CVertex::GetNext ()
 {
     return next_vertex;
 }
-// 前のセルを指すポインタを取得する
+// 点リストの前のセルを指すポインタを取得する
 CVertex* CVertex::GetPre ()
 {
     return pre_vertex;
 }
 
 
-// リストを解放する
+// 点リストを解放する
 void CVertex::FreeVertex ()
 {
     CVertex* nowV = this;
