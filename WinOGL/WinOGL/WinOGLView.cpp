@@ -96,7 +96,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
 
-    AC.AddVertex (x_Ldown, y_Ldown);
+    AC.AddList (x_Ldown, y_Ldown);
 
     RedrawWindow ();
 
@@ -180,8 +180,7 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
 
-    AC.DeleteVertex ();
-    AC.AddVertex (x_Ldown, y_Ldown);
+    AC.AddTmpList (x_Ldown, y_Ldown);
 
     RedrawWindow ();
 
@@ -191,7 +190,7 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
-    AC.DeleteVertex ();
+    AC.SubList ();
 
     RedrawWindow ();
 

@@ -1,25 +1,40 @@
 #pragma once
 #include "pch.h"
 #include <gl/GL.h>
-#include "CVertex.h"
+#include "CShape.h"
+#include "CMath.h"
 
 class CAdminControl {
 public:
     CAdminControl ();
     ~CAdminControl ();
     void Draw ();
+
 private:
-    // 点リストのヘッド
-    CVertex* vertex_head;
-    // 点リストの最後
-    CVertex* vertex_tail;
+    // 形状リストのヘッド
+    CShape* shape_head;
+    // 形状リストの最後
+    CShape* shape_tail;
+
+    CMath CM;
+
+public:
     // 点の描画
     void DrawPoint (CVertex* vertex);
     // 線の描画
     void DrawLine (CVertex* start, CVertex* end);
-public:
-    // 左クリックでリストに点を追加
-    void AddVertex (float new_x, float new_y);
-    // 右クリックで最新の点を削除
-    void DeleteVertex ();
+    // ループの描画
+    void DrawLoop (CVertex* start, CVertex* end);
+
+    // 形状リストにセルを追加
+    void AddShape ();
+    // 形状リストの最新のセルを削除
+    void DeleteShape ();
+
+    // 形状リストに点を追加
+    void AddList (float new_x, float new_y);
+    // 形状リストに予測点を追加
+    void AddTmpList (float new_x, float new_y);
+    // 形状リストから点を削除
+    void SubList ();
 };
