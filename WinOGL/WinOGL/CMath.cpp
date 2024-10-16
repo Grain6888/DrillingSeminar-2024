@@ -12,3 +12,10 @@ float CMath::VertexDistance (CVertex* p1, float p2_x, float p2_y)
 {
     return float (sqrt (pow ((p2_x - p1->GetX ()), 2) + pow ((p2_y - p1->GetY ()), 2)));
 }
+
+// ©Œğ·‚ğ”»’è‚·‚é
+bool CMath::SelfCross (CVertex* l1_p1, CVertex* l1_p2, CVertex* l2_p1, CVertex* l2_p2)
+{
+    // TODO: ‚±‚±‚ÉÀ‘•ƒR[ƒh‚ğ’Ç‰Á‚µ‚Ü‚·.
+    return false;
+}
