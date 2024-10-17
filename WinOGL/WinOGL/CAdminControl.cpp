@@ -165,10 +165,21 @@ void CAdminControl::DeleteShape ()
 void CAdminControl::AddList (float new_x, float new_y)
 {
     // 形状リストが空の場合はリストを新規作成
-    if (shape_tail == NULL)
+    if (shape_head == NULL)
     {
         AddShape ();
     }
+    else if (shape_head != shape_tail)
+    {
+        for (CShape* sp = shape_head; sp != shape_tail && shape_tail->GetVertexNum () > 0; sp = sp->GetNext ())
+        {
+            if (CMath::OtherCross (sp, shape_tail, new_x, new_y))
+            {
+                return;
+            }
+        }
+    }
+
 
     // 形状リストのセルに含まれる点が3つ未満の場合
     if (shape_tail->GetVertexNum () < 3)

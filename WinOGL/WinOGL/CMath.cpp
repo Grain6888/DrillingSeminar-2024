@@ -31,18 +31,27 @@ bool CMath::SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
     }
 }
 // ‘¼Œğ·‚ğ”»’è‚·‚é
-bool CMath::OtherCross (CShape* a_s, CShape* a_e)
+bool CMath::OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y)
 {
+    CVertex* new_p = new CVertex;
+    new_p->SetXY (new_x, new_y);
     for (CShape* sp = a_s; sp != a_e; sp = sp->GetNext ())
     {
-        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail ()->GetPre (); vp = vp->GetNext ())
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (SelfCross (sp->GetTail ()->GetPre (), sp->GetTail (), vp, vp->GetNext ()))
+            if (SelfCross (vp, vp->GetNext (), a_e->GetTail (), new_p))
             {
+                new_p->FreeVertex ();
                 return true;
             }
         }
+        if (SelfCross (sp->GetHead (), sp->GetTail (), a_e->GetTail (), new_p))
+        {
+            new_p->FreeVertex ();
+            return true;
+        }
     }
+    new_p->FreeVertex ();
     return false;
 }
 
