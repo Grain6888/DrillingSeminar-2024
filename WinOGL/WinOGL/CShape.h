@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 #include "CVertex.h"
-#include "CMath.h"
 
 class CShape {
 public:
@@ -22,8 +21,6 @@ private:
 
     // 形状リストのセルに含まれる点の数
     int vertex_num;
-
-    CMath CM;
 
 public:
     // 次のセルを指すポインタを書き込む

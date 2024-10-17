@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CAdminControl.h"
 #include "CShape.h"
+#include "CMath.h"
 
 // コンストラクタ
 CAdminControl::CAdminControl ()
@@ -169,17 +170,17 @@ void CAdminControl::AddList (float new_x, float new_y)
         AddShape ();
     }
 
-    // 形状リストのセルに含まれる点が3つ以下の場合
+    // 形状リストのセルに含まれる点が3つ未満の場合
     if (shape_tail->GetVertexNum () < 3)
     {
-        shape_tail->AddVertex (new_x, new_y); /*三角形を作成するためには終点を含めて4点が少なくとも必要*/
+        shape_tail->AddVertex (new_x, new_y); /*三角形を作成するためには3点が少なくとも必要*/
     }
     // 形状リストのセルに追加する点が vertex_head と近い場合
-    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
+    else if (CMath::VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
     {
         for (CVertex* vp = shape_tail->GetHead ()->GetNext (); vp != shape_tail->GetTail ()->GetPre (); vp = vp->GetNext ())
         {
-            if (CM.SelfCross (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
+            if (CMath::SelfCross (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
             {
                 return;
             }

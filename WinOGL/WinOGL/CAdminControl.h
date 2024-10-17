@@ -2,7 +2,6 @@
 #include "pch.h"
 #include <gl/GL.h>
 #include "CShape.h"
-#include "CMath.h"
 
 class CAdminControl {
 public:
@@ -15,8 +14,6 @@ private:
     CShape* shape_head;
     // 形状リストの最後
     CShape* shape_tail;
-
-    CMath CM;
 
 public:
     // 点の描画
@@ -34,7 +31,7 @@ public:
     // 形状リストに点を追加
     void AddList (float new_x, float new_y);
     // 形状リストに予測点を追加
-    void AddTmpList (float new_x, float new_y);
+    //void AddTmpList (float new_x, float new_y);
     // 形状リストから点を削除
     void SubList ();
 };

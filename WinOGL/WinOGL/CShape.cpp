@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CShape.h"
 #include "CVertex.h"
+#include "CMath.h"
 
 CShape::CShape ()
 {
@@ -104,8 +105,9 @@ void CShape::AddVertex (float new_x, float new_y)
     {
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
-            if (CM.SelfCross (vertex_tail, new_v, vp, vp->GetNext ()))
+            if (CMath::SelfCross (vertex_tail, new_v, vp, vp->GetNext ()))
             {
+                new_v->FreeVertex ();
                 return;
             }
         }

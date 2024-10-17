@@ -30,6 +30,21 @@ bool CMath::SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
         return false;
     }
 }
+// ‘¼Œğ·‚ğ”»’è‚·‚é
+bool CMath::OtherCross (CShape* a_s, CShape* a_e)
+{
+    for (CShape* sp = a_s; sp != a_e; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail ()->GetPre (); vp = vp->GetNext ())
+        {
+            if (SelfCross (sp->GetTail ()->GetPre (), sp->GetTail (), vp, vp->GetNext ()))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 // ŠOÏ‚ğŒvZ‚·‚é
 float CMath::OuterProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
