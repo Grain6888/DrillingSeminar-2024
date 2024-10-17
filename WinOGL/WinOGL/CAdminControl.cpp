@@ -74,25 +74,24 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
     glLineWidth (2.0);
     glBegin (GL_LINE_STRIP); /*実線開始*/
 
-    for (CVertex* vp = start; vp != end; vp = vp->GetNext ())
+    for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
     {
         glVertex2f (vp->GetX (), vp->GetY ());
 
-        // 形状リスト最後尾のセルに含まれる点リストの最後尾をつなぐ線を予測線として破線で描画
-        if (vp->GetNext () == shape_tail->GetTail ())
-        {
-            glEnd (); /*実線終了*/
+        //// 形状リスト最後尾のセルに含まれる点リストの最後尾をつなぐ線を予測線として破線で描画
+        //if (vp->GetNext () == shape_tail->GetTail ())
+        //{
+        //    glEnd (); /*実線終了*/
 
-            glEnable (GL_LINE_STIPPLE); /*破線開始*/
-            glLineStipple (2, 0xF0F0);
-            glColor3f (1.0, 1.0, 1.0);
-            glBegin (GL_LINES);
-            glVertex2f (vp->GetX (), vp->GetY ());
-            glVertex2f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
-        }
+        //    glEnable (GL_LINE_STIPPLE); /*破線開始*/
+        //    glLineStipple (2, 0xF0F0);
+        //    glColor3f (1.0, 1.0, 1.0);
+        //    glBegin (GL_LINES);
+        //    glVertex2f (vp->GetX (), vp->GetY ());
+        //    glVertex2f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
+        //}
     }
     glEnd ();
-    glDisable (GL_LINE_STIPPLE); /*破線終了*/
 
     return;
 }
@@ -103,7 +102,7 @@ void CAdminControl::DrawLoop (CVertex* start, CVertex* end)
     glColor3f (0.0, 1.0, 0.0);
     glLineWidth (2.0);
     glBegin (GL_LINE_LOOP);
-    for (CVertex* vp = start; vp != end; vp = vp->GetNext ())
+    for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
     {
         glVertex2f (vp->GetX (), vp->GetY ());
     }
@@ -171,13 +170,20 @@ void CAdminControl::AddList (float new_x, float new_y)
     }
 
     // 形状リストのセルに含まれる点が3つ以下の場合
-    if (shape_tail->GetVertexNum () <= 3)
+    if (shape_tail->GetVertexNum () < 3)
     {
         shape_tail->AddVertex (new_x, new_y); /*三角形を作成するためには終点を含めて4点が少なくとも必要*/
     }
     // 形状リストのセルに追加する点が vertex_head と近い場合
     else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
     {
+        for (CVertex* vp = shape_tail->GetHead ()->GetNext (); vp != shape_tail->GetTail ()->GetPre (); vp = vp->GetNext ())
+        {
+            if (CM.SelfCross (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
+            {
+                return;
+            }
+        }
         AddShape (); /*後述の AddTmpList で予測点として用いた点を形状を閉じるための点として流用するので，新規に AddVertex の必要はない*/
     }
     // 形状リストのセルに追加する点が vertex_head から離れている場合
@@ -186,33 +192,33 @@ void CAdminControl::AddList (float new_x, float new_y)
         shape_tail->AddVertex (new_x, new_y); /*普通に点を追加するだけ*/
     }
 }
-// 形状リストに予測点を追加
-void CAdminControl::AddTmpList (float new_x, float new_y)
-{
-    // 形状リストが空の場合はリストを新規作成
-    if (shape_tail == NULL)
-    {
-        AddShape ();
-    }
-
-    shape_tail->DeleteVertex (); /*前回追加した AddTmpList を削除してから新しい座標の AddTmpList に更新する*/
-
-    // 形状リストのセルに含まれる点が3つ以下の場合
-    if (shape_tail->GetVertexNum () < 3)
-    {
-        shape_tail->AddVertex (new_x, new_y); /*三角形を作成するためには終点を含めて4点が少なくとも必要*/
-    }
-    // 形状リストのセルに追加する予測点が vertex_head と近い場合
-    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
-    {
-        shape_tail->AddVertex (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ()); /*予測点が vertex_head に自動で吸着する．ただし，形状リストの新規追加は行わない*/
-    }
-    // 形状リストのセルに追加する予測点が  vertex_head から離れている場合
-    else
-    {
-        shape_tail->AddVertex (new_x, new_y); /*普通に点を追加するだけ*/
-    }
-}
+//// 形状リストに予測点を追加
+//void CAdminControl::AddTmpList (float new_x, float new_y)
+//{
+//    // 形状リストが空の場合はリストを新規作成
+//    if (shape_tail == NULL)
+//    {
+//        AddShape ();
+//    }
+//
+//    shape_tail->DeleteVertex (); /*前回追加した AddTmpList を削除してから新しい座標の AddTmpList に更新する*/
+//
+//    // 形状リストのセルに含まれる点が3つ以下の場合
+//    if (shape_tail->GetVertexNum () < 3)
+//    {
+//        shape_tail->AddVertex (new_x, new_y); /*三角形を作成するためには終点を含めて4点が少なくとも必要*/
+//    }
+//    // 形状リストのセルに追加する予測点が vertex_head と近い場合
+//    else if (CM.VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
+//    {
+//        shape_tail->AddVertex (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ()); /*予測点が vertex_head に自動で吸着する．ただし，形状リストの新規追加は行わない*/
+//    }
+//    // 形状リストのセルに追加する予測点が  vertex_head から離れている場合
+//    else
+//    {
+//        shape_tail->AddVertex (new_x, new_y); /*普通に点を追加するだけ*/
+//    }
+//}
 // 形状リストから点を削除
 void CAdminControl::SubList ()
 {

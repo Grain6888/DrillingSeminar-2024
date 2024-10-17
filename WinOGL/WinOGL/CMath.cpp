@@ -37,13 +37,16 @@ float CMath::OuterProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVert
     CVertex* v_a = CalcPointVector (p_a_s, p_a_e);
     CVertex* v_b = CalcPointVector (p_b_s, p_b_e);
 
-    return v_a->GetX () * v_b->GetY () - v_a->GetY () * v_b->GetX ();
+    float result = v_a->GetX () * v_b->GetY () - v_a->GetY () * v_b->GetX ();
+    v_a->FreeVertex ();
+    v_b->FreeVertex ();
+    return result;
 }
 
 // 位置ベクトルを計算する
 CVertex* CMath::CalcPointVector (CVertex* p_s, CVertex* p_e)
 {
     CVertex* new_point_vector = new CVertex;
-    new_point_vector->SetXY (p_e->GetX () - p_s->GetX (), p_e->GetX () - p_s->GetY ());
+    new_point_vector->SetXY (p_e->GetX () - p_s->GetX (), p_e->GetY () - p_s->GetY ());
     return new_point_vector;
 }

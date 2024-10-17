@@ -93,9 +93,23 @@ void CShape::AddVertex (float new_x, float new_y)
     {
         vertex_head = new_v;
     }
-    // 点リストが空でない場合
+    // 点リストのセルが3つ以下（辺が2つまで）の場合
+    else if (vertex_num < 3)
+    {
+        vertex_tail->SetNext (new_v); /*最後尾の更新*/
+        new_v->SetPre (pre_v);
+    }
+    // 点リストのセルが4つ以上（辺が3つから）の場合
     else
     {
+        for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
+        {
+            if (CM.SelfCross (vertex_tail, new_v, vp, vp->GetNext ()))
+            {
+                return;
+            }
+        }
+
         vertex_tail->SetNext (new_v); /*最後尾の更新*/
         new_v->SetPre (pre_v);
     }
