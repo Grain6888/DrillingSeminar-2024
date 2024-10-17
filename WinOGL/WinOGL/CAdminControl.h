@@ -7,7 +7,7 @@ class CAdminControl {
 public:
     CAdminControl ();
     ~CAdminControl ();
-    void Draw ();
+    void Draw (float new_x, float new_y);
 
 private:
     // 形状リストのヘッド
@@ -22,6 +22,10 @@ public:
     void DrawLine (CVertex* start, CVertex* end);
     // ループの描画
     void DrawLoop (CVertex* start, CVertex* end);
+    // 予測点の描画
+    void DrawExpectedPoint (float new_x, float new_y);
+    // 予想線の描画
+    void DrawExpectedLine (CVertex* start, float end_x, float end_y);
 
     // 形状リストにセルを追加
     void AddShape ();

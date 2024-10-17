@@ -37,6 +37,8 @@ CWinOGLView::CWinOGLView () noexcept
 {
     x_Ldown = 0.0;
     y_Ldown = 0.0;
+    x_over = 0.0;
+    y_over = 0.0;
     m_hRC = NULL;
 }
 
@@ -63,7 +65,7 @@ void CWinOGLView::OnDraw (CDC* pDC)
     glClearColor (0.0, 0.0, 0.0, 1.0);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
 
-    AC.Draw ();
+    AC.Draw (x_over, y_over);
 
     glFlush ();
     SwapBuffers (pDC->m_hDC);
@@ -176,16 +178,14 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 }
 
 
-//void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
-//{
-//    DeviceP2WorldP (point);
-//
-//    AC.AddTmpList (x_Ldown, y_Ldown);
-//
-//    RedrawWindow ();
-//
-//    CView::OnMouseMove (nFlags, point);
-//}
+void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
+{
+    DeviceP2WorldP (point);
+
+    RedrawWindow ();
+
+    CView::OnMouseMove (nFlags, point);
+}
 
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
@@ -220,14 +220,18 @@ void CWinOGLView::DeviceP2WorldP (CPoint point)
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
         x_Ldown = (x_Ldown - (float)(1.0 - x_Ldown)) * aspect_ratio;
+        x_over = x_Ldown;
         y_Ldown -= (float)(1.0 - y_Ldown);
+        y_over = y_Ldown;
     }
     //ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
         x_Ldown = x_Ldown - (float)(1.0 - x_Ldown);
+        x_over = x_Ldown;
         y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
+        y_over = y_Ldown;
     }
     return;
 }
