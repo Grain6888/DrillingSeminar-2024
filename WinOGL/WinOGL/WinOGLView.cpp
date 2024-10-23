@@ -198,7 +198,6 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 }
 
 
-// デバイス座標系→ワールド座標系
 void CWinOGLView::DeviceP2WorldP (CPoint point)
 {
     // 描画領域の大きさを取得
@@ -233,5 +232,4 @@ void CWinOGLView::DeviceP2WorldP (CPoint point)
         y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
         y_over = y_Ldown;
     }
-    return;
 }

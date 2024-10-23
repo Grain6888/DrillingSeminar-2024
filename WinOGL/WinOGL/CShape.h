@@ -2,50 +2,66 @@
 #include "pch.h"
 #include "CVertex.h"
 
+/// @brief Shape セルの中身と，それらに含まれる点リストの管理（追加・削除）を行うクラス．
 class CShape {
 public:
     CShape ();
     CShape (CShape* new_next, CShape* new_pre);
     ~CShape ();
 
-private:
-    // 点リストのヘッド
-    CVertex* vertex_head;
-    // 点リストの最後
-    CVertex* vertex_tail;
-
-    // 前のリストを指すポインタ
-    CShape* pre_shape;
-    // 次のリストを指すポインタ
-    CShape* next_shape;
-
-    // 形状リストのセルに含まれる点の数
-    int vertex_num;
-
-public:
-    // 次のセルを指すポインタを書き込む
+    /// @brief 一つ新しい Shape セルを指すポインタを設定する．
+    /// @param new_next 設定する Shape セルのポインタ．
     void SetNext (CShape* new_next);
-    // 前のセルを指すポインタを書き込む
+
+    /// @brief 一つ古い Shape セルを指すポインタを設定する．
+    /// @param new_pre 設定する Shape セルのポインタ．
     void SetPre (CShape* new_pre);
 
-    // 次のセルを指すポインタを取得する
+    /// @brief 一つ新しい Shape セルを指すポインタを取得する．
+    /// @return 一つ新しい Shape セルのポインタ．
     CShape* GetNext ();
-    // 前のセルを指すポインタを取得する
+
+    /// @brief 一つ古い Shape セルを指すポインタを取得する．
+    /// @return 一つ古い Shape セルのポインタ．
     CShape* GetPre ();
-    // 形状リストのセルに含まれる点の数を取得する
+
+    /// @brief 点リストに含まれる Vertex セルの個数を取得する．
+    /// @return 点リストに含まれる Vertex セルの個数．
     int GetVertexNum ();
 
-    // 形状リストのセルに含まれる点リストの先頭を指すポインタを取得する
+    /// @brief 図形リストに含まれる点リストの，先頭の Vertex セルを指すポインタを取得する．
+    /// @return 図形リストに含まれる点リストの，先頭の Vertex セルを指すポインタ．
     CVertex* CShape::GetHead ();
-    // 形状リストのセルに含まれる点リストの最後を指すポインタを取得する
+
+    /// @brief 図形リストに含まれる点リストの，最新の Vertex セルを指すポインタを取得する．
+    /// @return 図形リストに含まれる点リストの，最新の Vertex セルを指すポインタ．
     CVertex* CShape::GetTail ();
 
-    // 形状リストを解放する
+    /// @brief 自分の Shape セル以降の図形リストのメモリ領域を開放する．
     void FreeShape ();
 
-    // 点リストにセルを追加
+    /// @brief 図形リストに含まれる点リストの最新の Vertex セル（vertex_tail）の次に，新しい Vertex セルを追加する．
+    /// @param new_x 一つ新しい Vertex セルの X 座標．
+    /// @param new_y 一つ新しい Vertex セルの Y 座標．
     void AddVertex (float new_x, float new_y);
-    // 点リストの最新の点を削除
+
+    /// @brief 図形リストに含まれる点リストの最新の Vertex セル（vertex_tail）を削除する．
     void DeleteVertex ();
+
+private:
+    /// @brief 点リストの先頭の Vertex セルを指すポインタ．
+    CVertex* vertex_head;
+
+    /// @brief 点リストの最新の Vertex セルを指すポインタ．
+    CVertex* vertex_tail;
+
+    /// @brief 図形リストの Shape セルの，一つ古いセルを指すポインタ．
+    CShape* pre_shape;
+
+    /// @brief 図形リストの Shape セルの，一つ新しいセルを指すポインタ．
+    CShape* next_shape;
+
+    /// @brief 点リストに含まれる Vertex セルの個数．
+    int vertex_num;
 };
 

@@ -1,6 +1,5 @@
 ﻿
 // WinOGLView.h : CWinOGLView クラスのインターフェイス
-//
 
 #pragma once
 #include <gl/GL.h>
@@ -17,13 +16,11 @@ public:
     CWinOGLDoc* GetDocument () const;
 
 // 操作
-public:
 
 // オーバーライド
 public:
     virtual void OnDraw (CDC* pDC);  // このビューを描画するためにオーバーライドされます。
     virtual BOOL PreCreateWindow (CREATESTRUCT& cs);
-protected:
 
 // 実装
 public:
@@ -33,8 +30,6 @@ public:
     virtual void Dump (CDumpContext& dc) const;
 #endif
 
-protected:
-
 // 生成された、メッセージ割り当て関数
 protected:
     DECLARE_MESSAGE_MAP ()
@@ -42,23 +37,28 @@ public:
     afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
     afx_msg void OnMouseMove (UINT nFlags, CPoint point);
     afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
-private:
-    HGLRC m_hRC;
-public:
     afx_msg int OnCreate (LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnDestroy ();
     afx_msg BOOL OnEraseBkgnd (CDC* pDC);
     afx_msg void OnSize (UINT nType, int cx, int cy);
 private:
-    // 左クリックしたx座標
+    /// @brief 左クリックした時の，X 座標．
     float x_Ldown;
-    // 左クリックしたy座標
+
+    /// @brief 左クリックした時の，Y 座標．
     float y_Ldown;
+
+    /// @brief マウスオーバーした時の，X 座標．
     float x_over;
+
+    /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
+
     CAdminControl AC;
-private:
-    // デバイス座標系→ワールド座標系
+    HGLRC m_hRC;
+
+    /// @brief デバイス座標系からワールド座標系に座標を変換する．
+    /// @param point デバイス座標系 X,Y 座標．
     void DeviceP2WorldP (CPoint point);
 };
 
