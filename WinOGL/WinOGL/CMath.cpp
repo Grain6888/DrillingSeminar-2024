@@ -55,6 +55,43 @@ bool CMath::OtherCrossDetect (CShape* a_s, CShape* a_e, float new_x, float new_y
     return false;
 }
 
+bool CMath::InclusionDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
+{
+    double angle_sum = 0.0;
+    CVertex* new_p = new CVertex;
+    new_p->SetXY (new_x, new_y);
+
+    for (CShape* sp = a_s; sp != a_e; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+        {
+            angle_sum += CalcAngle (new_p, vp, new_p, vp->GetNext ());
+        }
+        angle_sum += CalcAngle (sp->GetTail (), new_p, sp->GetHead (), new_p);
+    }
+
+    double difference = 2 * M_PI - fabs (angle_sum);
+    if (difference >= -0.001 && difference <= 0.001)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+float CMath::InnerProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+{
+    CVertex* v_a = CalcPointVector (p_a_s, p_a_e);
+    CVertex* v_b = CalcPointVector (p_b_s, p_b_e);
+
+    float result = v_a->GetX () * v_b->GetX () + v_a->GetY () * v_b->GetY ();
+    v_a->FreeVertex ();
+    v_b->FreeVertex ();
+    return result;
+}
+
 float CMath::OuterProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
     CVertex* v_a = CalcPointVector (p_a_s, p_a_e);
@@ -71,4 +108,11 @@ CVertex* CMath::CalcPointVector (CVertex* p_s, CVertex* p_e)
     CVertex* new_point_vector = new CVertex;
     new_point_vector->SetXY (p_e->GetX () - p_s->GetX (), p_e->GetY () - p_s->GetY ());
     return new_point_vector;
+}
+
+double CMath::CalcAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+{
+    float outer_product = OuterProduct (p_a_s, p_a_e, p_b_s, p_b_e);
+    float inner_product = InnerProduct (p_a_s, p_a_e, p_b_s, p_b_e);
+    return atan2 (outer_product, inner_product);
 }

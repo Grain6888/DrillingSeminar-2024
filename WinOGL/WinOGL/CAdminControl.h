@@ -63,6 +63,14 @@ public:
     /// @brief 点の描画サイズを小さくし，線の描画幅を細くする．
     void DrawSizeDown ();
 
+    /// @brief 座標軸を描画する．
+    void DrawAxis ();
+
+    /// @brief 座標軸の表示または非表示の状態を切り替える．
+    void SwitchAxis ();
+
+    /// @brief 座標軸の表示または非表示の状態を取得する．表示中なら true，非表示中なら false が返る．
+    bool GetAxis ();
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;
@@ -78,4 +86,7 @@ private:
 
     /// @brief 図形リストに含まれる Shape セルの個数．
     int shape_num;
+
+    /// @brief 座標軸の表示または非表示の状態を管理するフラグ．表示なら true，非表示なら false．
+    bool AxisFlag = false;
 };

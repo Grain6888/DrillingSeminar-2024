@@ -21,6 +21,11 @@ void CAdminControl::Draw (float new_x, float new_y)
 {
     DrawExpectedPoint (new_x, new_y);
 
+    if (AxisFlag)
+    {
+        DrawAxis ();
+    }
+
     // 図形リストが空でない場合のみ実行．
     if (shape_num != 0)
     {
@@ -107,7 +112,7 @@ void CAdminControl::DrawStrip (CVertex* start, CVertex* end)
 
 void CAdminControl::DrawLoop (CVertex* start, CVertex* end)
 {
-    glColor3f (0.0, 1.0, 0.0);
+    glColor3f (1.0, 1.0, 0.0);
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINE_LOOP);
     for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
@@ -176,9 +181,15 @@ void CAdminControl::AddList (float new_x, float new_y)
     {
         AddShape ();
     }
-    // 図形リストが空でない場合
-    else
+    // 図形リストに含まれる Shape セルの個数が 1 より多い場合
+    else if (shape_num > 1)
     {
+        //内包判定
+        if (CMath::InclusionDetect (shape_head, shape_tail, new_x, new_y))
+        {
+            return;
+        }
+
         // 図形リストの最新の Shape セルに含まれる点リストが空でない場合
         if (shape_tail->GetVertexNum () > 0)
         {
@@ -262,4 +273,32 @@ void CAdminControl::DrawSizeDown ()
         POINTSIZE -= 0.5;
         LINEWIDTH -= 0.5;
     }
+}
+
+void CAdminControl::DrawAxis ()
+{
+    glBegin (GL_LINES);
+    // x軸
+    glColor3f (1.0, 0.0, 0.0);
+    glVertex3f (-1.0, 0.0, 0.0);
+    glVertex3f (1.0, 0.0, 0.0);
+    // y軸
+    glColor3f (0.0, 1.0, 0.0);
+    glVertex3f (0.0, -1.0, 0.0);
+    glVertex3f (0.0, 1.0, 0.0);
+    // z軸
+    glColor3f (0.0, 0.0, 1.0);
+    glVertex3f (0.0, 0.0, -1.0);
+    glVertex3f (0.0, 0.0, 1.0);
+    glEnd ();
+}
+
+void CAdminControl::SwitchAxis ()
+{
+    AxisFlag = !AxisFlag;
+}
+
+bool CAdminControl::GetAxis ()
+{
+    return AxisFlag;
 }
