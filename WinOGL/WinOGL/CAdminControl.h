@@ -57,7 +57,19 @@ public:
     /// @brief 最新の Shape セル（shape_tail）に含まれる点リストの，最新の Vertex セルを削除する．
     void SubList ();
 
+    /// @brief 点の描画サイズを大きくし，線の描画幅を太くする．
+    void DrawSizeUp ();
+
+    /// @brief 点の描画サイズを小さくし，線の描画幅を細くする．
+    void DrawSizeDown ();
+
 private:
+    /// @brief 点の描画サイズ．
+    float POINTSIZE = 10.0;
+
+    /// @brief 線の描画幅．
+    float LINEWIDTH = 2.0;
+
     /// @brief 図形リストの先頭の Shape セルを指すポインタ．
     CShape* shape_head;
 

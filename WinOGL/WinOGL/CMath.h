@@ -23,7 +23,7 @@ public:
     /// @param b_s 2 つ目の辺の始点の X,Y 座標．
     /// @param b_e 2 つ目の辺の終点の X,Y 座標．
     /// @return 自交差の有無．交差する場合は true，交差しない場合は false．
-    static bool SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e);
+    static bool CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e);
 
     /// @brief 自分の図形に含まれる 1 辺がほかの図形に含まれる 1 辺と交差していないかを判定する．主に「自分以外の Shape セルに含まれる辺」と「新しく追加する辺」の他交差の有無の判定に用いる．ただし，新しく追加する辺の始点は，自分の図形に含まれる点リストの最新の Vertex セル（vertex_tail）に限定される．
     /// @param a_s   ほかの図形に含まれる 1 辺の始点の X,Y 座標．
@@ -31,7 +31,7 @@ public:
     /// @param new_x 自分の図形に含まれる 1 辺の終点の X 座標．
     /// @param new_y 自分の図形に含まれる 1 辺の終点の Y 座標．
     /// @return 
-    static bool OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y);
+    static bool OtherCrossDetect (CShape* a_s, CShape* a_e, float new_x, float new_y);
 
     /// @brief 2 つのベクトルの外積を計算する．
     /// @param p_a_s 1 つ目のベクトルの始点．

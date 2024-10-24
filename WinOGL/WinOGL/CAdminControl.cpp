@@ -59,13 +59,13 @@ void CAdminControl::DrawExpectedPoint (float new_x, float new_y)
     if (shape_num != 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
     {
         glColor3f (0.0, 1.0, 1.0);
-        glPointSize (15.0);
+        glPointSize (POINTSIZE);
     }
     // 通常の場合
     else
     {
         glColor3f (1.0, 1.0, 1.0);
-        glPointSize (10.0);
+        glPointSize (POINTSIZE);
     }
     glBegin (GL_POINTS);
     glVertex2f (new_x, new_y);
@@ -87,7 +87,7 @@ void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
 void CAdminControl::DrawPoint (CVertex* vertex)
 {
     glColor3f (1.0, 0.0, 1.0);
-    glPointSize (10.0);
+    glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
     glVertex2f (vertex->GetX (), vertex->GetY ());
     glEnd ();
@@ -96,7 +96,7 @@ void CAdminControl::DrawPoint (CVertex* vertex)
 void CAdminControl::DrawStrip (CVertex* start, CVertex* end)
 {
     glColor3f (1.0, 0.0, 1.0);
-    glLineWidth (2.0);
+    glLineWidth (LINEWIDTH);
     glBegin (GL_LINE_STRIP);
     for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
     {
@@ -108,7 +108,7 @@ void CAdminControl::DrawStrip (CVertex* start, CVertex* end)
 void CAdminControl::DrawLoop (CVertex* start, CVertex* end)
 {
     glColor3f (0.0, 1.0, 0.0);
-    glLineWidth (2.0);
+    glLineWidth (LINEWIDTH);
     glBegin (GL_LINE_LOOP);
     for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
     {
@@ -185,7 +185,7 @@ void CAdminControl::AddList (float new_x, float new_y)
             // 自身の Shape セル（shape_tail）以外を対象に，他交差判定を行う．
             for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
             {
-                if (CMath::OtherCross (sp, shape_tail, new_x, new_y))
+                if (CMath::OtherCrossDetect (sp, shape_tail, new_x, new_y))
                 {
                     return;
                 }
@@ -207,7 +207,7 @@ void CAdminControl::AddList (float new_x, float new_y)
             // いわゆる砂時計の形を防ぐために，自交差判定を行う．
             for (CVertex* vp = shape_tail->GetHead ()->GetNext (); vp != shape_tail->GetTail ()->GetPre (); vp = vp->GetNext ())
             {
-                if (CMath::SelfCross (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
+                if (CMath::CrossDetect (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
                 {
                     return;
                 }
@@ -243,5 +243,23 @@ void CAdminControl::SubList ()
         {
             shape_tail->DeleteVertex ();
         }
+    }
+}
+
+void CAdminControl::DrawSizeUp ()
+{
+    if (LINEWIDTH <= 10.0)
+    {
+        POINTSIZE += 0.5;
+        LINEWIDTH += 0.5;
+    }
+}
+
+void CAdminControl::DrawSizeDown ()
+{
+    if (LINEWIDTH >= 1.0)
+    {
+        POINTSIZE -= 0.5;
+        LINEWIDTH -= 0.5;
     }
 }

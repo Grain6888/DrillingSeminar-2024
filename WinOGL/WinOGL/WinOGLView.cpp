@@ -30,6 +30,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_SIZE ()
     ON_WM_MOUSEMOVE ()
     ON_WM_RBUTTONDOWN ()
+    ON_COMMAND (ID_SIZEUP, &CWinOGLView::OnSizeup)
+    ON_COMMAND (ID_SIZEDOWN, &CWinOGLView::OnSizedown)
 END_MESSAGE_MAP ()
 
 // CWinOGLView コンストラクション/デストラクション
@@ -232,4 +234,17 @@ void CWinOGLView::DeviceP2WorldP (CPoint point)
         y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
         y_over = y_Ldown;
     }
+}
+
+void CWinOGLView::OnSizeup ()
+{
+    AC.DrawSizeUp ();
+    RedrawWindow ();
+}
+
+
+void CWinOGLView::OnSizedown ()
+{
+    AC.DrawSizeDown ();
+    RedrawWindow ();
 }

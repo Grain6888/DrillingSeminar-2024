@@ -11,7 +11,7 @@ float CMath::VertexDistance (CVertex* p1, float p2_x, float p2_y)
     return float (sqrt (pow ((p2_x - p1->GetX ()), 2) + pow ((p2_y - p1->GetY ()), 2)));
 }
 
-bool CMath::SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
+bool CMath::CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
     float outer_product_a_1 = OuterProduct (a_s, a_e, a_s, b_s);
     float outer_product_a_2 = OuterProduct (a_s, a_e, a_s, b_e);
@@ -28,7 +28,7 @@ bool CMath::SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
     }
 }
 
-bool CMath::OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y)
+bool CMath::OtherCrossDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
 {
     CVertex* new_p = new CVertex;
     new_p->SetXY (new_x, new_y);
@@ -38,14 +38,14 @@ bool CMath::OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y)
         // 図形の始点から終点までに存在する辺を対象に，他交差判定を行う．
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (SelfCross (vp, vp->GetNext (), a_e->GetTail (), new_p))
+            if (CrossDetect (vp, vp->GetNext (), a_e->GetTail (), new_p))
             {
                 new_p->FreeVertex ();
                 return true;
             }
         }
         // 図形の終点から始点に伸びる辺を対象に，他交差判定を行う．
-        if (SelfCross (sp->GetHead (), sp->GetTail (), a_e->GetTail (), new_p))
+        if (CrossDetect (sp->GetHead (), sp->GetTail (), a_e->GetTail (), new_p))
         {
             new_p->FreeVertex ();
             return true;
