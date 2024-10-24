@@ -33,7 +33,7 @@ void CAdminControl::Draw (float new_x, float new_y)
                 DrawPoint (vp);
             }
 
-            // 完成済みの図形の場合
+            // 完成済みの図形（図形リストの最新の Shape セル以外）の場合
             if (sp != shape_tail)
             {
                 DrawLoop (sp->GetHead (), sp->GetTail ());
@@ -72,7 +72,6 @@ void CAdminControl::DrawExpectedPoint (float new_x, float new_y)
     glEnd ();
 }
 
-
 void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
 {
     glEnable (GL_LINE_STIPPLE);
@@ -84,7 +83,6 @@ void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
     glEnd ();
     glDisable (GL_LINE_STIPPLE);
 }
-
 
 void CAdminControl::DrawPoint (CVertex* vertex)
 {
@@ -138,8 +136,6 @@ void CAdminControl::AddShape ()
     }
     shape_tail = new_s;
     shape_num++;
-
-    return;
 }
 
 void CAdminControl::DeleteShape ()
