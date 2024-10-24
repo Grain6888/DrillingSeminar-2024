@@ -185,7 +185,7 @@ void CAdminControl::AddList (float new_x, float new_y)
     else if (shape_num > 1)
     {
         //“à•ï”»’è
-        if (CMath::InclusionDetect (shape_head, shape_tail, new_x, new_y))
+        if (CMath::InclusionDetect (shape_head, shape_tail->GetPre (), new_x, new_y))
         {
             return;
         }
@@ -219,6 +219,14 @@ void CAdminControl::AddList (float new_x, float new_y)
             for (CVertex* vp = shape_tail->GetHead ()->GetNext (); vp != shape_tail->GetTail ()->GetPre (); vp = vp->GetNext ())
             {
                 if (CMath::CrossDetect (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
+                {
+                    return;
+                }
+            }
+
+            for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+            {
+                if (CMath::InclusionDetect (shape_tail, shape_tail, sp->GetHead ()->GetX (), sp->GetHead ()->GetY ()))
                 {
                     return;
                 }

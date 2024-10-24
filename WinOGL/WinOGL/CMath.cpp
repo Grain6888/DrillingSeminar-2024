@@ -61,7 +61,7 @@ bool CMath::InclusionDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
     CVertex* new_p = new CVertex;
     new_p->SetXY (new_x, new_y);
 
-    for (CShape* sp = a_s; sp != a_e; sp = sp->GetNext ())
+    for (CShape* sp = a_s; sp != a_e->GetNext (); sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
