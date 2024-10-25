@@ -70,6 +70,7 @@ bool CMath::InclusionDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
         angle_sum += CalcAngle (sp->GetTail (), new_p, sp->GetHead (), new_p);
     }
 
+    new_p->FreeVertex ();
     double difference = 2 * M_PI - fabs (angle_sum);
     if (difference >= -0.001 && difference <= 0.001)
     {
