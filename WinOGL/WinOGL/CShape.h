@@ -29,6 +29,22 @@ public:
     /// @return 点リストに含まれる Vertex セルの個数．
     int GetVertexNum ();
 
+    /// @brief 選択された Vertex セルのポインタを設定する．
+    /// @param vp 選択された Vertex セルのポインタ．
+    void SetChoseVertex (CVertex* vp);
+
+    /// @brief 選択された Vertex セルのポインタを取得する．
+    /// @return 選択された Vertex セルのポインタ．
+    CVertex* GetChoseVertex ();
+
+    /// @brief 選択された辺の始点に相当する Vertex セルのポインタを設定する．
+    /// @param sp_s 選択された辺の始点に相当する Vertex セルのポインタ．
+    void SetChoseStrip (CVertex* sp_s);
+
+    /// @brief 選択された辺の始点に相当する Vertex セルのポインタを取得する．
+    /// @return 選択された辺の始点に相当する Vertex セルのポインタ．
+    CVertex* GetChoseStrip ();
+
     /// @brief 図形リストに含まれる点リストの，先頭の Vertex セルを指すポインタを取得する．
     /// @return 図形リストに含まれる点リストの，先頭の Vertex セルを指すポインタ．
     CVertex* CShape::GetHead ();
@@ -54,6 +70,12 @@ private:
 
     /// @brief 点リストの最新の Vertex セルを指すポインタ．
     CVertex* vertex_tail;
+
+    /// @brief 選択された Vertex セルを指すポインタ．
+    CVertex* chose_vertex;
+
+    /// @brief 選択された辺の始点に相当する Vertex セルを指すポインタ．
+    CVertex* chose_strip;
 
     /// @brief 図形リストの Shape セルの，一つ古いセルを指すポインタ．
     CShape* pre_shape;

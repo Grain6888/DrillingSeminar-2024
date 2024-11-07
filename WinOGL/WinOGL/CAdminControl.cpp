@@ -8,6 +8,7 @@ CAdminControl::CAdminControl ()
     shape_head = NULL;
     shape_tail = NULL;
     shape_num = 0;
+    chose_shape = NULL;
 }
 
 CAdminControl::~CAdminControl ()
@@ -15,6 +16,7 @@ CAdminControl::~CAdminControl ()
     shape_head->FreeShape ();
     shape_head = NULL;
     shape_tail = NULL;
+    chose_shape = NULL;
 }
 
 void CAdminControl::Draw (float new_x, float new_y)
@@ -35,7 +37,14 @@ void CAdminControl::Draw (float new_x, float new_y)
             // 図形リストに含まれる点リストを順にたどる．
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
             {
-                DrawPoint (vp);
+                if (vp != sp->GetChoseVertex ())
+                {
+                    DrawPoint (vp);
+                }
+                else
+                {
+                    DrawChoseVertex (vp);
+                }
             }
 
             // 完成済みの図形（図形リストの最新の Shape セル以外）の場合
@@ -87,6 +96,37 @@ void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
     glVertex2f (end_x, end_y);
     glEnd ();
     glDisable (GL_LINE_STIPPLE);
+}
+
+void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
+{
+    if (shape_num != 0)
+    {
+        for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                if (CMath::VertexDistance (vp, mouse_x, mouse_y) < 0.1)
+                {
+                    sp->SetChoseVertex (vp);
+                    return;
+                }
+                else
+                {
+                    sp->SetChoseVertex (NULL);
+                }
+            }
+        }
+    }
+}
+
+void CAdminControl::DrawChoseVertex (CVertex* vp)
+{
+    glColor3f (1.0, 0.0, 0.0);
+    glPointSize (POINTSIZE);
+    glBegin (GL_POINTS);
+    glVertex2f (vp->GetX (), vp->GetY ());
+    glEnd ();
 }
 
 void CAdminControl::DrawPoint (CVertex* vertex)

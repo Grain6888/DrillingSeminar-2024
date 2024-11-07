@@ -39,6 +39,13 @@ public:
     /// @param end_y 現在のマウスポインタの Y 座標．
     void DrawExpectedLine (CVertex* start, float end_x, float end_y);
 
+    /// @brief 現在のマウスポインタの位置から最も近い Vertex セルを指すポインタを設定する．
+    /// @param mouse_x 現在のマウスポインタの X 座標．
+    /// @param mouse_y 現在のマウスポインタの Y 座標．
+    void SearchNearestVertex (float mouse_x, float mouse_y);
+
+    void DrawChoseVertex (CVertex* vp);
+
     /// @brief 最新の Shape セル（shape_tail）の次に，新しい Shape セルを追加する．
     void AddShape ();
 
@@ -91,6 +98,9 @@ private:
 
     /// @brief 図形リストの最新の Shape セルを指すポインタ．
     CShape* shape_tail;
+
+    /// @brief 選択された Shape セルを指すポインタ．
+    CShape* chose_shape;
 
     /// @brief 図形リストに含まれる Shape セルの個数．
     int shape_num;

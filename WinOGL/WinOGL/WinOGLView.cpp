@@ -108,6 +108,10 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     {
         AC.AddList (x_Ldown, y_Ldown);
     }
+    else
+    {
+        AC.SearchNearestVertex (x_Ldown, y_Ldown);
+    }
 
     RedrawWindow ();
 
@@ -199,8 +203,14 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
-    AC.SubList ();
+    if (AC.GetEditMode ())
+    {
+        AC.SubList ();
+    }
+    else
+    {
 
+    }
     RedrawWindow ();
 
     CView::OnRButtonDown (nFlags, point);
