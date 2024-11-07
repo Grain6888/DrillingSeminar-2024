@@ -49,7 +49,7 @@ void CAdminControl::Draw (float new_x, float new_y)
                 DrawStrip (shape_tail->GetHead (), shape_tail->GetTail ());
 
                 // 最新の Shape セルに含まれる点リストが空でない場合のみ実行．
-                if (shape_tail->GetVertexNum () > 0)
+                if (shape_tail->GetVertexNum () > 0 && EditModeFlag)
                 {
                     DrawExpectedLine (shape_tail->GetTail (), new_x, new_y);
                 }

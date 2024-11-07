@@ -104,7 +104,10 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
 
-    AC.AddList (x_Ldown, y_Ldown);
+    if (AC.GetEditMode ())
+    {
+        AC.AddList (x_Ldown, y_Ldown);
+    }
 
     RedrawWindow ();
 
