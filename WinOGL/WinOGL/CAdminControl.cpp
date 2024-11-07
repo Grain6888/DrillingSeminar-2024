@@ -310,3 +310,13 @@ bool CAdminControl::GetAxis ()
 {
     return AxisFlag;
 }
+
+void CAdminControl::SwitchEditMode ()
+{
+    EditModeFlag = !EditModeFlag;
+}
+
+bool CAdminControl::GetEditMode ()
+{
+    return EditModeFlag;
+}

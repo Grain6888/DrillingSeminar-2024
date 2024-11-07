@@ -11,6 +11,11 @@ float CMath::VertexDistance (CVertex* p1, float p2_x, float p2_y)
     return float (sqrt (pow ((p2_x - p1->GetX ()), 2) + pow ((p2_y - p1->GetY ()), 2)));
 }
 
+float CMath::StripDistance (CVertex* vp, CVertex* sp_s, CVertex* sp_e)
+{
+    return 0.0;
+}
+
 bool CMath::CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
     float outer_product_a_1 = OuterProduct (a_s, a_e, a_s, b_s);

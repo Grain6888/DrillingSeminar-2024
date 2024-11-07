@@ -69,8 +69,16 @@ public:
     /// @brief 座標軸の表示または非表示の状態を切り替える．
     void SwitchAxis ();
 
-    /// @brief 座標軸の表示または非表示の状態を取得する．表示中なら true，非表示中なら false が返る．
+    /// @brief 座標軸の表示または非表示の状態を取得する．
+    /// @return 表示中なら true，非表示中なら false．
     bool GetAxis ();
+
+    /// @brief 編集モードまたは選択モードの状態を切り替える．
+    void SwitchEditMode ();
+
+    /// @brief 編集モードまたは選択モードの状態を取得する．
+    /// @return 編集モードなら true，選択モードなら false．
+    bool GetEditMode ();
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;
@@ -89,4 +97,7 @@ private:
 
     /// @brief 座標軸の表示または非表示の状態を管理するフラグ．表示なら true，非表示なら false．
     bool AxisFlag = false;
+
+    /// @brief 編集モードまたは選択モードの状態を管理するフラグ．編集モードなら true，選択モードなら false．
+    bool EditModeFlag = false;
 };

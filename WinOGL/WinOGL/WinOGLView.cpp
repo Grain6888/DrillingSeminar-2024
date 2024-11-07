@@ -34,6 +34,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_SIZEDOWN, &CWinOGLView::OnSizedown)
     ON_COMMAND (ID_AXIS, &CWinOGLView::OnAxis)
     ON_UPDATE_COMMAND_UI (ID_AXIS, &CWinOGLView::OnUpdateAxis)
+    ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditmode)
+    ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditmode)
 END_MESSAGE_MAP ()
 
 // CWinOGLView コンストラクション/デストラクション
@@ -262,4 +264,19 @@ void CWinOGLView::OnAxis ()
 void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck (AC.GetAxis ());
+}
+
+
+void CWinOGLView::OnEditmode ()
+{
+    AC.SwitchEditMode ();
+    RedrawWindow ();
+}
+
+
+
+
+void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.GetEditMode ());
 }
