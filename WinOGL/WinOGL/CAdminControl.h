@@ -44,9 +44,9 @@ public:
     /// @brief 現在のマウスポインタの位置から最も近い Vertex セルを指すポインタを設定する．
     /// @param mouse_x 現在のマウスポインタの X 座標．
     /// @param mouse_y 現在のマウスポインタの Y 座標．
-    void SearchNearestVertex (float mouse_x, float mouse_y);
+    CVertex* SearchNearestVertex (float mouse_x, float mouse_y);
 
-    void SearchNearestStrip (float mouse_x, float mouse_y);
+    CVertex* SearchNearestStrip (float mouse_x, float mouse_y);
 
     void DrawChoseVertex (CVertex* vp);
 

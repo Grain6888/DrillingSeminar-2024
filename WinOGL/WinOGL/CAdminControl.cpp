@@ -110,7 +110,7 @@ void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
     glDisable (GL_LINE_STIPPLE);
 }
 
-void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
+CVertex* CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
 {
     if (shape_num != 0)
     {
@@ -121,7 +121,7 @@ void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
                 if (CMath::VertexDistance (vp, mouse_x, mouse_y) < 0.1)
                 {
                     sp->SetChoseVertex (vp);
-                    return;
+                    return sp->GetChoseVertex ();
                 }
                 else
                 {
@@ -130,9 +130,10 @@ void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
             }
         }
     }
+    return NULL;
 }
 
-void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
+CVertex* CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
 {
     if (shape_num != 0)
     {
@@ -140,20 +141,20 @@ void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
         {
             for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
             {
-                if (CMath::StripDistance (mouse_x, mouse_y, vp, vp->GetNext ()) < 0.1)
+                if (CMath::StripDistance (mouse_x, mouse_y, vp, vp->GetNext ()) < 0.1 && CMath::VertexDistance (vp, mouse_x, mouse_y) >= 0.1 && CMath::VertexDistance (vp->GetNext (), mouse_x, mouse_y) >= 0.1)
                 {
                     sp->SetChoseStrip (vp);
-                    return;
+                    return sp->GetChoseStrip ();
                 }
                 else
                 {
                     sp->SetChoseStrip (NULL);
                 }
             }
-            if (CMath::StripDistance (mouse_x, mouse_y, sp->GetTail (), sp->GetHead ()) < 0.1)
+            if (CMath::StripDistance (mouse_x, mouse_y, sp->GetTail (), sp->GetHead ()) < 0.1 && CMath::VertexDistance (sp->GetTail (), mouse_x, mouse_y) >= 0.1 && CMath::VertexDistance (sp->GetHead (), mouse_x, mouse_y) >= 0.1)
             {
                 sp->SetChoseStrip (sp->GetTail ());
-                return;
+                return sp->GetChoseStrip ();
             }
             else
             {
@@ -161,6 +162,7 @@ void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
             }
         }
     }
+    return NULL;
 }
 
 void CAdminControl::DrawChoseVertex (CVertex* vp)

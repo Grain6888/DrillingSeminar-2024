@@ -112,6 +112,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     {
         AC.SearchNearestVertex (x_Ldown, y_Ldown);
         AC.SearchNearestStrip (x_Ldown, y_Ldown);
+
     }
 
     RedrawWindow ();
