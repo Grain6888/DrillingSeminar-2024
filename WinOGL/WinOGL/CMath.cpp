@@ -11,7 +11,7 @@ float CMath::VertexDistance (CVertex* p1, float p2_x, float p2_y)
     return float (sqrt (pow ((p2_x - p1->GetX ()), 2) + pow ((p2_y - p1->GetY ()), 2)));
 }
 
-bool CMath::SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
+bool CMath::CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
     float outer_product_a_1 = OuterProduct (a_s, a_e, a_s, b_s);
     float outer_product_a_2 = OuterProduct (a_s, a_e, a_s, b_e);
@@ -28,7 +28,7 @@ bool CMath::SelfCross (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
     }
 }
 
-bool CMath::OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y)
+bool CMath::OtherCrossDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
 {
     CVertex* new_p = new CVertex;
     new_p->SetXY (new_x, new_y);
@@ -38,14 +38,14 @@ bool CMath::OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y)
         // 図形の始点から終点までに存在する辺を対象に，他交差判定を行う．
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (SelfCross (vp, vp->GetNext (), a_e->GetTail (), new_p))
+            if (CrossDetect (vp, vp->GetNext (), a_e->GetTail (), new_p))
             {
                 new_p->FreeVertex ();
                 return true;
             }
         }
         // 図形の終点から始点に伸びる辺を対象に，他交差判定を行う．
-        if (SelfCross (sp->GetHead (), sp->GetTail (), a_e->GetTail (), new_p))
+        if (CrossDetect (sp->GetHead (), sp->GetTail (), a_e->GetTail (), new_p))
         {
             new_p->FreeVertex ();
             return true;
@@ -53,6 +53,44 @@ bool CMath::OtherCross (CShape* a_s, CShape* a_e, float new_x, float new_y)
     }
     new_p->FreeVertex ();
     return false;
+}
+
+bool CMath::InclusionDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
+{
+    double angle_sum = 0.0;
+    CVertex* new_p = new CVertex;
+    new_p->SetXY (new_x, new_y);
+
+    for (CShape* sp = a_s; sp != a_e->GetNext (); sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+        {
+            angle_sum += CalcAngle (new_p, vp, new_p, vp->GetNext ());
+        }
+        angle_sum += CalcAngle (sp->GetTail (), new_p, sp->GetHead (), new_p);
+    }
+
+    new_p->FreeVertex ();
+    double difference = 2 * M_PI - fabs (angle_sum);
+    if (difference >= -0.001 && difference <= 0.001)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+float CMath::InnerProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+{
+    CVertex* v_a = CalcPointVector (p_a_s, p_a_e);
+    CVertex* v_b = CalcPointVector (p_b_s, p_b_e);
+
+    float result = v_a->GetX () * v_b->GetX () + v_a->GetY () * v_b->GetY ();
+    v_a->FreeVertex ();
+    v_b->FreeVertex ();
+    return result;
 }
 
 float CMath::OuterProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
@@ -71,4 +109,11 @@ CVertex* CMath::CalcPointVector (CVertex* p_s, CVertex* p_e)
     CVertex* new_point_vector = new CVertex;
     new_point_vector->SetXY (p_e->GetX () - p_s->GetX (), p_e->GetY () - p_s->GetY ());
     return new_point_vector;
+}
+
+double CMath::CalcAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+{
+    float outer_product = OuterProduct (p_a_s, p_a_e, p_b_s, p_b_e);
+    float inner_product = InnerProduct (p_a_s, p_a_e, p_b_s, p_b_e);
+    return atan2 (outer_product, inner_product);
 }

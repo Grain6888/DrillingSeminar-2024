@@ -41,6 +41,9 @@ public:
     afx_msg void OnDestroy ();
     afx_msg BOOL OnEraseBkgnd (CDC* pDC);
     afx_msg void OnSize (UINT nType, int cx, int cy);
+    afx_msg void OnSizeup ();
+    afx_msg void OnSizedown ();
+    afx_msg void OnAxis ();
 private:
     /// @brief 左クリックした時の，X 座標．
     float x_Ldown;
@@ -60,6 +63,8 @@ private:
     /// @brief デバイス座標系からワールド座標系に座標を変換する．
     /// @param point デバイス座標系 X,Y 座標．
     void DeviceP2WorldP (CPoint point);
+public:
+    afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
