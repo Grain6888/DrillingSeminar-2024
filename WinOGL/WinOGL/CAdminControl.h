@@ -18,6 +18,8 @@ public:
     /// @param vertex 点の X,Y 座標．
     void DrawPoint (CVertex* vertex);
 
+    void DrawChoseStrip (CVertex* sp_s, CVertex* sp_e);
+
     /// @brief 辺の描画を行う．
     /// @param start 辺の始点の X,Y 座標．
     /// @param end   辺の終点の X,Y 座標．
@@ -43,6 +45,8 @@ public:
     /// @param mouse_x 現在のマウスポインタの X 座標．
     /// @param mouse_y 現在のマウスポインタの Y 座標．
     void SearchNearestVertex (float mouse_x, float mouse_y);
+
+    void SearchNearestStrip (float mouse_x, float mouse_y);
 
     void DrawChoseVertex (CVertex* vp);
 

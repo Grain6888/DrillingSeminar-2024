@@ -63,6 +63,18 @@ void CAdminControl::Draw (float new_x, float new_y)
                     DrawExpectedLine (shape_tail->GetTail (), new_x, new_y);
                 }
             }
+
+            for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+            {
+                if (vp == sp->GetChoseStrip ())
+                {
+                    DrawChoseStrip (vp, vp->GetNext ());
+                }
+            }
+            if (sp->GetTail () != NULL && sp->GetTail () == sp->GetChoseStrip ())
+            {
+                DrawChoseStrip (sp->GetTail (), sp->GetHead ());
+            }
         }
     }
 }
@@ -120,6 +132,37 @@ void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
     }
 }
 
+void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
+{
+    if (shape_num != 0)
+    {
+        for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () != 0; sp = sp->GetNext ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+            {
+                if (CMath::StripDistance (mouse_x, mouse_y, vp, vp->GetNext ()) < 0.1)
+                {
+                    sp->SetChoseStrip (vp);
+                    return;
+                }
+                else
+                {
+                    sp->SetChoseStrip (NULL);
+                }
+            }
+            if (CMath::StripDistance (mouse_x, mouse_y, sp->GetTail (), sp->GetHead ()) < 0.1)
+            {
+                sp->SetChoseStrip (sp->GetTail ());
+                return;
+            }
+            else
+            {
+                sp->SetChoseStrip (NULL);
+            }
+        }
+    }
+}
+
 void CAdminControl::DrawChoseVertex (CVertex* vp)
 {
     glColor3f (1.0, 0.0, 0.0);
@@ -135,6 +178,16 @@ void CAdminControl::DrawPoint (CVertex* vertex)
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
     glVertex2f (vertex->GetX (), vertex->GetY ());
+    glEnd ();
+}
+
+void CAdminControl::DrawChoseStrip (CVertex* sp_s, CVertex* sp_e)
+{
+    glColor3f (1.0, 0.0, 0.0);
+    glLineWidth (LINEWIDTH);
+    glBegin (GL_LINES);
+    glVertex2f (sp_s->GetX (), sp_s->GetY ());
+    glVertex2f (sp_e->GetX (), sp_e->GetY ());
     glEnd ();
 }
 

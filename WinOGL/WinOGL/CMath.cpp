@@ -11,9 +11,46 @@ float CMath::VertexDistance (CVertex* p1, float p2_x, float p2_y)
     return float (sqrt (pow ((p2_x - p1->GetX ()), 2) + pow ((p2_y - p1->GetY ()), 2)));
 }
 
-float CMath::StripDistance (CVertex* vp, CVertex* sp_s, CVertex* sp_e)
+float CMath::StripDistance (float v_x, float v_y, CVertex* sp_s, CVertex* sp_e)
 {
-    return 0.0;
+    // https://ikatakos.com/pot/programming_algorithm/geometry/point_to_line
+
+    float ax = sp_s->GetX ();
+    float ay = sp_s->GetY ();
+    float bx = sp_e->GetX ();
+    float by = sp_e->GetY ();
+    float px = v_x;
+    float py = v_y;
+
+    float abx = bx - ax;
+    float aby = by - ay;
+    float apx = px - ax;
+    float apy = py - ay;
+
+    CVertex* vp = new CVertex;
+    vp->SetXY (v_x, v_y);
+
+    float t = (apx * abx + apy * aby) / (powf (abx, 2) + powf (aby, 2));
+
+    float cx = 0.0;
+    float cy = 0.0;
+    if (t <= 0)
+    {
+        cx = ax;
+        cy = ay;
+    }
+    else if (t >= 1)
+    {
+        cx = bx;
+        cy = by;
+    }
+    else
+    {
+        cx = ax + t * abx;
+        cy = ay + t * aby;
+    }
+    vp->FreeVertex ();
+    return sqrt ((powf ((px - cx), 2) + powf ((py - cy), 2)));
 }
 
 bool CMath::CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
