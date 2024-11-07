@@ -50,7 +50,14 @@ void CAdminControl::Draw (float new_x, float new_y)
             // 完成済みの図形（図形リストの最新の Shape セル以外）の場合
             if (sp != shape_tail)
             {
-                DrawLoop (sp->GetHead (), sp->GetTail ());
+                if (sp != chose_shape)
+                {
+                    DrawLoop (sp->GetHead (), sp->GetTail ());
+                }
+                else
+                {
+                    DrawChoseLoop (sp->GetHead (), sp->GetTail ());
+                }
             }
             // 作りかけの図形（図形リストの最新の Shape セル）の場合
             else
@@ -110,7 +117,7 @@ void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
     glDisable (GL_LINE_STIPPLE);
 }
 
-CVertex* CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
+void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
 {
     if (shape_num != 0)
     {
@@ -121,7 +128,7 @@ CVertex* CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
                 if (CMath::VertexDistance (vp, mouse_x, mouse_y) < 0.1)
                 {
                     sp->SetChoseVertex (vp);
-                    return sp->GetChoseVertex ();
+                    return;
                 }
                 else
                 {
@@ -130,10 +137,28 @@ CVertex* CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
             }
         }
     }
-    return NULL;
 }
 
-CVertex* CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
+void CAdminControl::SearchNearestShape (float mouse_x, float mouse_y)
+{
+    if (shape_num > 1)
+    {
+        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        {
+            if (CMath::InclusionDetect (shape_head, sp, mouse_x, mouse_y))
+            {
+                chose_shape = sp;
+                return;
+            }
+            else
+            {
+                chose_shape = NULL;
+            }
+        }
+    }
+}
+
+void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
 {
     if (shape_num != 0)
     {
@@ -144,7 +169,7 @@ CVertex* CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
                 if (CMath::StripDistance (mouse_x, mouse_y, vp, vp->GetNext ()) < 0.1 && CMath::VertexDistance (vp, mouse_x, mouse_y) >= 0.1 && CMath::VertexDistance (vp->GetNext (), mouse_x, mouse_y) >= 0.1)
                 {
                     sp->SetChoseStrip (vp);
-                    return sp->GetChoseStrip ();
+                    return;
                 }
                 else
                 {
@@ -154,7 +179,7 @@ CVertex* CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
             if (CMath::StripDistance (mouse_x, mouse_y, sp->GetTail (), sp->GetHead ()) < 0.1 && CMath::VertexDistance (sp->GetTail (), mouse_x, mouse_y) >= 0.1 && CMath::VertexDistance (sp->GetHead (), mouse_x, mouse_y) >= 0.1)
             {
                 sp->SetChoseStrip (sp->GetTail ());
-                return sp->GetChoseStrip ();
+                return;
             }
             else
             {
@@ -162,7 +187,6 @@ CVertex* CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
             }
         }
     }
-    return NULL;
 }
 
 void CAdminControl::DrawChoseVertex (CVertex* vp)
@@ -208,6 +232,18 @@ void CAdminControl::DrawStrip (CVertex* start, CVertex* end)
 void CAdminControl::DrawLoop (CVertex* start, CVertex* end)
 {
     glColor3f (1.0, 1.0, 0.0);
+    glLineWidth (LINEWIDTH);
+    glBegin (GL_LINE_LOOP);
+    for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
+    {
+        glVertex2f (vp->GetX (), vp->GetY ());
+    }
+    glEnd ();
+}
+
+void CAdminControl::DrawChoseLoop (CVertex* start, CVertex* end)
+{
+    glColor3f (1.0, 0.0, 0.0);
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINE_LOOP);
     for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
@@ -267,6 +303,16 @@ void CAdminControl::DeleteShape ()
 int CAdminControl::GetShapeNum ()
 {
     return shape_num;
+}
+
+void CAdminControl::SetChoseShape (CShape* sp)
+{
+    chose_shape = sp;
+}
+
+CShape* CAdminControl::GetChoseShape ()
+{
+    return chose_shape;
 }
 
 void CAdminControl::AddList (float new_x, float new_y)

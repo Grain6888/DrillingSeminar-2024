@@ -30,6 +30,8 @@ public:
     /// @param end   図形の終点の X,Y 座標．
     void DrawLoop (CVertex* start, CVertex* end);
 
+    void DrawChoseLoop (CVertex* start, CVertex* end);
+
     /// @brief 予測点（現在のマウスポインタの位置）の描画を行う．
     /// @param new_x 現在のマウスポインタの X 座標．
     /// @param new_y 現在のマウスポインタの Y 座標．
@@ -44,9 +46,11 @@ public:
     /// @brief 現在のマウスポインタの位置から最も近い Vertex セルを指すポインタを設定する．
     /// @param mouse_x 現在のマウスポインタの X 座標．
     /// @param mouse_y 現在のマウスポインタの Y 座標．
-    CVertex* SearchNearestVertex (float mouse_x, float mouse_y);
+    void SearchNearestVertex (float mouse_x, float mouse_y);
 
-    CVertex* SearchNearestStrip (float mouse_x, float mouse_y);
+    void SearchNearestStrip (float mouse_x, float mouse_y);
+
+    void SearchNearestShape (float mouse_x, float mouse_y);
 
     void DrawChoseVertex (CVertex* vp);
 
@@ -59,6 +63,9 @@ public:
     /// @brief 図形リストに含まれる Shape セルの個数を取得する．
     /// @return 図形リストに含まれる Shape セルの個数．
     int GetShapeNum ();
+
+    void SetChoseShape (CShape* sp);
+    CShape* GetChoseShape ();
 
     /// @brief 最新の Shape セル（shape_tail）に含まれる点リストに，新しい Vertex セルを追加する．
     /// @param new_x 新しい Vertex セルの X 座標．
