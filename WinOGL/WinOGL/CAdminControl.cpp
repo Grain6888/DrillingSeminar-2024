@@ -191,7 +191,7 @@ void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
 
 void CAdminControl::DrawChoseVertex (CVertex* vp)
 {
-    glColor3f (1.0, 0.0, 0.0);
+    glColor3f (0.0, 1.0, 0.0);
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
     glVertex2f (vp->GetX (), vp->GetY ());
@@ -209,7 +209,7 @@ void CAdminControl::DrawPoint (CVertex* vertex)
 
 void CAdminControl::DrawChoseStrip (CVertex* sp_s, CVertex* sp_e)
 {
-    glColor3f (1.0, 0.0, 0.0);
+    glColor3f (0.0, 1.0, 0.0);
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINES);
     glVertex2f (sp_s->GetX (), sp_s->GetY ());
@@ -243,7 +243,7 @@ void CAdminControl::DrawLoop (CVertex* start, CVertex* end)
 
 void CAdminControl::DrawChoseLoop (CVertex* start, CVertex* end)
 {
-    glColor3f (1.0, 0.0, 0.0);
+    glColor3f (0.0, 1.0, 0.0);
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINE_LOOP);
     for (CVertex* vp = start; vp != NULL; vp = vp->GetNext ())
