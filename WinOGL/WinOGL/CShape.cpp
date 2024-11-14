@@ -10,6 +10,8 @@ CShape::CShape ()
     next_shape = NULL;
     pre_shape = NULL;
     vertex_num = 0;
+    chose_vertex = NULL;
+    chose_strip = NULL;
 };
 
 CShape::CShape (CShape* new_next, CShape* new_pre)
@@ -23,6 +25,8 @@ CShape::~CShape ()
     vertex_head->FreeVertex ();
     vertex_head = NULL;
     vertex_tail = NULL;
+    chose_vertex = NULL;
+    chose_strip = NULL;
 };
 
 void CShape::SetNext (CShape* new_next)
@@ -48,6 +52,26 @@ CShape* CShape::GetPre ()
 int CShape::GetVertexNum ()
 {
     return vertex_num;
+}
+
+void CShape::SetChoseVertex (CVertex* vp)
+{
+    chose_vertex = vp;
+}
+
+CVertex* CShape::GetChoseVertex ()
+{
+    return chose_vertex;
+}
+
+void CShape::SetChoseStrip (CVertex* sp_s)
+{
+    chose_strip = sp_s;
+}
+
+CVertex* CShape::GetChoseStrip ()
+{
+    return chose_strip;
 }
 
 CVertex* CShape::GetHead ()

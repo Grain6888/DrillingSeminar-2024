@@ -18,6 +18,8 @@ public:
     /// @param vertex 点の X,Y 座標．
     void DrawPoint (CVertex* vertex);
 
+    void DrawChoseStrip (CVertex* sp_s, CVertex* sp_e);
+
     /// @brief 辺の描画を行う．
     /// @param start 辺の始点の X,Y 座標．
     /// @param end   辺の終点の X,Y 座標．
@@ -27,6 +29,8 @@ public:
     /// @param start 図形の始点の X,Y 座標．
     /// @param end   図形の終点の X,Y 座標．
     void DrawLoop (CVertex* start, CVertex* end);
+
+    void DrawChoseLoop (CVertex* start, CVertex* end);
 
     /// @brief 予測点（現在のマウスポインタの位置）の描画を行う．
     /// @param new_x 現在のマウスポインタの X 座標．
@@ -39,6 +43,17 @@ public:
     /// @param end_y 現在のマウスポインタの Y 座標．
     void DrawExpectedLine (CVertex* start, float end_x, float end_y);
 
+    /// @brief 現在のマウスポインタの位置から最も近い Vertex セルを指すポインタを設定する．
+    /// @param mouse_x 現在のマウスポインタの X 座標．
+    /// @param mouse_y 現在のマウスポインタの Y 座標．
+    void SearchNearestVertex (float mouse_x, float mouse_y);
+
+    void SearchNearestStrip (float mouse_x, float mouse_y);
+
+    void SearchNearestShape (float mouse_x, float mouse_y);
+
+    void DrawChoseVertex (CVertex* vp);
+
     /// @brief 最新の Shape セル（shape_tail）の次に，新しい Shape セルを追加する．
     void AddShape ();
 
@@ -48,6 +63,9 @@ public:
     /// @brief 図形リストに含まれる Shape セルの個数を取得する．
     /// @return 図形リストに含まれる Shape セルの個数．
     int GetShapeNum ();
+
+    void SetChoseShape (CShape* sp);
+    CShape* GetChoseShape ();
 
     /// @brief 最新の Shape セル（shape_tail）に含まれる点リストに，新しい Vertex セルを追加する．
     /// @param new_x 新しい Vertex セルの X 座標．
@@ -69,8 +87,16 @@ public:
     /// @brief 座標軸の表示または非表示の状態を切り替える．
     void SwitchAxis ();
 
-    /// @brief 座標軸の表示または非表示の状態を取得する．表示中なら true，非表示中なら false が返る．
+    /// @brief 座標軸の表示または非表示の状態を取得する．
+    /// @return 表示中なら true，非表示中なら false．
     bool GetAxis ();
+
+    /// @brief 編集モードまたは選択モードの状態を切り替える．
+    void SwitchEditMode ();
+
+    /// @brief 編集モードまたは選択モードの状態を取得する．
+    /// @return 編集モードなら true，選択モードなら false．
+    bool GetEditMode ();
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;
@@ -84,9 +110,15 @@ private:
     /// @brief 図形リストの最新の Shape セルを指すポインタ．
     CShape* shape_tail;
 
+    /// @brief 選択された Shape セルを指すポインタ．
+    CShape* chose_shape;
+
     /// @brief 図形リストに含まれる Shape セルの個数．
     int shape_num;
 
     /// @brief 座標軸の表示または非表示の状態を管理するフラグ．表示なら true，非表示なら false．
     bool AxisFlag = false;
+
+    /// @brief 編集モードまたは選択モードの状態を管理するフラグ．編集モードなら true，選択モードなら false．
+    bool EditModeFlag = false;
 };

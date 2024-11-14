@@ -19,6 +19,8 @@ public:
     /// @return 2 点間の距離．ただし，0 から 1 で正規化された値．
     static float VertexDistance (CVertex* p1, float p2_x, float p2_y);
 
+    static float StripDistance (float v_x, float v_y, CVertex* sp_s, CVertex* sp_e);
+
     /// @brief 自分の図形に含まれる 2 辺が交差していないかを判定する．主に「自分の Shape セルに含まれる辺」と「新しく追加する辺」の自交差の有無の判定に用いる．
     /// @param a_s 1 つ目の辺の始点の X,Y 座標．通常は，図形リストの最新の Shape セルに含まれる点リストの最新の Vertex セルを指定する．
     /// @param a_e 1 つ目の辺の終点の X,Y 座標．通常は，図形リストに追加する新しい Vertex セルを指定する．
