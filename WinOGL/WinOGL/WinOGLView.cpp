@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_AXIS, &CWinOGLView::OnUpdateAxis)
     ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditmode)
     ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditmode)
+    ON_WM_LBUTTONUP ()
 END_MESSAGE_MAP ()
 
 // CWinOGLView コンストラクション/デストラクション
@@ -46,6 +47,7 @@ CWinOGLView::CWinOGLView () noexcept
     x_over = 0.0;
     y_over = 0.0;
     m_hRC = NULL;
+    l_drag_flag = FALSE;
 }
 
 CWinOGLView::~CWinOGLView ()
@@ -110,6 +112,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     }
     else
     {
+        l_drag_flag = TRUE;
         AC.SearchNearestVertex (x_Ldown, y_Ldown);
         AC.SearchNearestStrip (x_Ldown, y_Ldown);
         AC.SearchNearestShape (x_Ldown, y_Ldown);
@@ -196,6 +199,10 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
+    if (AC.GetEditMode () == FALSE && l_drag_flag == TRUE)
+    {
+        AC.MoveVertex (x_over, y_over);
+    }
 
     RedrawWindow ();
 
@@ -289,9 +296,15 @@ void CWinOGLView::OnEditmode ()
 }
 
 
-
-
 void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck (AC.GetEditMode ());
+}
+
+
+void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
+{
+    l_drag_flag = FALSE;
+
+    CView::OnLButtonUp (nFlags, point);
 }

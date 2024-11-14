@@ -48,6 +48,8 @@ public:
     /// @param mouse_y 現在のマウスポインタの Y 座標．
     void SearchNearestVertex (float mouse_x, float mouse_y);
 
+    void MoveVertex (float new_x, float new_y);
+
     void SearchNearestStrip (float mouse_x, float mouse_y);
 
     void SearchNearestShape (float mouse_x, float mouse_y);

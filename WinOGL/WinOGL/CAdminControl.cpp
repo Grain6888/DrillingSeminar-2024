@@ -65,9 +65,15 @@ void CAdminControl::Draw (float new_x, float new_y)
                 DrawStrip (shape_tail->GetHead (), shape_tail->GetTail ());
 
                 // 最新の Shape セルに含まれる点リストが空でない場合のみ実行．
-                if (shape_tail->GetVertexNum () > 0 && EditModeFlag)
+                if (shape_tail->GetVertexNum () > 0)
                 {
-                    DrawExpectedLine (shape_tail->GetTail (), new_x, new_y);
+                    if (EditModeFlag)
+                    {
+                        DrawExpectedLine (shape_tail->GetTail (), new_x, new_y);
+                    }
+                    else
+                    {
+                    }
                 }
             }
 
@@ -128,6 +134,7 @@ void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
                 if (CMath::VertexDistance (vp, mouse_x, mouse_y) < 0.1)
                 {
                     sp->SetChoseVertex (vp);
+                    sp->SetLastVertexXY (vp->GetX (), vp->GetY ());
                     return;
                 }
                 else
@@ -135,6 +142,21 @@ void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
                     sp->SetChoseVertex (NULL);
                 }
             }
+        }
+    }
+}
+
+void CAdminControl::MoveVertex (float new_x, float new_y)
+{
+    for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == sp->GetChoseVertex ())
+            {
+                sp->GetChoseVertex ()->SetXY (new_x, new_y);
+            }
+
         }
     }
 }

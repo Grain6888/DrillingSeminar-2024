@@ -33,9 +33,14 @@ public:
     /// @param vp 選択された Vertex セルのポインタ．
     void SetChoseVertex (CVertex* vp);
 
+    void SetLastVertexXY (float last_x, float last_y);
+
     /// @brief 選択された Vertex セルのポインタを取得する．
     /// @return 選択された Vertex セルのポインタ．
     CVertex* GetChoseVertex ();
+
+    float GetLastVertexX ();
+    float GetLastVertexY ();
 
     /// @brief 選択された辺の始点に相当する Vertex セルのポインタを設定する．
     /// @param sp_s 選択された辺の始点に相当する Vertex セルのポインタ．
@@ -73,6 +78,12 @@ private:
 
     /// @brief 選択された Vertex セルを指すポインタ．
     CVertex* chose_vertex;
+
+    /// @brief 選択された Vertex セルの X 座標．
+    float last_vertex_x;
+
+    /// @brief 選択された Vertex セルの Y 座標．
+    float last_vertex_y;
 
     /// @brief 選択された辺の始点に相当する Vertex セルを指すポインタ．
     CVertex* chose_strip;

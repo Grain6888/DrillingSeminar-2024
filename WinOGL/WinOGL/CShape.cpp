@@ -11,6 +11,8 @@ CShape::CShape ()
     pre_shape = NULL;
     vertex_num = 0;
     chose_vertex = NULL;
+    last_vertex_x = 0.0;
+    last_vertex_y = 0.0;
     chose_strip = NULL;
 };
 
@@ -59,9 +61,25 @@ void CShape::SetChoseVertex (CVertex* vp)
     chose_vertex = vp;
 }
 
+void CShape::SetLastVertexXY (float last_x, float last_y)
+{
+    last_vertex_x = last_x;
+    last_vertex_y = last_y;
+}
+
 CVertex* CShape::GetChoseVertex ()
 {
     return chose_vertex;
+}
+
+float CShape::GetLastVertexX ()
+{
+    return last_vertex_x;
+}
+
+float CShape::GetLastVertexY ()
+{
+    return last_vertex_y;
 }
 
 void CShape::SetChoseStrip (CVertex* sp_s)

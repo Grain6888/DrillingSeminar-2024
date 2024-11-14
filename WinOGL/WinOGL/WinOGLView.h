@@ -35,6 +35,7 @@ protected:
     DECLARE_MESSAGE_MAP ()
 public:
     afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
+    afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
     afx_msg void OnMouseMove (UINT nFlags, CPoint point);
     afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
     afx_msg int OnCreate (LPCREATESTRUCT lpCreateStruct);
@@ -59,6 +60,8 @@ private:
 
     /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
+
+    bool l_drag_flag;
 
     CAdminControl AC;
     HGLRC m_hRC;
