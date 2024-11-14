@@ -156,7 +156,20 @@ void CAdminControl::MoveVertex (float new_x, float new_y)
             {
                 sp->GetChoseVertex ()->SetXY (new_x, new_y);
             }
+        }
+    }
+}
 
+void CAdminControl::ResetMoveVertex ()
+{
+    for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == sp->GetChoseVertex ())
+            {
+                sp->GetChoseVertex ()->SetXY (sp->GetLastVertexX (), sp->GetLastVertexY ());
+            }
         }
     }
 }
@@ -482,4 +495,92 @@ void CAdminControl::SwitchEditMode ()
 bool CAdminControl::GetEditMode ()
 {
     return EditModeFlag;
+}
+
+bool CAdminControl::IsInvalidMovedVertex ()
+{
+    for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == sp->GetChoseVertex () && sp->GetVertexNum () > 3)
+            {
+                if (vp == sp->GetTail ())
+                {
+                    for (CVertex* vp = sp->GetHead ()->GetNext (); vp != sp->GetTail ()->GetPre (); vp = vp->GetNext ())
+                    {
+                        if (CMath::CrossDetect (sp->GetHead (), sp->GetTail (), vp, vp->GetNext ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                    for (CVertex* vp = sp->GetHead (); vp != sp->GetTail ()->GetPre ()->GetPre (); vp = vp->GetNext ())
+                    {
+                        if (CMath::CrossDetect (sp->GetTail (), sp->GetTail ()->GetPre (), vp, vp->GetNext ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                }
+                else if (vp == sp->GetHead ())
+                {
+                    for (CVertex* vp = sp->GetTail ()->GetPre (); vp != sp->GetHead ()->GetNext (); vp = vp->GetPre ())
+                    {
+                        if (CMath::CrossDetect (sp->GetHead (), sp->GetTail (), vp, vp->GetPre ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                    for (CVertex* vp = sp->GetTail (); vp != sp->GetHead ()->GetNext ()->GetNext (); vp = vp->GetPre ())
+                    {
+                        if (CMath::CrossDetect (sp->GetHead (), sp->GetHead ()->GetNext (), vp, vp->GetPre ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                }
+                else
+                {
+                    for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+                    {
+                        if (vp == sp->GetChoseVertex ()->GetPre () || vp == sp->GetChoseVertex () || vp == sp->GetChoseVertex ()->GetNext ())
+                        {
+                            continue;
+                        }
+                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetNext (), vp, vp->GetNext ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                    if (sp->GetChoseVertex ()->GetNext () != sp->GetTail ())
+                    {
+                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetNext (), sp->GetTail (), sp->GetHead ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                    for (CVertex* vp = sp->GetTail (); vp != sp->GetHead (); vp = vp->GetPre ())
+                    {
+                        if (vp == sp->GetChoseVertex ()->GetNext () || vp == sp->GetChoseVertex () || vp == sp->GetChoseVertex ()->GetPre ())
+                        {
+                            continue;
+                        }
+                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetPre (), vp, vp->GetPre ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                    if (sp->GetChoseVertex ()->GetPre () != sp->GetHead ())
+                    {
+                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetPre (), sp->GetHead (), sp->GetTail ()))
+                        {
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return FALSE;
 }

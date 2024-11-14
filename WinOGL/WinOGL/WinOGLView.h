@@ -61,6 +61,12 @@ private:
     /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
 
+    /// @brief 選択された Vertex セルの X 座標．
+    float last_vertex_x;
+
+    /// @brief 選択された Vertex セルの Y 座標．
+    float last_vertex_y;
+
     bool l_drag_flag;
 
     CAdminControl AC;

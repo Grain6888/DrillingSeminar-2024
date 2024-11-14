@@ -50,6 +50,8 @@ public:
 
     void MoveVertex (float new_x, float new_y);
 
+    void ResetMoveVertex ();
+
     void SearchNearestStrip (float mouse_x, float mouse_y);
 
     void SearchNearestShape (float mouse_x, float mouse_y);
@@ -99,6 +101,8 @@ public:
     /// @brief 編集モードまたは選択モードの状態を取得する．
     /// @return 編集モードなら true，選択モードなら false．
     bool GetEditMode ();
+
+    bool IsInvalidMovedVertex ();
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;

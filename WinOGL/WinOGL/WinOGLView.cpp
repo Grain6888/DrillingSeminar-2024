@@ -46,6 +46,8 @@ CWinOGLView::CWinOGLView () noexcept
     y_Ldown = 0.0;
     x_over = 0.0;
     y_over = 0.0;
+    last_vertex_x = 0.0;
+    last_vertex_y = 0.0;
     m_hRC = NULL;
     l_drag_flag = FALSE;
 }
@@ -304,7 +306,16 @@ void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    l_drag_flag = FALSE;
+    if (AC.GetEditMode () == FALSE)
+    {
+        l_drag_flag = FALSE;
+        if (AC.IsInvalidMovedVertex () == TRUE)
+        {
+            AC.ResetMoveVertex ();
+        }
+    }
+
+    RedrawWindow ();
 
     CView::OnLButtonUp (nFlags, point);
 }
