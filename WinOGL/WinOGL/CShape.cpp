@@ -137,7 +137,7 @@ void CShape::AddVertex (float new_x, float new_y)
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
             // 自交差している場合は点の追加をキャンセル．
-            if (CMath::CrossDetect (vertex_tail, new_v, vp, vp->GetNext ()))
+            if (CMath::IsSelfCrossing (vertex_tail, new_v, vp, vp->GetNext ()))
             {
                 new_v->FreeVertex ();
                 return;

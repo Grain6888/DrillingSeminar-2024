@@ -49,7 +49,7 @@ CWinOGLView::CWinOGLView () noexcept
     last_vertex_x = 0.0;
     last_vertex_y = 0.0;
     m_hRC = NULL;
-    l_drag_flag = FALSE;
+    l_drag_flag = false;
 }
 
 CWinOGLView::~CWinOGLView ()
@@ -114,7 +114,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     }
     else
     {
-        l_drag_flag = TRUE;
+        l_drag_flag = true;
         AC.SearchNearestVertex (x_Ldown, y_Ldown);
         AC.SearchNearestStrip (x_Ldown, y_Ldown);
         AC.SearchNearestShape (x_Ldown, y_Ldown);
@@ -201,7 +201,7 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
-    if (AC.GetEditMode () == FALSE && l_drag_flag == TRUE)
+    if (AC.GetEditMode () == false && l_drag_flag == true)
     {
         AC.MoveVertex (x_over, y_over);
     }
@@ -306,10 +306,10 @@ void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (AC.GetEditMode () == FALSE)
+    if (AC.GetEditMode () == false)
     {
-        l_drag_flag = FALSE;
-        if (AC.IsInvalidMovedVertex () == TRUE)
+        l_drag_flag = false;
+        if (AC.IsInvalidMovedVertex () == true)
         {
             AC.ResetMoveVertex ();
         }

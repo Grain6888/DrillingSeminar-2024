@@ -21,7 +21,7 @@ CAdminControl::~CAdminControl ()
 
 void CAdminControl::Draw (float new_x, float new_y)
 {
-    DrawExpectedPoint (new_x, new_y);
+    DrawTmpVertex (new_x, new_y);
 
     if (AxisFlag)
     {
@@ -92,10 +92,11 @@ void CAdminControl::Draw (float new_x, float new_y)
     }
 }
 
-void CAdminControl::DrawExpectedPoint (float new_x, float new_y)
+void CAdminControl::DrawTmpVertex (float new_x, float new_y)
 {
+    CVertex tmp_vertex (new_x, new_y, NULL, NULL);
     // 図形リストが空でなく，最新の Shape セルに含まれる Vertex セルの個数が 3 以上で，マウスポインタの座標が始点の座標と近い場合
-    if (shape_num != 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
+    if (shape_num != 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), &tmp_vertex) < 0.1)
     {
         glColor3f (0.0, 1.0, 1.0);
         glPointSize (POINTSIZE);
@@ -125,13 +126,14 @@ void CAdminControl::DrawExpectedLine (CVertex* start, float end_x, float end_y)
 
 void CAdminControl::SearchNearestVertex (float mouse_x, float mouse_y)
 {
+    CVertex tmp_vertex (mouse_x, mouse_y, NULL, NULL);
     if (shape_num != 0)
     {
         for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
         {
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
             {
-                if (CMath::VertexDistance (vp, mouse_x, mouse_y) < 0.1)
+                if (CMath::VertexDis (vp, &tmp_vertex) < 0.1)
                 {
                     sp->SetChoseVertex (vp);
                     sp->SetLastVertexXY (vp->GetX (), vp->GetY ());
@@ -180,7 +182,7 @@ void CAdminControl::SearchNearestShape (float mouse_x, float mouse_y)
     {
         for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
         {
-            if (CMath::InclusionDetect (shape_head, sp, mouse_x, mouse_y))
+            if (CMath::IsInclusion (shape_head, sp, mouse_x, mouse_y))
             {
                 chose_shape = sp;
                 return;
@@ -195,13 +197,14 @@ void CAdminControl::SearchNearestShape (float mouse_x, float mouse_y)
 
 void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
 {
+    CVertex tmp_vertex (mouse_x, mouse_y, NULL, NULL);
     if (shape_num != 0)
     {
         for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () != 0; sp = sp->GetNext ())
         {
             for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
             {
-                if (CMath::StripDistance (mouse_x, mouse_y, vp, vp->GetNext ()) < 0.1 && CMath::VertexDistance (vp, mouse_x, mouse_y) >= 0.1 && CMath::VertexDistance (vp->GetNext (), mouse_x, mouse_y) >= 0.1)
+                if (CMath::LineDis (mouse_x, mouse_y, vp, vp->GetNext ()) < 0.1 && CMath::VertexDis (vp, &tmp_vertex) >= 0.1 && CMath::VertexDis (vp->GetNext (), &tmp_vertex) >= 0.1)
                 {
                     sp->SetChoseStrip (vp);
                     return;
@@ -211,7 +214,7 @@ void CAdminControl::SearchNearestStrip (float mouse_x, float mouse_y)
                     sp->SetChoseStrip (NULL);
                 }
             }
-            if (CMath::StripDistance (mouse_x, mouse_y, sp->GetTail (), sp->GetHead ()) < 0.1 && CMath::VertexDistance (sp->GetTail (), mouse_x, mouse_y) >= 0.1 && CMath::VertexDistance (sp->GetHead (), mouse_x, mouse_y) >= 0.1)
+            if (CMath::LineDis (mouse_x, mouse_y, sp->GetTail (), sp->GetHead ()) < 0.1 && CMath::VertexDis (sp->GetTail (), &tmp_vertex) >= 0.1 && CMath::VertexDis (sp->GetHead (), &tmp_vertex) >= 0.1)
             {
                 sp->SetChoseStrip (sp->GetTail ());
                 return;
@@ -352,6 +355,7 @@ CShape* CAdminControl::GetChoseShape ()
 
 void CAdminControl::AddList (float new_x, float new_y)
 {
+    CVertex new_vertex (new_x, new_y, NULL, NULL);
     // 図形リストが空の場合
     if (shape_num == 0)
     {
@@ -361,7 +365,7 @@ void CAdminControl::AddList (float new_x, float new_y)
     else if (shape_num > 1)
     {
         //内包判定
-        if (CMath::InclusionDetect (shape_head, shape_tail->GetPre (), new_x, new_y))
+        if (CMath::IsInclusion (shape_head, shape_tail->GetPre (), new_x, new_y))
         {
             return;
         }
@@ -372,7 +376,7 @@ void CAdminControl::AddList (float new_x, float new_y)
             // 自身の Shape セル（shape_tail）以外を対象に，他交差判定を行う．
             for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
             {
-                if (CMath::OtherCrossDetect (sp, shape_tail, new_x, new_y))
+                if (CMath::IsOtherCrossing (sp, shape_tail, new_x, new_y))
                 {
                     return;
                 }
@@ -389,12 +393,12 @@ void CAdminControl::AddList (float new_x, float new_y)
     else
     {
         // 図形リストの最新の Shape セルに含まれる始点と追加点の距離が近い場合
-        if (CMath::VertexDistance (shape_tail->GetHead (), new_x, new_y) < 0.1)
+        if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1)
         {
             // いわゆる砂時計の形を防ぐために，自交差判定を行う．
             for (CVertex* vp = shape_tail->GetHead ()->GetNext (); vp != shape_tail->GetTail ()->GetPre (); vp = vp->GetNext ())
             {
-                if (CMath::CrossDetect (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
+                if (CMath::IsSelfCrossing (shape_tail->GetTail (), shape_tail->GetHead (), vp, vp->GetNext ()))
                 {
                     return;
                 }
@@ -402,7 +406,7 @@ void CAdminControl::AddList (float new_x, float new_y)
 
             for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
             {
-                if (CMath::InclusionDetect (shape_tail, shape_tail, sp->GetHead ()->GetX (), sp->GetHead ()->GetY ()))
+                if (CMath::IsInclusion (shape_tail, shape_tail, sp->GetHead ()->GetX (), sp->GetHead ()->GetY ()))
                 {
                     return;
                 }
@@ -509,16 +513,16 @@ bool CAdminControl::IsInvalidMovedVertex ()
                 {
                     for (CVertex* vp = sp->GetHead ()->GetNext (); vp != sp->GetTail ()->GetPre (); vp = vp->GetNext ())
                     {
-                        if (CMath::CrossDetect (sp->GetHead (), sp->GetTail (), vp, vp->GetNext ()))
+                        if (CMath::IsSelfCrossing (sp->GetHead (), sp->GetTail (), vp, vp->GetNext ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                     for (CVertex* vp = sp->GetHead (); vp != sp->GetTail ()->GetPre ()->GetPre (); vp = vp->GetNext ())
                     {
-                        if (CMath::CrossDetect (sp->GetTail (), sp->GetTail ()->GetPre (), vp, vp->GetNext ()))
+                        if (CMath::IsSelfCrossing (sp->GetTail (), sp->GetTail ()->GetPre (), vp, vp->GetNext ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                 }
@@ -526,16 +530,16 @@ bool CAdminControl::IsInvalidMovedVertex ()
                 {
                     for (CVertex* vp = sp->GetTail ()->GetPre (); vp != sp->GetHead ()->GetNext (); vp = vp->GetPre ())
                     {
-                        if (CMath::CrossDetect (sp->GetHead (), sp->GetTail (), vp, vp->GetPre ()))
+                        if (CMath::IsSelfCrossing (sp->GetHead (), sp->GetTail (), vp, vp->GetPre ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                     for (CVertex* vp = sp->GetTail (); vp != sp->GetHead ()->GetNext ()->GetNext (); vp = vp->GetPre ())
                     {
-                        if (CMath::CrossDetect (sp->GetHead (), sp->GetHead ()->GetNext (), vp, vp->GetPre ()))
+                        if (CMath::IsSelfCrossing (sp->GetHead (), sp->GetHead ()->GetNext (), vp, vp->GetPre ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                 }
@@ -547,16 +551,16 @@ bool CAdminControl::IsInvalidMovedVertex ()
                         {
                             continue;
                         }
-                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetNext (), vp, vp->GetNext ()))
+                        if (CMath::IsSelfCrossing (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetNext (), vp, vp->GetNext ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                     if (sp->GetChoseVertex ()->GetNext () != sp->GetTail ())
                     {
-                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetNext (), sp->GetTail (), sp->GetHead ()))
+                        if (CMath::IsSelfCrossing (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetNext (), sp->GetTail (), sp->GetHead ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                     for (CVertex* vp = sp->GetTail (); vp != sp->GetHead (); vp = vp->GetPre ())
@@ -565,16 +569,16 @@ bool CAdminControl::IsInvalidMovedVertex ()
                         {
                             continue;
                         }
-                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetPre (), vp, vp->GetPre ()))
+                        if (CMath::IsSelfCrossing (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetPre (), vp, vp->GetPre ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                     if (sp->GetChoseVertex ()->GetPre () != sp->GetHead ())
                     {
-                        if (CMath::CrossDetect (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetPre (), sp->GetHead (), sp->GetTail ()))
+                        if (CMath::IsSelfCrossing (sp->GetChoseVertex (), sp->GetChoseVertex ()->GetPre (), sp->GetHead (), sp->GetTail ()))
                         {
-                            return TRUE;
+                            return true;
                         }
                     }
                 }
@@ -582,5 +586,5 @@ bool CAdminControl::IsInvalidMovedVertex ()
         }
     }
 
-    return FALSE;
+    return false;
 }

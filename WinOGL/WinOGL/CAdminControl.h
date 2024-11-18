@@ -35,7 +35,7 @@ public:
     /// @brief 予測点（現在のマウスポインタの位置）の描画を行う．
     /// @param new_x 現在のマウスポインタの X 座標．
     /// @param new_y 現在のマウスポインタの Y 座標．
-    void DrawExpectedPoint (float new_x, float new_y);
+    void DrawTmpVertex (float new_x, float new_y);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の X,Y 座標．通常は，描画中の図形（shape_tail）の点リストの終点（vertex_tail）を指定する．

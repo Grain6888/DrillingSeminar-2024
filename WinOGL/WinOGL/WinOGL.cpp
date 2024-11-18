@@ -62,7 +62,7 @@ BOOL CWinOGLApp::InitInstance ()
     CWinApp::InitInstance ();
 
 
-    EnableTaskbarInteraction (FALSE);
+    EnableTaskbarInteraction (false);
 
     // RichEdit コントロールを使用するには AfxInitRichEdit2() が必要です
     // AfxInitRichEdit2();
@@ -87,7 +87,7 @@ BOOL CWinOGLApp::InitInstance ()
         RUNTIME_CLASS (CMainFrame),       // メイン SDI フレーム ウィンドウ
         RUNTIME_CLASS (CWinOGLView));
     if (!pDocTemplate)
-        return FALSE;
+        return false;
     AddDocTemplate (pDocTemplate);
 
 
@@ -100,12 +100,12 @@ BOOL CWinOGLApp::InitInstance ()
     // コマンド ラインで指定されたディスパッチ コマンドです。アプリケーションが
     // /RegServer、/Register、/Unregserver または /Unregister で起動された場合、False を返します。
     if (!ProcessShellCommand (cmdInfo))
-        return FALSE;
+        return false;
 
     // メイン ウィンドウが初期化されたので、表示と更新を行います。
     m_pMainWnd->ShowWindow (SW_SHOW);
     m_pMainWnd->UpdateWindow ();
-    return TRUE;
+    return true;
 }
 
 // CWinOGLApp メッセージ ハンドラー
