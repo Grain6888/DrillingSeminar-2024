@@ -40,12 +40,12 @@ CWinOGLDoc::~CWinOGLDoc ()
 BOOL CWinOGLDoc::OnNewDocument ()
 {
     if (!CDocument::OnNewDocument ())
-        return FALSE;
+        return false;
 
     // TODO: この位置に再初期化処理を追加してください。
     // (SDI ドキュメントはこのドキュメントを再利用します。
 
-    return TRUE;
+    return true;
 }
 
 

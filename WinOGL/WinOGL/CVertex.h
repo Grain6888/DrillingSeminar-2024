@@ -1,55 +1,87 @@
 #pragma once
 #include "pch.h"
 
-/// @brief Vertex セルの中身の管理を行うクラス．
+/// @brief 頂点の管理を行うクラス．
 class CVertex {
 public:
     CVertex ();
     CVertex (float new_x, float new_y, CVertex* new_next, CVertex* new_pre);
     ~CVertex ();
 
-    /// @brief Vertex セルに X,Y 座標を設定する．
-    /// @param new_x 設定する Vertex セルの X 座標．
-    /// @param new_y 設定する Vertex セルの Y 座標．
+    /// @brief 頂点の X,Y 座標を設定する．
+    /// @param new_x 頂点の X 座標．
+    /// @param new_y 頂点の Y 座標．
     void SetXY (float new_x, float new_y);
 
-    /// @brief Vertex セルの X 座標を取得する．
-    /// @return Vertex セルの X 座標．
+    /// @brief 移動前の頂点の X,Y 座標を設定する．
+    /// @param x 移動前の頂点の X 座標．
+    /// @param y 移動前の頂点の Y 座標．
+    void SetLastXY (float x, float y);
+
+    /// @brief 頂点の X 座標を取得する．
+    /// @return 頂点の X 座標
     float GetX ();
 
-    /// @brief Vertex セルの Y 座標を取得する．
-    /// @return Vertex セルの Y 座標．
+    /// @brief 移動前の頂点の X 座標を取得する．
+    /// @return 移動前の頂点の X 座標
+    float GetLastX ();
+
+    /// @brief 頂点の Y 座標を取得する．
+    /// @return 頂点の Y 座標
     float GetY ();
 
-    /// @brief 一つ新しい Vertex セルを指すポインタを設定する．
-    /// @param new_next 設定する Vertex セルのポインタ．
+    /// @brief 移動前の頂点の Y 座標を取得する．
+    /// @return 移動前の頂点の Y 座標
+    float GetLastY ();
+
+    /// @brief 次の頂点を設定する．
+    /// @param new_next 次の頂点
     void SetNext (CVertex* new_next);
 
-    /// @brief 一つ古い Vertex セルを指すポインタを設定する．
-    /// @param new_pre 設定する Vertex セルのポインタ．
+    /// @brief 前の頂点を設定する．
+    /// @param new_pre 前の頂点
     void SetPre (CVertex* new_pre);
 
-    /// @brief 一つ新しい Vertex セルを指すポインタを取得する．
-    /// @return 一つ新しい Vertex セルのポインタ．
+    /// @brief 次の頂点を取得する．
+    /// @return 次の頂点
     CVertex* GetNext ();
 
-    /// @brief 一つ古い Vertex セルを指すポインタを取得する．
-    /// @return 一つ古い Vertex セルのポインタ．
+    /// @brief 前の頂点を取得する．
+    /// @return 前の頂点
     CVertex* GetPre ();
 
-    /// @brief 自分の Vertex セル以降の点リストのメモリ領域を開放する．
+    /// @brief 以降の頂点を削除する．
     void FreeVertex ();
 
+    /// @brief 頂点を選択する．
+    void Select ();
+
+    /// @brief 頂点の選択を解除する．
+    void DeSelect ();
+
+    /// @brief 頂点の選択状態を取得する．
+    /// @return 選択されているなら true，選択されていないなら false．
+    bool IsSelected ();
+
 private:
-    /// @brief Vertex セルの X 座標．
+    /// @brief 頂点の X 座標．
     float x;
 
-    /// @brief Vertex セルの Y 座標．
+    /// @brief 頂点の Y 座標．
     float y;
 
-    /// @brief 点リストの Vertex セルの，一つ古いセルを指すポインタ．
+    /// @brief 移動前の頂点の X 座標．
+    float last_x;
+
+    /// @brief 移動前の頂点の Y 座標．
+    float last_y;
+
+    /// @brief 次の頂点．
+    CVertex* next_vertex;
+
+    /// @brief 前の頂点．
     CVertex* pre_vertex;
 
-    /// @brief 点リストの Vertex セルの，一つ新しいセルを指すポインタ．
-    CVertex* next_vertex;
+    /// @brief 選択状態のフラグ．
+    bool SelectedFlag = false;
 };

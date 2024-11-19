@@ -69,11 +69,11 @@ int CMainFrame::OnCreate (LPCREATESTRUCT lpCreateStruct)
 BOOL CMainFrame::PreCreateWindow (CREATESTRUCT& cs)
 {
     if (!CFrameWnd::PreCreateWindow (cs))
-        return FALSE;
+        return false;
     // TODO: この位置で CREATESTRUCT cs を修正して Window クラスまたはスタイルを
     //  修正してください。
 
-    return TRUE;
+    return true;
 }
 
 // CMainFrame の診断

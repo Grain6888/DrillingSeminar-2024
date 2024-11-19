@@ -1,34 +1,26 @@
 #include "pch.h"
 #include "CMath.h"
 
-float CMath::VertexDistance (CVertex* p1, CVertex* p2)
+float CMath::VertexDis (CVertex* p1, CVertex* p2)
 {
     return float (sqrt (pow ((p2->GetX () - p1->GetX ()), 2) + pow ((p2->GetY () - p1->GetY ()), 2)));
 }
 
-float CMath::VertexDistance (CVertex* p1, float p2_x, float p2_y)
-{
-    return float (sqrt (pow ((p2_x - p1->GetX ()), 2) + pow ((p2_y - p1->GetY ()), 2)));
-}
-
-float CMath::StripDistance (float v_x, float v_y, CVertex* sp_s, CVertex* sp_e)
+float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
 {
     // https://ikatakos.com/pot/programming_algorithm/geometry/point_to_line
 
-    float ax = sp_s->GetX ();
-    float ay = sp_s->GetY ();
-    float bx = sp_e->GetX ();
-    float by = sp_e->GetY ();
-    float px = v_x;
-    float py = v_y;
+    float ax = line_s->GetX ();
+    float ay = line_s->GetY ();
+    float bx = line_e->GetX ();
+    float by = line_e->GetY ();
+    float px = p->GetX ();
+    float py = p->GetY ();
 
     float abx = bx - ax;
     float aby = by - ay;
     float apx = px - ax;
     float apy = py - ay;
-
-    CVertex* vp = new CVertex;
-    vp->SetXY (v_x, v_y);
 
     float t = (apx * abx + apy * aby) / (powf (abx, 2) + powf (aby, 2));
 
@@ -49,18 +41,17 @@ float CMath::StripDistance (float v_x, float v_y, CVertex* sp_s, CVertex* sp_e)
         cx = ax + t * abx;
         cy = ay + t * aby;
     }
-    vp->FreeVertex ();
-    return sqrt ((powf ((px - cx), 2) + powf ((py - cy), 2)));
+    return sqrtf ((powf ((px - cx), 2) + powf ((py - cy), 2)));
 }
 
-bool CMath::CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
+bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
-    float outer_product_a_1 = OuterProduct (a_s, a_e, a_s, b_s);
-    float outer_product_a_2 = OuterProduct (a_s, a_e, a_s, b_e);
-    float outer_product_b_1 = OuterProduct (b_s, b_e, b_s, a_s);
-    float outer_product_b_2 = OuterProduct (b_s, b_e, b_s, a_e);
+    float outer_a_1 = Outer (a_s, a_e, a_s, b_s);
+    float outer_a_2 = Outer (a_s, a_e, a_s, b_e);
+    float outer_b_1 = Outer (b_s, b_e, b_s, a_s);
+    float outer_b_2 = Outer (b_s, b_e, b_s, a_e);
 
-    if ((outer_product_a_1 * outer_product_a_2 <= 0) && (outer_product_b_1 * outer_product_b_2 <= 0))
+    if ((outer_a_1 * outer_a_2 <= 0) && (outer_b_1 * outer_b_2 <= 0))
     {
         return true;
     }
@@ -70,49 +61,15 @@ bool CMath::CrossDetect (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
     }
 }
 
-bool CMath::OtherCrossDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
-{
-    CVertex* new_p = new CVertex;
-    new_p->SetXY (new_x, new_y);
-
-    for (CShape* sp = a_s; sp != a_e; sp = sp->GetNext ())
-    {
-        // 図形の始点から終点までに存在する辺を対象に，他交差判定を行う．
-        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
-        {
-            if (CrossDetect (vp, vp->GetNext (), a_e->GetTail (), new_p))
-            {
-                new_p->FreeVertex ();
-                return true;
-            }
-        }
-        // 図形の終点から始点に伸びる辺を対象に，他交差判定を行う．
-        if (CrossDetect (sp->GetHead (), sp->GetTail (), a_e->GetTail (), new_p))
-        {
-            new_p->FreeVertex ();
-            return true;
-        }
-    }
-    new_p->FreeVertex ();
-    return false;
-}
-
-bool CMath::InclusionDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
+bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
 {
     double angle_sum = 0.0;
-    CVertex* new_p = new CVertex;
-    new_p->SetXY (new_x, new_y);
-
-    for (CShape* sp = a_s; sp != a_e->GetNext (); sp = sp->GetNext ())
+    for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail (); vp = vp->GetNext ())
     {
-        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
-        {
-            angle_sum += CalcAngle (new_p, vp, new_p, vp->GetNext ());
-        }
-        angle_sum += CalcAngle (sp->GetTail (), new_p, sp->GetHead (), new_p);
+        angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
     }
+    angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead (), new_vertex);
 
-    new_p->FreeVertex ();
     double difference = 2 * M_PI - fabs (angle_sum);
     if (difference >= -0.001 && difference <= 0.001)
     {
@@ -124,10 +81,10 @@ bool CMath::InclusionDetect (CShape* a_s, CShape* a_e, float new_x, float new_y)
     }
 }
 
-float CMath::InnerProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+float CMath::Inner (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
-    CVertex* v_a = CalcPointVector (p_a_s, p_a_e);
-    CVertex* v_b = CalcPointVector (p_b_s, p_b_e);
+    CVertex* v_a = PositionVec (p_a_s, p_a_e);
+    CVertex* v_b = PositionVec (p_b_s, p_b_e);
 
     float result = v_a->GetX () * v_b->GetX () + v_a->GetY () * v_b->GetY ();
     v_a->FreeVertex ();
@@ -135,10 +92,10 @@ float CMath::InnerProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVert
     return result;
 }
 
-float CMath::OuterProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+float CMath::Outer (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
-    CVertex* v_a = CalcPointVector (p_a_s, p_a_e);
-    CVertex* v_b = CalcPointVector (p_b_s, p_b_e);
+    CVertex* v_a = PositionVec (p_a_s, p_a_e);
+    CVertex* v_b = PositionVec (p_b_s, p_b_e);
 
     float result = v_a->GetX () * v_b->GetY () - v_a->GetY () * v_b->GetX ();
     v_a->FreeVertex ();
@@ -146,16 +103,16 @@ float CMath::OuterProduct (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVert
     return result;
 }
 
-CVertex* CMath::CalcPointVector (CVertex* p_s, CVertex* p_e)
+CVertex* CMath::PositionVec (CVertex* p_s, CVertex* p_e)
 {
     CVertex* new_point_vector = new CVertex;
     new_point_vector->SetXY (p_e->GetX () - p_s->GetX (), p_e->GetY () - p_s->GetY ());
     return new_point_vector;
 }
 
-double CMath::CalcAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+double CMath::VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
-    float outer_product = OuterProduct (p_a_s, p_a_e, p_b_s, p_b_e);
-    float inner_product = InnerProduct (p_a_s, p_a_e, p_b_s, p_b_e);
+    float outer_product = Outer (p_a_s, p_a_e, p_b_s, p_b_e);
+    float inner_product = Inner (p_a_s, p_a_e, p_b_s, p_b_e);
     return atan2 (outer_product, inner_product);
 }
