@@ -100,6 +100,7 @@ void CAdminControl::DrawMouseVertex (CVertex* mouse)
 {
     if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1)
     {
+        mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
         glColor3f (1.0, 0.0, 0.0);
     }
     else
