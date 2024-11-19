@@ -16,47 +16,49 @@ public:
 
     /// @brief 点の描画を行う．
     /// @param vertex 点の X,Y 座標．
-    void DrawPoint (CVertex* vertex);
-
-    void DrawChoseStrip (CVertex* sp_s, CVertex* sp_e);
+    void DrawVertex (CVertex* vertex);
 
     /// @brief 辺の描画を行う．
     /// @param start 辺の始点の X,Y 座標．
     /// @param end   辺の終点の X,Y 座標．
-    void DrawStrip (CVertex* start, CVertex* end);
+    void DrawLine (CVertex* start, CVertex* end);
 
     /// @brief 閉じた図形（多角形）の描画を行う．なお，始点の座標（start）と終点の座標（end）はそれぞれ別である．
     /// @param start 図形の始点の X,Y 座標．
     /// @param end   図形の終点の X,Y 座標．
-    void DrawLoop (CVertex* start, CVertex* end);
-
-    void DrawChoseLoop (CVertex* start, CVertex* end);
+    void DrawShape (CShape* shape);
 
     /// @brief 予測点（現在のマウスポインタの位置）の描画を行う．
     /// @param new_x 現在のマウスポインタの X 座標．
     /// @param new_y 現在のマウスポインタの Y 座標．
-    void DrawTmpVertex (float new_x, float new_y);
+    void DrawTmpVertex (CVertex* tmp_vertex);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の X,Y 座標．通常は，描画中の図形（shape_tail）の点リストの終点（vertex_tail）を指定する．
-    /// @param end_x 現在のマウスポインタの X 座標．
-    /// @param end_y 現在のマウスポインタの Y 座標．
-    void DrawExpectedLine (CVertex* start, float end_x, float end_y);
+    /// @param end_x 現在のマウスポインタの X 座標
+    /// @param end_y 現在のマウスポインタの Y 座標
+    void DrawTmpLine (CVertex* start, CVertex* end);
 
-    /// @brief 現在のマウスポインタの位置から最も近い Vertex セルを指すポインタを設定する．
-    /// @param mouse_x 現在のマウスポインタの X 座標．
-    /// @param mouse_y 現在のマウスポインタの Y 座標．
-    void SearchNearestVertex (float mouse_x, float mouse_y);
+    void SelectShapeElements (float mouse_x, float mouse_y);
 
-    void MoveVertex (float new_x, float new_y);
+    /// @brief マウスの近くの頂点を探す．
+    /// @param mouse マウスの座標 (X,Y)
+    /// @return 見つかれば頂点アドレス，見つからなければ NULL．
+    CVertex* SearchNearestVertex (CVertex* mouse);
 
-    void ResetMoveVertex ();
+    void MoveVertex (float mouse_x, float mouse_y);
 
-    void SearchNearestStrip (float mouse_x, float mouse_y);
+    void ResetMovedVertex ();
 
-    void SearchNearestShape (float mouse_x, float mouse_y);
+    /// @brief マウスの近くの辺を探す．
+    /// @param mouse マウスの座標 (X,Y)
+    /// @return 見つかれば辺の始点のアドレス，見つからなければ NULL．
+    CVertex* SearchNearestLine (CVertex* mouse);
 
-    void DrawChoseVertex (CVertex* vp);
+    /// @brief マウスの近くの図形を探す．
+    /// @param mouse マウスの座標 (X,Y)
+    /// @return 見つかれば図形のアドレス，見つからなければ NULL．
+    CShape* SearchNearestShape (CVertex* mouse);
 
     /// @brief 最新の Shape セル（shape_tail）の次に，新しい Shape セルを追加する．
     void AddShape ();
@@ -67,9 +69,6 @@ public:
     /// @brief 図形リストに含まれる Shape セルの個数を取得する．
     /// @return 図形リストに含まれる Shape セルの個数．
     int GetShapeNum ();
-
-    void SetChoseShape (CShape* sp);
-    CShape* GetChoseShape ();
 
     /// @brief 最新の Shape セル（shape_tail）に含まれる点リストに，新しい Vertex セルを追加する．
     /// @param new_x 新しい Vertex セルの X 座標．
@@ -103,6 +102,42 @@ public:
     bool GetEditMode ();
 
     bool IsInvalidMovedVertex ();
+
+    /// @brief 新しい頂点がほかの多角形に内包されていないかを判定する．
+    /// @param new_vertex 新しい頂点
+    /// @return 内包される場合は true，内包されない場合は false．
+    bool IsNewVertexContained (CVertex* new_vertex);
+
+    /// @brief 新しい多角形がほかの多角形を内包していないかを判定する．
+    /// @return 内包する場合は true，内包しない場合は false．
+    bool IsNewShapeContaining ();
+
+    /// @brief 新しい頂点がほかの多角形と他交差していないかを判定する．
+    /// @param new_vertex 新しい頂点
+    /// @return 他交差する場合は true，他交差しない場合は false．
+    bool IsNewVertexOtherCross (CVertex* new_vertex);
+
+    /// @brief 移動した頂点が多角形と他交差していないかを判定する．
+    /// @param moved_vertex 移動した頂点
+    /// @return 他交差する場合は true，他交差しない場合は false．
+    bool IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex);
+
+    /// @brief 移動した頂点がほかの多角形に内包されていないかを判定する．
+    /// @param moved_vertex 移動した頂点
+    /// @return 内包される場合は true，内包されない場合は false．
+    bool IsMovedVertexContained (CShape* my_shape, CVertex* moved_vertex);
+
+    /// @brief 移動した多角形がほかの多角形を内包していないかを判定する．
+    /// @param moved_shape 移動した多角形
+    /// @return 内包する場合は true，内包しない場合は false．
+    bool IsMovedShapeContaining (CShape* moved_shape);
+
+    /// @brief すべての図形を選択状態にする．
+    void SelectAllShape ();
+
+    /// @brief すべての図形の選択状態を解除する．
+    void DeSelectAllShape ();
+
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;
@@ -115,9 +150,6 @@ private:
 
     /// @brief 図形リストの最新の Shape セルを指すポインタ．
     CShape* shape_tail;
-
-    /// @brief 選択された Shape セルを指すポインタ．
-    CShape* chose_shape;
 
     /// @brief 図形リストに含まれる Shape セルの個数．
     int shape_num;

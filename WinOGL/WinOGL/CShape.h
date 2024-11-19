@@ -29,27 +29,6 @@ public:
     /// @return 点リストに含まれる Vertex セルの個数．
     int GetVertexNum ();
 
-    /// @brief 選択された Vertex セルのポインタを設定する．
-    /// @param vp 選択された Vertex セルのポインタ．
-    void SetChoseVertex (CVertex* vp);
-
-    void SetLastVertexXY (float last_x, float last_y);
-
-    /// @brief 選択された Vertex セルのポインタを取得する．
-    /// @return 選択された Vertex セルのポインタ．
-    CVertex* GetChoseVertex ();
-
-    float GetLastVertexX ();
-    float GetLastVertexY ();
-
-    /// @brief 選択された辺の始点に相当する Vertex セルのポインタを設定する．
-    /// @param sp_s 選択された辺の始点に相当する Vertex セルのポインタ．
-    void SetChoseStrip (CVertex* sp_s);
-
-    /// @brief 選択された辺の始点に相当する Vertex セルのポインタを取得する．
-    /// @return 選択された辺の始点に相当する Vertex セルのポインタ．
-    CVertex* GetChoseStrip ();
-
     /// @brief 図形リストに含まれる点リストの，先頭の Vertex セルを指すポインタを取得する．
     /// @return 図形リストに含まれる点リストの，先頭の Vertex セルを指すポインタ．
     CVertex* CShape::GetHead ();
@@ -69,6 +48,32 @@ public:
     /// @brief 図形リストに含まれる点リストの最新の Vertex セル（vertex_tail）を削除する．
     void DeleteVertex ();
 
+    /// @brief 新しい頂点が自交差していないかを判定する．
+    /// @param new_vertex 新しい頂点
+    /// @return 自交差する場合は true，自交差しない場合は false．
+    bool IsNewVertexSelfCross (CVertex* new_vertex);
+
+    /// @brief 移動した頂点が自交差していないかを判定する．
+    /// @param moved_vertex 移動した頂点
+    /// @return 自交差する場合は true，自交差しない場合は false．
+    bool IsMovedVertexSelfCross (CVertex* moved_vertex);
+
+    /// @brief すべての頂点を選択状態にする．
+    void SelectAllVertex ();
+
+    /// @brief すべての頂点の選択状態を解除する．
+    void DeSelectAllVertex ();
+
+    /// @brief 図形を選択状態にする．
+    void SetSelection ();
+
+    /// @brief 図形の選択状態を解除する．
+    void SetNotSelection ();
+
+    /// @brief 図形の選択状態を取得する．
+    /// @return 選択されている場合は true，選択されていない場合は false．
+    bool GetSelection ();
+
 private:
     /// @brief 点リストの先頭の Vertex セルを指すポインタ．
     CVertex* vertex_head;
@@ -76,17 +81,8 @@ private:
     /// @brief 点リストの最新の Vertex セルを指すポインタ．
     CVertex* vertex_tail;
 
-    /// @brief 選択された Vertex セルを指すポインタ．
-    CVertex* chose_vertex;
-
-    /// @brief 選択された Vertex セルの X 座標．
-    float last_vertex_x;
-
-    /// @brief 選択された Vertex セルの Y 座標．
-    float last_vertex_y;
-
-    /// @brief 選択された辺の始点に相当する Vertex セルを指すポインタ．
-    CVertex* chose_strip;
+    /// @brief 選択状態のフラグ．
+    bool selected_flag;
 
     /// @brief 図形リストの Shape セルの，一つ古いセルを指すポインタ．
     CShape* pre_shape;

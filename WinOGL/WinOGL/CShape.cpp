@@ -10,10 +10,7 @@ CShape::CShape ()
     next_shape = NULL;
     pre_shape = NULL;
     vertex_num = 0;
-    chose_vertex = NULL;
-    last_vertex_x = 0.0;
-    last_vertex_y = 0.0;
-    chose_strip = NULL;
+    selected_flag = false;
 };
 
 CShape::CShape (CShape* new_next, CShape* new_pre)
@@ -27,8 +24,6 @@ CShape::~CShape ()
     vertex_head->FreeVertex ();
     vertex_head = NULL;
     vertex_tail = NULL;
-    chose_vertex = NULL;
-    chose_strip = NULL;
 };
 
 void CShape::SetNext (CShape* new_next)
@@ -56,42 +51,6 @@ int CShape::GetVertexNum ()
     return vertex_num;
 }
 
-void CShape::SetChoseVertex (CVertex* vp)
-{
-    chose_vertex = vp;
-}
-
-void CShape::SetLastVertexXY (float last_x, float last_y)
-{
-    last_vertex_x = last_x;
-    last_vertex_y = last_y;
-}
-
-CVertex* CShape::GetChoseVertex ()
-{
-    return chose_vertex;
-}
-
-float CShape::GetLastVertexX ()
-{
-    return last_vertex_x;
-}
-
-float CShape::GetLastVertexY ()
-{
-    return last_vertex_y;
-}
-
-void CShape::SetChoseStrip (CVertex* sp_s)
-{
-    chose_strip = sp_s;
-}
-
-CVertex* CShape::GetChoseStrip ()
-{
-    return chose_strip;
-}
-
 CVertex* CShape::GetHead ()
 {
     return vertex_head;
@@ -117,7 +76,7 @@ void CShape::AddVertex (float new_x, float new_y)
 {
     CVertex* new_v = new CVertex;
     new_v->SetXY (new_x, new_y);
-    CVertex* pre_v = vertex_tail;
+    CVertex* pre_vertex = vertex_tail;
 
     // 点リストが空の場合
     if (vertex_num == 0)
@@ -128,7 +87,7 @@ void CShape::AddVertex (float new_x, float new_y)
     else if (vertex_num <= 2)
     {
         vertex_tail->SetNext (new_v);
-        new_v->SetPre (pre_v);
+        new_v->SetPre (pre_vertex);
     }
     // 点リストに含まれる Vertex セルの個数が 2 より多い場合
     else
@@ -137,14 +96,14 @@ void CShape::AddVertex (float new_x, float new_y)
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
             // 自交差している場合は点の追加をキャンセル．
-            if (CMath::IsSelfCrossing (vertex_tail, new_v, vp, vp->GetNext ()))
+            if (CMath::IsLineCrossing (vertex_tail, new_v, vp, vp->GetNext ()))
             {
                 new_v->FreeVertex ();
                 return;
             }
         }
         vertex_tail->SetNext (new_v);
-        new_v->SetPre (pre_v);
+        new_v->SetPre (pre_vertex);
     }
     vertex_tail = new_v;
     vertex_num++;
@@ -174,4 +133,147 @@ void CShape::DeleteVertex ()
         vertex_tail = pre_vp;
         vertex_num--;
     }
+}
+
+bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
+{
+    // 自交差をチェック
+    if (vertex_num >= 3)
+    {
+        for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
+        {
+            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_tail, new_vertex))
+            {
+                return true;
+            }
+        }
+    }
+
+    // 砂時計をチェック
+    if (vertex_num >= 4)
+    {
+        for (CVertex* vp = vertex_head->GetNext (); vp != vertex_tail->GetPre (); vp = vp->GetNext ())
+        {
+            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_head, vertex_tail))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
+{
+    if (vertex_num > 3)
+    {
+        if (moved_vertex == vertex_head)
+        {
+            for (CVertex* vp = vertex_tail->GetPre (); vp != vertex_head->GetNext (); vp = vp->GetPre ())
+            {
+                if (CMath::IsLineCrossing (vertex_head, vertex_tail, vp, vp->GetPre ()))
+                {
+                    return true;
+                }
+            }
+            for (CVertex* vp = vertex_tail; vp != vertex_head->GetNext ()->GetNext (); vp = vp->GetPre ())
+            {
+                if (CMath::IsLineCrossing (vertex_head, vertex_head->GetNext (), vp, vp->GetPre ()))
+                {
+                    return true;
+                }
+            }
+        }
+        else if (moved_vertex == vertex_tail)
+        {
+            for (CVertex* vp = vertex_head->GetNext (); vp != vertex_tail->GetPre (); vp = vp->GetNext ())
+            {
+                if (CMath::IsLineCrossing (vertex_head, vertex_tail, vp, vp->GetNext ()))
+                {
+                    return true;
+                }
+            }
+            for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre ()->GetPre (); vp = vp->GetNext ())
+            {
+                if (CMath::IsLineCrossing (vertex_tail, vertex_tail->GetPre (), vp, vp->GetNext ()))
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            for (CVertex* vp = vertex_head; vp != vertex_tail; vp = vp->GetNext ())
+            {
+                if (vp == moved_vertex->GetPre () || vp == moved_vertex || vp == moved_vertex->GetNext ())
+                {
+                    continue;
+                }
+                if (CMath::IsLineCrossing (moved_vertex, moved_vertex->GetNext (), vp, vp->GetNext ()))
+                {
+                    return true;
+                }
+            }
+            if (moved_vertex->GetNext () != vertex_tail)
+            {
+                if (CMath::IsLineCrossing (moved_vertex, moved_vertex->GetNext (), vertex_tail, vertex_head))
+                {
+                    return true;
+                }
+            }
+            for (CVertex* vp = vertex_tail; vp != vertex_head; vp = vp->GetPre ())
+            {
+                if (vp == moved_vertex->GetNext () || vp == moved_vertex || vp == moved_vertex->GetPre ())
+                {
+                    continue;
+                }
+                if (CMath::IsLineCrossing (moved_vertex, moved_vertex->GetPre (), vp, vp->GetPre ()))
+                {
+                    return true;
+                }
+            }
+            if (moved_vertex->GetPre () != vertex_head)
+            {
+                if (CMath::IsLineCrossing (moved_vertex, moved_vertex->GetPre (), vertex_head, vertex_tail))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void CShape::SelectAllVertex ()
+{
+    for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
+    {
+        vp->SetSelection ();
+    }
+}
+
+void CShape::DeSelectAllVertex ()
+{
+    for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
+    {
+        vp->SetNotSelection ();
+    }
+}
+
+void CShape::SetSelection ()
+{
+    selected_flag = true;
+    SelectAllVertex ();
+}
+
+void CShape::SetNotSelection ()
+{
+    selected_flag = false;
+    DeSelectAllVertex ();
+}
+
+bool CShape::GetSelection ()
+{
+    return selected_flag;
 }
