@@ -10,7 +10,6 @@ CShape::CShape ()
     next_shape = NULL;
     pre_shape = NULL;
     vertex_num = 0;
-    SelectedFlag = false;
 };
 
 CShape::CShape (CShape* new_next, CShape* new_pre)
@@ -22,8 +21,6 @@ CShape::CShape (CShape* new_next, CShape* new_pre)
 CShape::~CShape ()
 {
     vertex_head->FreeVertex ();
-    vertex_head = NULL;
-    vertex_tail = NULL;
 };
 
 void CShape::SetNext (CShape* new_next)
@@ -74,38 +71,33 @@ void CShape::FreeShape ()
 
 void CShape::AddVertex (float new_x, float new_y)
 {
-    CVertex* new_v = new CVertex;
-    new_v->SetXY (new_x, new_y);
+    CVertex* new_vertex = new CVertex;
+    new_vertex->SetXY (new_x, new_y);
     CVertex* pre_vertex = vertex_tail;
 
     // 点リストが空の場合
     if (vertex_num == 0)
     {
-        vertex_head = new_v;
+        vertex_head = new_vertex;
     }
     // 点リストに含まれる Vertex セルの個数が 2 以下の場合
     else if (vertex_num <= 2)
     {
-        vertex_tail->SetNext (new_v);
-        new_v->SetPre (pre_vertex);
+        vertex_tail->SetNext (new_vertex);
+        new_vertex->SetPre (pre_vertex);
     }
     // 点リストに含まれる Vertex セルの個数が 2 より多い場合
     else
     {
-        // 自身の Vertex セル（vertex_tail）を含む辺（始点: vertex_tail から一つ古いセル → 終点: vertex_tail）以外を対象に，自交差判定を行う．
-        for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
+        if (IsNewVertexSelfCross (new_vertex))
         {
-            // 自交差している場合は点の追加をキャンセル．
-            if (CMath::IsLineCrossing (vertex_tail, new_v, vp, vp->GetNext ()))
-            {
-                new_v->FreeVertex ();
-                return;
-            }
+            new_vertex->FreeVertex ();
+            return;
         }
-        vertex_tail->SetNext (new_v);
-        new_v->SetPre (pre_vertex);
+        vertex_tail->SetNext (new_vertex);
+        new_vertex->SetPre (pre_vertex);
     }
-    vertex_tail = new_v;
+    vertex_tail = new_vertex;
     vertex_num++;
 }
 
@@ -154,7 +146,7 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
     {
         for (CVertex* vp = vertex_head->GetNext (); vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
-            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_head, vertex_tail))
+            if (CMath::VertexDis (vertex_head, new_vertex) < 0.1 && CMath::IsLineCrossing (vp, vp->GetNext (), vertex_head, vertex_tail))
             {
                 return true;
             }

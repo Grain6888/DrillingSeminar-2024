@@ -36,8 +36,8 @@ protected:
 public:
     afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
     afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
-    afx_msg void OnMouseMove (UINT nFlags, CPoint point);
     afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
+    afx_msg void OnMouseMove (UINT nFlags, CPoint point);
     afx_msg int OnCreate (LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnDestroy ();
     afx_msg BOOL OnEraseBkgnd (CDC* pDC);
@@ -48,6 +48,10 @@ public:
     afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
     afx_msg void OnEditmode ();
     afx_msg void OnUpdateEditmode (CCmdUI* pCmdUI);
+
+    /// @brief デバイス座標系からワールド座標系に座標を変換する．
+    /// @param point デバイス座標系 X,Y 座標．
+    void DeviceP2WorldP (CPoint point);
 private:
     /// @brief 左クリックした時の，X 座標．
     float x_Ldown;
@@ -67,14 +71,11 @@ private:
     /// @brief 選択された Vertex セルの Y 座標．
     float last_vertex_y;
 
-    bool l_drag_flag;
+    /// @brief マウスドラッグ
+    bool LDragFlag = false;
 
     CAdminControl AC;
     HGLRC m_hRC;
-
-    /// @brief デバイス座標系からワールド座標系に座標を変換する．
-    /// @param point デバイス座標系 X,Y 座標．
-    void DeviceP2WorldP (CPoint point);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

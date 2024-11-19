@@ -7,7 +7,6 @@ CVertex::CVertex ()
     y = 0.0;
     last_x = 0.0;
     last_y = 0.0;
-    SelectedFlag = false;
     next_vertex = NULL;
     pre_vertex = NULL;
 };

@@ -65,7 +65,7 @@ public:
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();
 
-    /// @brief 新しい図形を追加する．
+    /// @brief 図形を追加する．
     void AddShape ();
 
     /// @brief 図形を削除する．

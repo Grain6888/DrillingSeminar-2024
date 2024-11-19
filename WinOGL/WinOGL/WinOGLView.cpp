@@ -17,9 +17,7 @@
 #define new DEBUG_NEW
 #endif
 
-
 // ここから CWinOGLView
-
 IMPLEMENT_DYNCREATE (CWinOGLView, CView)
 
 BEGIN_MESSAGE_MAP (CWinOGLView, CView)
@@ -49,7 +47,6 @@ CWinOGLView::CWinOGLView () noexcept
     last_vertex_x = 0.0;
     last_vertex_y = 0.0;
     m_hRC = NULL;
-    l_drag_flag = false;
 }
 
 CWinOGLView::~CWinOGLView ()
@@ -82,7 +79,6 @@ void CWinOGLView::OnDraw (CDC* pDC)
     wglMakeCurrent (pDC->m_hDC, NULL);
 }
 
-
 // CWinOGLView の診断
 #ifdef _DEBUG
 void CWinOGLView::AssertValid () const
@@ -102,7 +98,6 @@ CWinOGLDoc* CWinOGLView::GetDocument () const // デバッグ以外のバージ�
 }
 #endif //_DEBUG
 
-
 // ここから CWinOGLView メッセージ ハンドラー
 void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
@@ -114,13 +109,54 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     }
     else
     {
-        l_drag_flag = true;
+        LDragFlag = true;
         AC.SelectShapeElements (x_Ldown, y_Ldown);
     }
 
     RedrawWindow ();
 
     CView::OnLButtonDown (nFlags, point);
+}
+
+void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
+{
+    if (!AC.IsEditMode ())
+    {
+        LDragFlag = false;
+        if (AC.IsInvalidMovedVertex ())
+        {
+            AC.ResetMovedVertex ();
+        }
+    }
+
+    RedrawWindow ();
+
+    CView::OnLButtonUp (nFlags, point);
+}
+
+void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
+{
+    if (AC.IsEditMode ())
+    {
+        AC.PopVertex ();
+    }
+
+    RedrawWindow ();
+
+    CView::OnRButtonDown (nFlags, point);
+}
+
+void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
+{
+    DeviceP2WorldP (point);
+    if (!AC.IsEditMode () && LDragFlag)
+    {
+        AC.TrackVertexToMouse (x_over, y_over);
+    }
+
+    RedrawWindow ();
+
+    CView::OnMouseMove (nFlags, point);
 }
 
 int CWinOGLView::OnCreate (LPCREATESTRUCT lpCreateStruct)
@@ -165,7 +201,6 @@ BOOL CWinOGLView::OnEraseBkgnd (CDC* pDC)
     return true;
 }
 
-
 void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 {
     CView::OnSize (nType, cx, cy);
@@ -195,36 +230,39 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
     wglMakeCurrent (clientDC.m_hDC, NULL);
 }
 
-
-void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
+void CWinOGLView::OnSizeup ()
 {
-    DeviceP2WorldP (point);
-    if (!AC.IsEditMode () && l_drag_flag == true)
-    {
-        AC.TrackVertexToMouse (x_over, y_over);
-    }
-
+    AC.DrawSizeUp ();
     RedrawWindow ();
-
-    CView::OnMouseMove (nFlags, point);
 }
 
-
-void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
+void CWinOGLView::OnSizedown ()
 {
-    if (AC.IsEditMode ())
-    {
-        AC.PopVertex ();
-    }
-    else
-    {
-
-    }
+    AC.DrawSizeDown ();
     RedrawWindow ();
-
-    CView::OnRButtonDown (nFlags, point);
 }
 
+void CWinOGLView::OnAxis ()
+{
+    AC.SwitchAxis ();
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsShowingAxis ());
+}
+
+void CWinOGLView::OnEditmode ()
+{
+    AC.SwitchEditMode ();
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsEditMode ());
+}
 
 void CWinOGLView::DeviceP2WorldP (CPoint point)
 {
@@ -260,60 +298,4 @@ void CWinOGLView::DeviceP2WorldP (CPoint point)
         y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
         y_over = y_Ldown;
     }
-}
-
-void CWinOGLView::OnSizeup ()
-{
-    AC.DrawSizeUp ();
-    RedrawWindow ();
-}
-
-
-void CWinOGLView::OnSizedown ()
-{
-    AC.DrawSizeDown ();
-    RedrawWindow ();
-}
-
-
-void CWinOGLView::OnAxis ()
-{
-    AC.SwitchAxis ();
-    RedrawWindow ();
-}
-
-
-void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
-{
-    pCmdUI->SetCheck (AC.IsShowingAxis ());
-}
-
-
-void CWinOGLView::OnEditmode ()
-{
-    AC.SwitchEditMode ();
-    RedrawWindow ();
-}
-
-
-void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
-{
-    pCmdUI->SetCheck (AC.IsEditMode ());
-}
-
-
-void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
-{
-    if (AC.IsEditMode () == false)
-    {
-        l_drag_flag = false;
-        if (AC.IsInvalidMovedVertex () == true)
-        {
-            AC.ResetMovedVertex ();
-        }
-    }
-
-    RedrawWindow ();
-
-    CView::OnLButtonUp (nFlags, point);
 }

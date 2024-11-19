@@ -52,7 +52,7 @@ void CAdminControl::Draw (float new_x, float new_y)
 
 void CAdminControl::DrawVertex (CVertex* vertex)
 {
-    if (vertex->IsSelected () == true)
+    if (vertex->IsSelected ())
     {
         glColor3f (1.0, 0.0, 0.0);
     }
@@ -68,7 +68,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 
 void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
-    if (start->IsSelected () == true && end->IsSelected () == true)
+    if (start->IsSelected () && end->IsSelected ())
     {
         glColor3f (1.0, 0.0, 0.0);
     }
@@ -199,7 +199,7 @@ void CAdminControl::TrackVertexToMouse (float mouse_x, float mouse_y)
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->IsSelected () == true)
+            if (vp->IsSelected ())
             {
                 vp->SetXY (mouse_x, mouse_y);
             }
@@ -213,7 +213,7 @@ void CAdminControl::ResetMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->IsSelected () == true)
+            if (vp->IsSelected ())
             {
                 vp->SetXY (vp->GetLastX (), vp->GetLastY ());
             }
@@ -454,19 +454,19 @@ bool CAdminControl::IsInvalidMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->IsSelected () == true && sp->IsMovedVertexSelfCross (vp))
+            if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
             {
                 return true;
             }
-            if (vp->IsSelected () == true && IsMovedVertexContained (sp, vp))
+            if (vp->IsSelected () && IsMovedVertexContained (sp, vp))
             {
                 return true;
             }
-            if (vp->IsSelected () == true && IsMovedShapeContaining (sp))
+            if (vp->IsSelected () && IsMovedShapeContaining (sp))
             {
                 return true;
             }
-            if (vp->IsSelected () == true && IsMovedVertexOtherCross (sp, vp))
+            if (vp->IsSelected () && IsMovedVertexOtherCross (sp, vp))
             {
                 return true;
             }
