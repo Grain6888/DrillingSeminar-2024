@@ -65,14 +65,14 @@ public:
     void DeSelectAllVertex ();
 
     /// @brief 図形を選択状態にする．
-    void SetSelection ();
+    void Select ();
 
     /// @brief 図形の選択状態を解除する．
-    void SetNotSelection ();
+    void DeSelect ();
 
     /// @brief 図形の選択状態を取得する．
     /// @return 選択されている場合は true，選択されていない場合は false．
-    bool GetSelection ();
+    bool IsSelected ();
 
 private:
     /// @brief 点リストの先頭の Vertex セルを指すポインタ．

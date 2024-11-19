@@ -249,7 +249,7 @@ void CShape::SelectAllVertex ()
 {
     for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
     {
-        vp->SetSelection ();
+        vp->Select ();
     }
 }
 
@@ -257,23 +257,23 @@ void CShape::DeSelectAllVertex ()
 {
     for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
     {
-        vp->SetNotSelection ();
+        vp->DeSelect ();
     }
 }
 
-void CShape::SetSelection ()
+void CShape::Select ()
 {
     selected_flag = true;
     SelectAllVertex ();
 }
 
-void CShape::SetNotSelection ()
+void CShape::DeSelect ()
 {
     selected_flag = false;
     DeSelectAllVertex ();
 }
 
-bool CShape::GetSelection ()
+bool CShape::IsSelected ()
 {
     return selected_flag;
 }

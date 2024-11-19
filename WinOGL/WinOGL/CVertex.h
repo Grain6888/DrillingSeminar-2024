@@ -54,14 +54,14 @@ public:
     void FreeVertex ();
 
     /// @brief 頂点を選択状態にする．
-    void SetSelection ();
+    void Select ();
 
     /// @brief 頂点の選択状態を解除する．
-    void SetNotSelection ();
+    void DeSelect ();
 
     /// @brief 頂点の選択状態を取得する．
     /// @return 選択されているなら true，選択されていないなら false．
-    bool GetSelection ();
+    bool IsSelected ();
 
 private:
     /// @brief 頂点の X 座標．

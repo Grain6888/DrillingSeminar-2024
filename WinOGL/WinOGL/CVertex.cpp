@@ -85,17 +85,17 @@ void CVertex::FreeVertex ()
     }
 }
 
-void CVertex::SetSelection ()
+void CVertex::Select ()
 {
     selected_flag = true;
 }
 
-void CVertex::SetNotSelection ()
+void CVertex::DeSelect ()
 {
     selected_flag = false;
 }
 
-bool CVertex::GetSelection ()
+bool CVertex::IsSelected ()
 {
     return selected_flag;
 }

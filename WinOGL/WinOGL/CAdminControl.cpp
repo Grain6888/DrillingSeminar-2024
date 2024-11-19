@@ -106,7 +106,7 @@ CVertex* CAdminControl::SearchNearestVertex (CVertex* mouse)
         {
             if (CMath::VertexDis (vp, mouse) < 0.1)
             {
-                vp->SetSelection ();
+                vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
                 return vp;
             }
@@ -122,7 +122,7 @@ void CAdminControl::MoveVertex (float mouse_x, float mouse_y)
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->GetSelection () == true)
+            if (vp->IsSelected () == true)
             {
                 vp->SetXY (mouse_x, mouse_y);
             }
@@ -136,7 +136,7 @@ void CAdminControl::ResetMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->GetSelection () == true)
+            if (vp->IsSelected () == true)
             {
                 vp->SetXY (vp->GetLastX (), vp->GetLastY ());
             }
@@ -151,7 +151,7 @@ CShape* CAdminControl::SearchNearestShape (CVertex* mouse)
         if (CMath::IsContained (sp, mouse))
         {
             DeSelectAllShape ();
-            sp->SetSelection ();
+            sp->Select ();
             return sp;
         }
     }
@@ -167,15 +167,15 @@ CVertex* CAdminControl::SearchNearestLine (CVertex* mouse)
         {
             if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SearchNearestVertex (mouse) == NULL)
             {
-                vp->SetSelection ();
-                vp->GetNext ()->SetSelection ();
+                vp->Select ();
+                vp->GetNext ()->Select ();
                 return vp;
             }
         }
         if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SearchNearestVertex (mouse) == NULL)
         {
-            sp->GetHead ()->SetSelection ();
-            sp->GetTail ()->SetSelection ();
+            sp->GetHead ()->Select ();
+            sp->GetTail ()->Select ();
             return sp->GetTail ();
         }
     }
@@ -185,7 +185,7 @@ CVertex* CAdminControl::SearchNearestLine (CVertex* mouse)
 
 void CAdminControl::DrawVertex (CVertex* vertex)
 {
-    if (vertex->GetSelection () == true)
+    if (vertex->IsSelected () == true)
     {
         glColor3f (1.0, 0.0, 0.0);
     }
@@ -201,7 +201,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 
 void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
-    if (start->GetSelection () == true && end->GetSelection () == true)
+    if (start->IsSelected () == true && end->IsSelected () == true)
     {
         glColor3f (1.0, 0.0, 0.0);
     }
@@ -414,19 +414,19 @@ bool CAdminControl::IsInvalidMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->GetSelection () == true && sp->IsMovedVertexSelfCross (vp))
+            if (vp->IsSelected () == true && sp->IsMovedVertexSelfCross (vp))
             {
                 return true;
             }
-            if (vp->GetSelection () == true && IsMovedVertexContained (sp, vp))
+            if (vp->IsSelected () == true && IsMovedVertexContained (sp, vp))
             {
                 return true;
             }
-            if (vp->GetSelection () == true && IsMovedShapeContaining (sp))
+            if (vp->IsSelected () == true && IsMovedShapeContaining (sp))
             {
                 return true;
             }
-            if (vp->GetSelection () == true && IsMovedVertexOtherCross (sp, vp))
+            if (vp->IsSelected () == true && IsMovedVertexOtherCross (sp, vp))
             {
                 return true;
             }
@@ -612,7 +612,7 @@ void CAdminControl::SelectAllShape ()
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
-        sp->SetSelection ();
+        sp->Select ();
     }
 }
 
@@ -620,6 +620,6 @@ void CAdminControl::DeSelectAllShape ()
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
-        sp->SetNotSelection ();
+        sp->DeSelect ();
     }
 }
