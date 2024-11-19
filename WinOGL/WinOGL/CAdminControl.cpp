@@ -26,7 +26,7 @@ void CAdminControl::Draw (float new_x, float new_y)
     }
 
     // 予測点を表示する．
-    DrawMouseVertex (&mouse);
+    DrawExVertex (&mouse);
 
     if (shape_num > 0)
     {
@@ -45,7 +45,7 @@ void CAdminControl::Draw (float new_x, float new_y)
         // 予測線を表示する．
         if (shape_tail->GetVertexNum () > 0 && IsEditMode ())
         {
-            DrawMouseLine (shape_tail->GetTail (), &mouse);
+            DrawExLine (shape_tail->GetTail (), &mouse);
         }
     }
 }
@@ -54,7 +54,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (0.89f, 0.18f, 0.57f);
+        glColor3f (0.36f, 0.80f, 0.68f);
     }
     else
     {
@@ -70,7 +70,7 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (0.89f, 0.18f, 0.57f);
+        glColor3f (0.36f, 0.80f, 0.68f);
     }
     else
     {
@@ -96,12 +96,11 @@ void CAdminControl::DrawShape (CShape* shape)
     }
 }
 
-void CAdminControl::DrawMouseVertex (CVertex* mouse)
+void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1)
+    if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
-        glColor3f (0.89f, 0.18f, 0.57f);
     }
     else
     {
@@ -113,11 +112,20 @@ void CAdminControl::DrawMouseVertex (CVertex* mouse)
     glEnd ();
 }
 
-void CAdminControl::DrawMouseLine (CVertex* start, CVertex* end)
+void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 {
+    CVertex mouse (end->GetX (), end->GetY (), NULL, NULL);
+
     glEnable (GL_LINE_STIPPLE);
     glLineStipple (2, 0xF0F0);
-    glColor3f (0.15f, 0.15f, 0.15f);
+    if (shape_tail->IsNewVertexSelfCross (&mouse) || IsNewVertexOtherCross (&mouse) || (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1))
+    {
+        glColor3f (0.94f, 0.25f, 0.14f);
+    }
+    else
+    {
+        glColor3f (0.15f, 0.15f, 0.15f);
+    }
     glBegin (GL_LINES);
     glVertex2f (start->GetX (), start->GetY ());
     glVertex2f (end->GetX (), end->GetY ());

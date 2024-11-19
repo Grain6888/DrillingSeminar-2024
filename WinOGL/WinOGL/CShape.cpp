@@ -134,7 +134,7 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
     {
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
-            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_tail, new_vertex))
+            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_tail, new_vertex) && CMath::VertexDis (vertex_head, new_vertex) >= 0.1)
             {
                 return true;
             }

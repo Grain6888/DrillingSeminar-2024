@@ -30,12 +30,12 @@ public:
 
     /// @brief 予測点の描画を行う．
     /// @param mouse マウスの座標 (X,Y)
-    void DrawMouseVertex (CVertex* mouse);
+    void DrawExVertex (CVertex* mouse);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
     /// @param end   予測線の終点
-    void DrawMouseLine (CVertex* start, CVertex* end);
+    void DrawExLine (CVertex* start, CVertex* end);
 
     /// @brief マウスの近くの要素を選択する．
     /// @param mouse_x マウスの X 座標
