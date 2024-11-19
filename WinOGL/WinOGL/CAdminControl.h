@@ -9,79 +9,84 @@ public:
     CAdminControl ();
     ~CAdminControl ();
 
-    /// @brief 図形の描画を行う．ここからさらに，DrawPoint / DrawLine で点 / 線を描画する．また，DrawExpectedPoint / DrawExpectedLine で予測点 / 線を描画する．
-    /// @param new_x 現在のマウスポインタの X 座標．予測点 / 線に使う．
-    /// @param new_y 現在のマウスポインタの Y 座標．予測点 / 線に使う．
+    /// @brief すべての描画を行う．
+    /// @param new_x マウスの X 座標
+    /// @param new_y マウスの Y 座標
     void Draw (float new_x, float new_y);
 
-    /// @brief 点の描画を行う．
-    /// @param vertex 点の X,Y 座標．
+    /// @brief 頂点の描画を行う．
+    /// @param vertex 頂点
     void DrawVertex (CVertex* vertex);
 
     /// @brief 辺の描画を行う．
-    /// @param start 辺の始点の X,Y 座標．
-    /// @param end   辺の終点の X,Y 座標．
+    /// @param start 辺の始点
+    /// @param end   辺の終点
     void DrawLine (CVertex* start, CVertex* end);
 
-    /// @brief 閉じた図形（多角形）の描画を行う．なお，始点の座標（start）と終点の座標（end）はそれぞれ別である．
-    /// @param start 図形の始点の X,Y 座標．
-    /// @param end   図形の終点の X,Y 座標．
+    /// @brief 図形の描画を行う．
+    /// @param start 図形の始点
+    /// @param end   図形の終点
     void DrawShape (CShape* shape);
 
-    /// @brief 予測点（現在のマウスポインタの位置）の描画を行う．
-    /// @param new_x 現在のマウスポインタの X 座標．
-    /// @param new_y 現在のマウスポインタの Y 座標．
-    void DrawTmpVertex (CVertex* tmp_vertex);
+    /// @brief 予測点の描画を行う．
+    /// @param mouse マウスの座標 (X,Y)
+    void DrawMouseVertex (CVertex* mouse);
 
     /// @brief 予測線の描画を行う．
-    /// @param start 予測線の X,Y 座標．通常は，描画中の図形（shape_tail）の点リストの終点（vertex_tail）を指定する．
-    /// @param end_x 現在のマウスポインタの X 座標
-    /// @param end_y 現在のマウスポインタの Y 座標
-    void DrawTmpLine (CVertex* start, CVertex* end);
+    /// @param start 予測線の始点
+    /// @param end   予測線の終点
+    void DrawMouseLine (CVertex* start, CVertex* end);
 
+    /// @brief マウスの近くの要素を選択する．
+    /// @param mouse_x マウスの X 座標
+    /// @param mouse_y マウスの Y 座標
     void SelectShapeElements (float mouse_x, float mouse_y);
 
     /// @brief マウスの近くの頂点を探す．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 見つかれば頂点アドレス，見つからなければ NULL．
-    CVertex* SearchNearestVertex (CVertex* mouse);
-
-    void MoveVertex (float mouse_x, float mouse_y);
-
-    void ResetMovedVertex ();
+    CVertex* SelectNearestVertex (CVertex* mouse);
 
     /// @brief マウスの近くの辺を探す．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 見つかれば辺の始点のアドレス，見つからなければ NULL．
-    CVertex* SearchNearestLine (CVertex* mouse);
+    CVertex* SelectNearestLine (CVertex* mouse);
 
     /// @brief マウスの近くの図形を探す．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 見つかれば図形のアドレス，見つからなければ NULL．
-    CShape* SearchNearestShape (CVertex* mouse);
+    CShape* SelectNearestShape (CVertex* mouse);
 
-    /// @brief 最新の Shape セル（shape_tail）の次に，新しい Shape セルを追加する．
+    /// @brief 頂点をマウスに追従する．
+    /// @param mouse_x マウスの X 座標
+    /// @param mouse_y マウスの Y 座標
+    void TrackVertexToMouse (float mouse_x, float mouse_y);
+
+    /// @brief 頂点を移動前の位置に戻す．
+    void ResetMovedVertex ();
+
+    /// @brief 新しい図形を追加する．
     void AddShape ();
 
-    /// @brief 最新の Shape セル（shape_tail）を削除する．
+    /// @brief 図形を削除する．
     void DeleteShape ();
 
-    /// @brief 図形リストに含まれる Shape セルの個数を取得する．
-    /// @return 図形リストに含まれる Shape セルの個数．
+    /// @brief 図形の数を取得する．
+    /// @return 図形の数
     int GetShapeNum ();
 
-    /// @brief 最新の Shape セル（shape_tail）に含まれる点リストに，新しい Vertex セルを追加する．
-    /// @param new_x 新しい Vertex セルの X 座標．
-    /// @param new_y 新しい Vertex セルの Y 座標．
-    void AddList (float new_x, float new_y);
+    /// @brief 図形の頂点リストの末尾に頂点を追加する．
+    /// @param new_x 頂点の X 座標
+    /// @param new_y 頂点の Y 座標
+    void PushVertex (float new_x, float new_y);
 
-    /// @brief 最新の Shape セル（shape_tail）に含まれる点リストの，最新の Vertex セルを削除する．
-    void SubList ();
+    /// @brief 図形の頂点リストの末尾の頂点を削除する．
+    void PopVertex ();
 
-    /// @brief 点の描画サイズを大きくし，線の描画幅を太くする．
+    /// @brief 描画サイズを上げる．
     void DrawSizeUp ();
 
-    /// @brief 点の描画サイズを小さくし，線の描画幅を細くする．
+    /// @brief 描画サイズを下げる．
     void DrawSizeDown ();
 
     /// @brief 座標軸を描画する．
@@ -92,16 +97,14 @@ public:
 
     /// @brief 座標軸の表示または非表示の状態を取得する．
     /// @return 表示中なら true，非表示中なら false．
-    bool GetAxis ();
+    bool IsShowingAxis ();
 
     /// @brief 編集モードまたは選択モードの状態を切り替える．
     void SwitchEditMode ();
 
     /// @brief 編集モードまたは選択モードの状態を取得する．
     /// @return 編集モードなら true，選択モードなら false．
-    bool GetEditMode ();
-
-    bool IsInvalidMovedVertex ();
+    bool IsEditMode ();
 
     /// @brief 新しい頂点がほかの多角形に内包されていないかを判定する．
     /// @param new_vertex 新しい頂点
@@ -116,6 +119,10 @@ public:
     /// @param new_vertex 新しい頂点
     /// @return 他交差する場合は true，他交差しない場合は false．
     bool IsNewVertexOtherCross (CVertex* new_vertex);
+
+    /// @brief 移動した頂点が不正でないかを判定する．
+    /// @return 不正な場合は true，不正でない場合は false．
+    bool IsInvalidMovedVertex ();
 
     /// @brief 移動した頂点が多角形と他交差していないかを判定する．
     /// @param moved_vertex 移動した頂点
@@ -145,18 +152,18 @@ private:
     /// @brief 線の描画幅．
     float LINEWIDTH = 2.0;
 
-    /// @brief 図形リストの先頭の Shape セルを指すポインタ．
+    /// @brief 先頭の図形．
     CShape* shape_head;
 
-    /// @brief 図形リストの最新の Shape セルを指すポインタ．
+    /// @brief 末尾の図形．
     CShape* shape_tail;
 
-    /// @brief 図形リストに含まれる Shape セルの個数．
+    /// @brief 図形の数．
     int shape_num;
 
-    /// @brief 座標軸の表示または非表示の状態を管理するフラグ．表示なら true，非表示なら false．
+    /// @brief 座標軸の表示または非表示の状態フラグ．表示なら true，非表示なら false．
     bool AxisFlag = false;
 
-    /// @brief 編集モードまたは選択モードの状態を管理するフラグ．編集モードなら true，選択モードなら false．
+    /// @brief 編集モードまたは選択モードの状態フラグ．編集モードなら true，選択モードなら false．
     bool EditModeFlag = false;
 };

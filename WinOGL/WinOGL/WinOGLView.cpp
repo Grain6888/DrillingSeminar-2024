@@ -108,9 +108,9 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
 
-    if (AC.GetEditMode ())
+    if (AC.IsEditMode ())
     {
-        AC.AddList (x_Ldown, y_Ldown);
+        AC.PushVertex (x_Ldown, y_Ldown);
     }
     else
     {
@@ -181,13 +181,13 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
     if (cx > cy)
     {
         aspect_ratio = (float)cx / cy;
-        glOrtho (-1.0 * aspect_ratio, 1.0 * aspect_ratio, -1.0, 1.0, -100.0, 100.0); // 課題1
+        glOrtho (-1.0 * aspect_ratio, 1.0 * aspect_ratio, -1.0, 1.0, -100.0, 100.0);
     }
     //ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)cy / cx;
-        glOrtho (-1.0, 1.0, -1.0 * aspect_ratio, 1.0 * aspect_ratio, -100.0, 100.0); // 課題1
+        glOrtho (-1.0, 1.0, -1.0 * aspect_ratio, 1.0 * aspect_ratio, -100.0, 100.0);
     }
 
     glMatrixMode (GL_MODELVIEW);
@@ -199,9 +199,9 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     DeviceP2WorldP (point);
-    if (!AC.GetEditMode () && l_drag_flag == true)
+    if (!AC.IsEditMode () && l_drag_flag == true)
     {
-        AC.MoveVertex (x_over, y_over);
+        AC.TrackVertexToMouse (x_over, y_over);
     }
 
     RedrawWindow ();
@@ -212,9 +212,9 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
-    if (AC.GetEditMode ())
+    if (AC.IsEditMode ())
     {
-        AC.SubList ();
+        AC.PopVertex ();
     }
     else
     {
@@ -285,7 +285,7 @@ void CWinOGLView::OnAxis ()
 
 void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
 {
-    pCmdUI->SetCheck (AC.GetAxis ());
+    pCmdUI->SetCheck (AC.IsShowingAxis ());
 }
 
 
@@ -298,13 +298,13 @@ void CWinOGLView::OnEditmode ()
 
 void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
 {
-    pCmdUI->SetCheck (AC.GetEditMode ());
+    pCmdUI->SetCheck (AC.IsEditMode ());
 }
 
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (AC.GetEditMode () == false)
+    if (AC.IsEditMode () == false)
     {
         l_drag_flag = false;
         if (AC.IsInvalidMovedVertex () == true)

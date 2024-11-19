@@ -82,7 +82,7 @@ private:
     CVertex* vertex_tail;
 
     /// @brief 選択状態のフラグ．
-    bool selected_flag;
+    bool SelectedFlag;
 
     /// @brief 図形リストの Shape セルの，一つ古いセルを指すポインタ．
     CShape* pre_shape;

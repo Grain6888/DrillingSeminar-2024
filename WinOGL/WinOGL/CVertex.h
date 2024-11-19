@@ -77,7 +77,7 @@ private:
     float last_y;
 
     /// @brief 選択状態のフラグ．
-    bool selected_flag;
+    bool SelectedFlag;
 
     /// @brief 点リストの Vertex セルの，一つ古いセルを指すポインタ．
     CVertex* pre_vertex;

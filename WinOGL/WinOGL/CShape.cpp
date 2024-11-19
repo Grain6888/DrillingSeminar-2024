@@ -10,7 +10,7 @@ CShape::CShape ()
     next_shape = NULL;
     pre_shape = NULL;
     vertex_num = 0;
-    selected_flag = false;
+    SelectedFlag = false;
 };
 
 CShape::CShape (CShape* new_next, CShape* new_pre)
@@ -263,17 +263,17 @@ void CShape::DeSelectAllVertex ()
 
 void CShape::Select ()
 {
-    selected_flag = true;
+    SelectedFlag = true;
     SelectAllVertex ();
 }
 
 void CShape::DeSelect ()
 {
-    selected_flag = false;
+    SelectedFlag = false;
     DeSelectAllVertex ();
 }
 
 bool CShape::IsSelected ()
 {
-    return selected_flag;
+    return SelectedFlag;
 }

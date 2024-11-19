@@ -7,7 +7,7 @@ CVertex::CVertex ()
     y = 0.0;
     last_x = 0.0;
     last_y = 0.0;
-    selected_flag = false;
+    SelectedFlag = false;
     next_vertex = NULL;
     pre_vertex = NULL;
 };
@@ -87,15 +87,15 @@ void CVertex::FreeVertex ()
 
 void CVertex::Select ()
 {
-    selected_flag = true;
+    SelectedFlag = true;
 }
 
 void CVertex::DeSelect ()
 {
-    selected_flag = false;
+    SelectedFlag = false;
 }
 
 bool CVertex::IsSelected ()
 {
-    return selected_flag;
+    return SelectedFlag;
 }
