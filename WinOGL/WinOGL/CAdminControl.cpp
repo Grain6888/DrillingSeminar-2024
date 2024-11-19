@@ -54,11 +54,11 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (1.0, 0.0, 0.0);
+        glColor3f (0.89f, 0.18f, 0.57f);
     }
     else
     {
-        glColor3f (1.0, 1.0, 1.0);
+        glColor3f (0.15f, 0.15f, 0.15f);
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -70,11 +70,11 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (1.0, 0.0, 0.0);
+        glColor3f (0.89f, 0.18f, 0.57f);
     }
     else
     {
-        glColor3f (1.0, 1.0, 1.0);
+        glColor3f (0.15f, 0.15f, 0.15f);
     }
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINES);
@@ -101,11 +101,11 @@ void CAdminControl::DrawMouseVertex (CVertex* mouse)
     if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1)
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
-        glColor3f (1.0, 0.0, 0.0);
+        glColor3f (0.89f, 0.18f, 0.57f);
     }
     else
     {
-        glColor3f (1.0, 1.0, 1.0);
+        glColor3f (0.15f, 0.15f, 0.15f);
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -117,7 +117,7 @@ void CAdminControl::DrawMouseLine (CVertex* start, CVertex* end)
 {
     glEnable (GL_LINE_STIPPLE);
     glLineStipple (2, 0xF0F0);
-    glColor3f (1.0, 1.0, 1.0);
+    glColor3f (0.15f, 0.15f, 0.15f);
     glBegin (GL_LINES);
     glVertex2f (start->GetX (), start->GetY ());
     glVertex2f (end->GetX (), end->GetY ());
@@ -345,8 +345,8 @@ void CAdminControl::DrawSizeUp ()
 {
     if (LINEWIDTH <= 10.0)
     {
-        POINTSIZE += 0.5;
-        LINEWIDTH += 0.5;
+        POINTSIZE += 0.5f;
+        LINEWIDTH += 0.5f;
     }
 }
 
@@ -354,8 +354,8 @@ void CAdminControl::DrawSizeDown ()
 {
     if (LINEWIDTH >= 1.0)
     {
-        POINTSIZE -= 0.5;
-        LINEWIDTH -= 0.5;
+        POINTSIZE -= 0.5f;
+        LINEWIDTH -= 0.5f;
     }
 }
 
@@ -415,9 +415,12 @@ bool CAdminControl::IsNewShapeContaining ()
 {
     for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
     {
-        if (CMath::IsContained (shape_tail, sp->GetHead ()))
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            return true;
+            if (CMath::IsContained (shape_tail, vp))
+            {
+                return true;
+            }
         }
     }
 

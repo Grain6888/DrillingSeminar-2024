@@ -69,7 +69,7 @@ void CWinOGLView::OnDraw (CDC* pDC)
         return;
 
     wglMakeCurrent (pDC->m_hDC, m_hRC);
-    glClearColor (0.0, 0.0, 0.0, 1.0);
+    glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
 
     AC.Draw (x_over, y_over);
