@@ -102,7 +102,15 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
-    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && (shape_tail->IsNewVertexSelfCross (mouse) || IsNewVertexOtherCross (mouse) || (CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())))
+    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
     {
         glColor3f (COLOR_RED);
     }
@@ -126,7 +134,15 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 
     glEnable (GL_LINE_STIPPLE);
     glLineStipple (2, 0xF0F0);
-    if (shape_tail->IsNewVertexSelfCross (&mouse) || IsNewVertexOtherCross (&mouse) || (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1))
+    if (shape_tail->IsNewVertexSelfCross (&mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (IsNewVertexOtherCross (&mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1)
     {
         glColor3f (COLOR_RED);
     }
