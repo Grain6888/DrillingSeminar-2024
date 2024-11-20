@@ -63,6 +63,8 @@ private:
 
     CAdminControl AC;
     HGLRC m_hRC;
+public:
+    afx_msg void OnEditUndo ();
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

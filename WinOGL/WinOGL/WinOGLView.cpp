@@ -30,6 +30,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditMode)
     ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditMode)
     ON_WM_LBUTTONUP ()
+    ON_COMMAND (ID_EDIT_UNDO, &CWinOGLView::OnEditUndo)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -125,15 +126,6 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
-    if (AC.IsEditMode ())
-    {
-        AC.PopVertex ();
-    }
-    else if (!(nFlags & MK_LBUTTON))
-    {
-        AC.ResetMovedVertex ();
-    }
-
     RedrawWindow ();
 
     CView::OnRButtonDown (nFlags, point);
@@ -367,4 +359,19 @@ bool CWinOGLView::IsMouseInside ()
     }
 
     return true;
+}
+
+
+void CWinOGLView::OnEditUndo ()
+{
+    if (AC.IsEditMode ())
+    {
+        AC.PopVertex ();
+    }
+    else
+    {
+        AC.ResetMovedVertex ();
+    }
+
+    RedrawWindow ();
 }

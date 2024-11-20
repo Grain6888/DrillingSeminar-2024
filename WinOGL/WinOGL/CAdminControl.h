@@ -175,5 +175,5 @@ private:
     bool AxisFlag = false;
 
     /// @brief 編集モードまたは選択モードの状態フラグ（編集モード true / 選択モード false）．
-    bool EditModeFlag = false;
+    bool EditModeFlag = true;
 };
