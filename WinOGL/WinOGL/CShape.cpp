@@ -242,6 +242,7 @@ void CShape::SelectAllVertex ()
     for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
     {
         vp->Select ();
+        vp->SetLastXY (vp->GetX (), vp->GetY ());
     }
 }
 
