@@ -179,7 +179,7 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (CMath::VertexDis (vp, mouse) < 0.1)
+            if (CMath::VertexDis (vp, mouse) < 0.1 && SelectNearestShape (mouse) == NULL)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
@@ -197,7 +197,7 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectNearestVertex (mouse) == NULL)
+            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectNearestVertex (mouse) == NULL && SelectNearestShape (mouse) == NULL)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
@@ -206,7 +206,7 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
                 return vp;
             }
         }
-        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectNearestVertex (mouse) == NULL)
+        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectNearestVertex (mouse) == NULL && SelectNearestShape (mouse) == NULL)
         {
             sp->GetHead ()->Select ();
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
