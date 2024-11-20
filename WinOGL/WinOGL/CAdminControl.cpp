@@ -38,7 +38,7 @@ void CAdminControl::Draw (float new_x, float new_y)
                 DrawVertex (vp);
             }
 
-            // 図形を描画する．
+            // 輪郭線を描画する．
             DrawShape (sp);
         }
 
@@ -101,6 +101,14 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
     if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
+    }
+    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && (shape_tail->IsNewVertexSelfCross (mouse) || IsNewVertexOtherCross (mouse) || (CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())))
+    {
+        glColor3f (0.94f, 0.25f, 0.14f);
+    }
+    else if (shape_num > 0 && IsNewVertexContained (mouse))
+    {
+        glColor3f (0.94f, 0.25f, 0.14f);
     }
     else
     {
@@ -250,12 +258,10 @@ void CAdminControl::AddShape ()
 
 void CAdminControl::DeleteShape ()
 {
-    // 図形リストが空の場合
     if (shape_num == 0)
     {
         return;
     }
-    // 図形リストに含まれる Shape セルの個数が 1 の場合
     else if (shape_num == 1)
     {
         shape_head->FreeShape ();
@@ -263,7 +269,6 @@ void CAdminControl::DeleteShape ()
         shape_tail = NULL;
         shape_num--;
     }
-    // 図形リストに含まれる Shape セルの個数が 1 より多い場合
     else
     {
         CShape* pre_sp = shape_tail->GetPre ();
@@ -283,12 +288,11 @@ void CAdminControl::PushVertex (float new_x, float new_y)
 {
     CVertex new_vertex (new_x, new_y, NULL, NULL);
 
-    // 図形リストが空の場合
     if (shape_num == 0)
     {
         AddShape ();
     }
-    // 図形リストに含まれる Shape セルの個数が 2 以上の場合
+
     if (shape_num >= 2)
     {
         if (IsNewVertexContained (&new_vertex) || IsNewVertexOtherCross (&new_vertex))
@@ -297,55 +301,34 @@ void CAdminControl::PushVertex (float new_x, float new_y)
         }
     }
 
-    // 図形リストの最新の Shape セルに含まれる Vertex セルの個数が 3 未満（多角形を作る場合は最低 3 点が必要）の場合
     if (shape_tail->GetVertexNum () < 3)
     {
         shape_tail->AddVertex (new_x, new_y);
     }
-    // 図形リストの最新の Shape セルに含まれる Vertex セルの個数が 3 以上の場合
+    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
+    {
+        AddShape ();
+    }
     else
     {
-        // 図形リストの最新の Shape セルに含まれる始点と追加点の距離が近い場合
-        if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1)
-        {
-            if (shape_tail->IsNewVertexSelfCross (&new_vertex) || IsNewShapeContaining ())
-            {
-                return;
-            }
-            else
-            {
-                AddShape ();
-            }
-        }
-        // 図形リストの最新の Shape セルに含まれる始点と追加点の距離が離れている場合
-        else
-        {
-            shape_tail->AddVertex (new_x, new_y);
-        }
+        shape_tail->AddVertex (new_x, new_y);
     }
 }
 
 void CAdminControl::PopVertex ()
 {
-    // 図形リストが空の場合
     if (shape_num == 0)
     {
         return;
     }
-    // 図形リストが空でない場合．
+    else if (shape_tail->GetVertexNum () == 0)
+    {
+        shape_tail->DeleteVertex ();
+        DeleteShape ();
+    }
     else
     {
-        // 図形リストの最新の Shape セルに含まれる点リストが空の場合
-        if (shape_tail->GetVertexNum () == 0)
-        {
-            shape_tail->DeleteVertex ();
-            DeleteShape ();
-        }
-        // 図形リストの最新の Shape セルに含まれる点リストが空でない場合
-        else
-        {
-            shape_tail->DeleteVertex ();
-        }
+        shape_tail->DeleteVertex ();
     }
 }
 
@@ -581,8 +564,7 @@ bool CAdminControl::IsMovedVertexContained (CShape* my_shape, CVertex* moved_ver
         {
             continue;
         }
-
-        if (CMath::IsContained (sp, moved_vertex))
+        else if (CMath::IsContained (sp, moved_vertex))
         {
             return true;
         }
@@ -599,8 +581,7 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
         {
             continue;
         }
-
-        if (CMath::IsContained (moved_shape, sp->GetHead ()))
+        else if (CMath::IsContained (moved_shape, sp->GetHead ()))
         {
             return true;
         }

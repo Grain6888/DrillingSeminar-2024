@@ -23,7 +23,7 @@ public:
     /// @param end   辺の終点
     void DrawLine (CVertex* start, CVertex* end);
 
-    /// @brief 図形の描画を行う．
+    /// @brief 図形の輪郭線の描画を行う．
     /// @param start 図形の始点
     /// @param end   図形の終点
     void DrawShape (CShape* shape);
