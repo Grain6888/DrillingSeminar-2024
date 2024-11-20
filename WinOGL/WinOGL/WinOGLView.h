@@ -45,6 +45,9 @@ public:
     /// @brief マウスオーバーした時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
     void SetOver (CPoint point);
+
+    bool IsMouseInside ();
+
 private:
     /// @brief 左クリックした時の，X 座標．
     float x_Ldown;
@@ -57,9 +60,6 @@ private:
 
     /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
-
-    /// @brief マウスドラッグ
-    bool LDragFlag = false;
 
     CAdminControl AC;
     HGLRC m_hRC;

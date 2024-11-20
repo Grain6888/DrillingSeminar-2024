@@ -100,7 +100,6 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     }
     else
     {
-        LDragFlag = true;
         AC.SelectShapeElements (x_Ldown, y_Ldown, nFlags);
     }
 
@@ -113,7 +112,6 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
     if (!AC.IsEditMode ())
     {
-        LDragFlag = false;
         if (AC.IsInvalidMovedVertex ())
         {
             AC.ResetMovedVertex ();
@@ -131,7 +129,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     {
         AC.PopVertex ();
     }
-    else if (!LDragFlag)
+    else if (!(nFlags & MK_LBUTTON))
     {
         AC.ResetMovedVertex ();
     }
@@ -144,9 +142,16 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     SetOver (point);
-    if (!AC.IsEditMode () && LDragFlag)
+    if (!AC.IsEditMode () && (nFlags & MK_LBUTTON))
     {
-        AC.TrackVertexToMouse (x_over, y_over);
+        if (IsMouseInside ())
+        {
+            AC.TrackVertexToMouse (x_over, y_over);
+        }
+        else
+        {
+            AC.ResetMovedVertex ();
+        }
     }
 
     RedrawWindow ();
@@ -265,24 +270,24 @@ void CWinOGLView::SetLDown (CPoint point)
     CRect rect;
     GetClientRect (rect);
 
-    //デバイス座標系
+    // デバイス座標系
     x_Ldown = (float)point.x;
     y_Ldown = (float)point.y;
 
-    //デバイス座標系→正規化座標系
+    // デバイス座標系→正規化座標系
     x_Ldown = x_Ldown / rect.Width ();
     y_Ldown = 1 - (y_Ldown / rect.Height ());
 
-    //正規化座標系→ワールド座標系
+    // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
-    //ウィンドウが横長の場合
+    // ウィンドウが横長の場合
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
         x_Ldown = (x_Ldown - (float)(1.0 - x_Ldown)) * aspect_ratio;
         y_Ldown -= (float)(1.0 - y_Ldown);
     }
-    //ウィンドウが縦長の場合
+    // ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
@@ -297,17 +302,16 @@ void CWinOGLView::SetOver (CPoint point)
     CRect rect;
     GetClientRect (rect);
 
-    //デバイス座標系
+    // デバイス座標系
     x_over = (float)point.x;
     y_over = (float)point.y;
 
-    //デバイス座標系→正規化座標系
+    // デバイス座標系→正規化座標系
     x_over = x_over / rect.Width ();
     y_over = 1 - (y_over / rect.Height ());
 
-    //正規化座標系→ワールド座標系
+    // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
-    //ウィンドウが横長の場合
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
@@ -316,7 +320,6 @@ void CWinOGLView::SetOver (CPoint point)
         y_over -= (float)(1.0 - y_over);
         y_over = y_over;
     }
-    //ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
@@ -325,4 +328,43 @@ void CWinOGLView::SetOver (CPoint point)
         y_over = (y_over - (float)(1.0 - y_over)) * aspect_ratio;
         y_over = y_over;
     }
+}
+
+bool CWinOGLView::IsMouseInside ()
+{
+
+    // 描画領域の大きさを取得
+    CRect rect;
+    GetClientRect (rect);
+
+    float left = 0.0;
+    float right = 0.0;
+    float top = 0.0;
+    float bottom = 0.0;
+
+    if (rect.Width () > rect.Height ())
+    {
+        left = -(float)rect.Width () / rect.Height () + 0.01;
+        right = (float)rect.Width () / rect.Height () - 0.01;
+        top = 0.99;
+        bottom = -0.99;
+    }
+    else
+    {
+        left = -0.99;
+        right = 0.99;
+        top = (float)rect.Height () / rect.Width () - 0.01;
+        bottom = -(float)rect.Height () / rect.Width () + 0.01;
+    }
+
+    if (x_over <= left || x_over >= right)
+    {
+        return false;
+    }
+    else if (y_over <= bottom || y_over >= top)
+    {
+        return false;
+    }
+
+    return true;
 }
