@@ -134,7 +134,7 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
     {
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
-            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_tail, new_vertex) && CMath::VertexDis (vertex_head, new_vertex) >= 0.1)
+            if (CMath::IsLineCrossing (vp, vp->GetNext (), vertex_tail, new_vertex) && CMath::VertexDis (new_vertex, vertex_head) != 0.0)
             {
                 return true;
             }
@@ -164,7 +164,7 @@ bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
         {
             for (CVertex* vp = vertex_tail->GetPre (); vp != vertex_head->GetNext (); vp = vp->GetPre ())
             {
-                if (CMath::IsLineCrossing (vertex_head, vertex_tail, vp, vp->GetPre ()))
+                if (ClosedFlag && CMath::IsLineCrossing (vertex_head, vertex_tail, vp, vp->GetPre ()))
                 {
                     return true;
                 }
@@ -181,7 +181,7 @@ bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
         {
             for (CVertex* vp = vertex_head->GetNext (); vp != vertex_tail->GetPre (); vp = vp->GetNext ())
             {
-                if (CMath::IsLineCrossing (vertex_head, vertex_tail, vp, vp->GetNext ()))
+                if (ClosedFlag && CMath::IsLineCrossing (vertex_head, vertex_tail, vp, vp->GetNext ()))
                 {
                     return true;
                 }
@@ -209,7 +209,7 @@ bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
             }
             if (moved_vertex->GetNext () != vertex_tail)
             {
-                if (CMath::IsLineCrossing (moved_vertex, moved_vertex->GetNext (), vertex_tail, vertex_head))
+                if (ClosedFlag && CMath::IsLineCrossing (moved_vertex, moved_vertex->GetNext (), vertex_tail, vertex_head))
                 {
                     return true;
                 }
@@ -227,7 +227,7 @@ bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
             }
             if (moved_vertex->GetPre () != vertex_head)
             {
-                if (CMath::IsLineCrossing (moved_vertex, moved_vertex->GetPre (), vertex_head, vertex_tail))
+                if (ClosedFlag && CMath::IsLineCrossing (moved_vertex, moved_vertex->GetPre (), vertex_head, vertex_tail))
                 {
                     return true;
                 }
@@ -242,6 +242,7 @@ void CShape::SelectAllVertex ()
     for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
     {
         vp->Select ();
+        vp->SetLastXY (vp->GetX (), vp->GetY ());
     }
 }
 
@@ -251,6 +252,21 @@ void CShape::DeSelectAllVertex ()
     {
         vp->DeSelect ();
     }
+}
+
+void CShape::Close ()
+{
+    ClosedFlag = true;
+}
+
+void CShape::Open ()
+{
+    ClosedFlag = false;
+}
+
+bool CShape::IsClosed ()
+{
+    return ClosedFlag;
 }
 
 void CShape::Select ()

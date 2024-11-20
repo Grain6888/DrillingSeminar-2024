@@ -1,7 +1,4 @@
-﻿
-// WinOGLView.h : CWinOGLView クラスのインターフェイス
-
-#pragma once
+﻿#pragma once
 #include <gl/GL.h>
 #include "CAdminControl.h"
 
@@ -11,20 +8,12 @@ protected: // シリアル化からのみ作成します。
     CWinOGLView () noexcept;
     DECLARE_DYNCREATE (CWinOGLView)
 
-// 属性
 public:
     CWinOGLDoc* GetDocument () const;
-
-// 操作
-
-// オーバーライド
-public:
     virtual void OnDraw (CDC* pDC);  // このビューを描画するためにオーバーライドされます。
     virtual BOOL PreCreateWindow (CREATESTRUCT& cs);
-
-// 実装
-public:
     virtual ~CWinOGLView ();
+
 #ifdef _DEBUG
     virtual void AssertValid () const;
     virtual void Dump (CDumpContext& dc) const;
@@ -42,16 +31,23 @@ public:
     afx_msg void OnDestroy ();
     afx_msg BOOL OnEraseBkgnd (CDC* pDC);
     afx_msg void OnSize (UINT nType, int cx, int cy);
-    afx_msg void OnSizeup ();
-    afx_msg void OnSizedown ();
+    afx_msg void OnSizeUp ();
+    afx_msg void OnSizeDown ();
     afx_msg void OnAxis ();
     afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
-    afx_msg void OnEditmode ();
-    afx_msg void OnUpdateEditmode (CCmdUI* pCmdUI);
+    afx_msg void OnEditMode ();
+    afx_msg void OnUpdateEditMode (CCmdUI* pCmdUI);
 
-    /// @brief デバイス座標系からワールド座標系に座標を変換する．
-    /// @param point デバイス座標系 X,Y 座標．
-    void DeviceP2WorldP (CPoint point);
+    /// @brief 左クリックした時の座標 (X,Y) を設定する．
+    /// @param point デバイス座標 (X,Y)
+    void SetLDown (CPoint point);
+
+    /// @brief マウスオーバーした時の座標 (X,Y) を設定する．
+    /// @param point デバイス座標 (X,Y)
+    void SetOver (CPoint point);
+
+    bool IsMouseInside ();
+
 private:
     /// @brief 左クリックした時の，X 座標．
     float x_Ldown;
@@ -64,15 +60,6 @@ private:
 
     /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
-
-    /// @brief 選択された Vertex セルの X 座標．
-    float last_vertex_x;
-
-    /// @brief 選択された Vertex セルの Y 座標．
-    float last_vertex_y;
-
-    /// @brief マウスドラッグ
-    bool LDragFlag = false;
 
     CAdminControl AC;
     HGLRC m_hRC;

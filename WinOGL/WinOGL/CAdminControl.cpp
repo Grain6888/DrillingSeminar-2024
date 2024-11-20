@@ -38,7 +38,7 @@ void CAdminControl::Draw (float new_x, float new_y)
                 DrawVertex (vp);
             }
 
-            // 図形を描画する．
+            // 輪郭線を描画する．
             DrawShape (sp);
         }
 
@@ -54,11 +54,11 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (0.36f, 0.80f, 0.68f);
+        glColor3f (COLOR_GREEN);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -70,11 +70,11 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (0.36f, 0.80f, 0.68f);
+        glColor3f (COLOR_GREEN);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINES);
@@ -98,13 +98,29 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
+    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
+    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
+    {
+        glColor3f (COLOR_ORANGE);
+    }
+    else if (EditModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -118,13 +134,21 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 
     glEnable (GL_LINE_STIPPLE);
     glLineStipple (2, 0xF0F0);
-    if (shape_tail->IsNewVertexSelfCross (&mouse) || IsNewVertexOtherCross (&mouse) || (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1))
+    if (shape_tail->IsNewVertexSelfCross (&mouse))
     {
-        glColor3f (0.94f, 0.25f, 0.14f);
+        glColor3f (COLOR_RED);
+    }
+    else if (IsNewVertexOtherCross (&mouse))
+    {
+        glColor3f (COLOR_RED);
+    }
+    else if (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1)
+    {
+        glColor3f (COLOR_ORANGE);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glBegin (GL_LINES);
     glVertex2f (start->GetX (), start->GetY ());
@@ -133,12 +157,16 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     glDisable (GL_LINE_STIPPLE);
 }
 
-void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y)
+void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
     if (shape_num > 0)
     {
-        DeSelectAllShape ();
+        // Ctrl を押しながら左クリックで複数選択
+        if (!(nFlags & MK_CONTROL))
+        {
+            DeSelectAllShape ();
+        }
         SelectNearestVertex (&mouse);
         SelectNearestLine (&mouse);
         SelectNearestShape (&mouse);
@@ -151,27 +179,12 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (CMath::VertexDis (vp, mouse) < 0.1)
+            if (CMath::VertexDis (vp, mouse) < 0.1 && SelectNearestShape (mouse) == NULL)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
                 return vp;
             }
-        }
-    }
-
-    return NULL;
-}
-
-CShape* CAdminControl::SelectNearestShape (CVertex* mouse)
-{
-    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
-    {
-        if (CMath::IsContained (sp, mouse))
-        {
-            DeSelectAllShape ();
-            sp->Select ();
-            return sp;
         }
     }
 
@@ -184,18 +197,36 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectNearestVertex (mouse) == NULL)
+            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectNearestVertex (mouse) == NULL && SelectNearestShape (mouse) == NULL)
             {
                 vp->Select ();
+                vp->SetLastXY (vp->GetX (), vp->GetY ());
                 vp->GetNext ()->Select ();
+                vp->GetNext ()->SetLastXY (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
                 return vp;
             }
         }
-        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectNearestVertex (mouse) == NULL)
+        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectNearestVertex (mouse) == NULL && SelectNearestShape (mouse) == NULL)
         {
             sp->GetHead ()->Select ();
+            sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
             sp->GetTail ()->Select ();
+            sp->GetTail ()->SetLastXY (sp->GetTail ()->GetX (), sp->GetTail ()->GetY ());
             return sp->GetTail ();
+        }
+    }
+
+    return NULL;
+}
+
+CShape* CAdminControl::SelectNearestShape (CVertex* mouse)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (CMath::IsContained (sp, mouse))
+        {
+            sp->Select ();
+            return sp;
         }
     }
 
@@ -250,12 +281,10 @@ void CAdminControl::AddShape ()
 
 void CAdminControl::DeleteShape ()
 {
-    // 図形リストが空の場合
     if (shape_num == 0)
     {
         return;
     }
-    // 図形リストに含まれる Shape セルの個数が 1 の場合
     else if (shape_num == 1)
     {
         shape_head->FreeShape ();
@@ -263,7 +292,6 @@ void CAdminControl::DeleteShape ()
         shape_tail = NULL;
         shape_num--;
     }
-    // 図形リストに含まれる Shape セルの個数が 1 より多い場合
     else
     {
         CShape* pre_sp = shape_tail->GetPre ();
@@ -283,12 +311,11 @@ void CAdminControl::PushVertex (float new_x, float new_y)
 {
     CVertex new_vertex (new_x, new_y, NULL, NULL);
 
-    // 図形リストが空の場合
     if (shape_num == 0)
     {
         AddShape ();
     }
-    // 図形リストに含まれる Shape セルの個数が 2 以上の場合
+
     if (shape_num >= 2)
     {
         if (IsNewVertexContained (&new_vertex) || IsNewVertexOtherCross (&new_vertex))
@@ -297,55 +324,35 @@ void CAdminControl::PushVertex (float new_x, float new_y)
         }
     }
 
-    // 図形リストの最新の Shape セルに含まれる Vertex セルの個数が 3 未満（多角形を作る場合は最低 3 点が必要）の場合
     if (shape_tail->GetVertexNum () < 3)
     {
         shape_tail->AddVertex (new_x, new_y);
     }
-    // 図形リストの最新の Shape セルに含まれる Vertex セルの個数が 3 以上の場合
+    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
+    {
+        shape_tail->Close ();
+        AddShape ();
+    }
     else
     {
-        // 図形リストの最新の Shape セルに含まれる始点と追加点の距離が近い場合
-        if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1)
-        {
-            if (shape_tail->IsNewVertexSelfCross (&new_vertex) || IsNewShapeContaining ())
-            {
-                return;
-            }
-            else
-            {
-                AddShape ();
-            }
-        }
-        // 図形リストの最新の Shape セルに含まれる始点と追加点の距離が離れている場合
-        else
-        {
-            shape_tail->AddVertex (new_x, new_y);
-        }
+        shape_tail->AddVertex (new_x, new_y);
     }
 }
 
 void CAdminControl::PopVertex ()
 {
-    // 図形リストが空の場合
     if (shape_num == 0)
     {
         return;
     }
-    // 図形リストが空でない場合．
+    else if (shape_tail->GetVertexNum () == 0)
+    {
+        DeleteShape ();
+    }
     else
     {
-        // 図形リストの最新の Shape セルに含まれる点リストが空の場合
-        if (shape_tail->GetVertexNum () == 0)
-        {
-            shape_tail->DeleteVertex ();
-            DeleteShape ();
-        }
-        // 図形リストの最新の Shape セルに含まれる点リストが空でない場合
-        else
-        {
-            shape_tail->DeleteVertex ();
-        }
+        shape_tail->Open ();
+        shape_tail->DeleteVertex ();
     }
 }
 
@@ -466,6 +473,46 @@ bool CAdminControl::IsInvalidMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
+            //
+            // 【削除】単純にマウスカーソルに追従するときに2点が重なる問題を一時的に解決
+            //
+            if (sp->GetVertexNum () == 2)
+            {
+                if (CMath::VertexDis (sp->GetHead (), sp->GetTail ()) == 0)
+                {
+                    return true;
+                }
+            }
+            else if (sp->GetVertexNum () == 3)
+            {
+                if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
+                {
+                    return true;
+                }
+                else if (CMath::VertexDis (sp->GetTail (), sp->GetTail ()->GetPre ()) == 0)
+                {
+                    return true;
+                }
+                else if (CMath::VertexDis (sp->GetHead (), sp->GetTail ()) == 0)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
+                {
+                    return true;
+                }
+                else if (CMath::VertexDis (sp->GetTail (), sp->GetTail ()->GetPre ()) == 0)
+                {
+                    return true;
+                }
+            }
+            //
+            //【削除】
+            //
+
             if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
             {
                 return true;
@@ -491,7 +538,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
 {
     if (my_shape->GetVertexNum () > 0)
     {
-        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
         {
             if (sp == my_shape)
             {
@@ -581,8 +628,7 @@ bool CAdminControl::IsMovedVertexContained (CShape* my_shape, CVertex* moved_ver
         {
             continue;
         }
-
-        if (CMath::IsContained (sp, moved_vertex))
+        else if (CMath::IsContained (sp, moved_vertex))
         {
             return true;
         }
@@ -599,8 +645,7 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
         {
             continue;
         }
-
-        if (CMath::IsContained (moved_shape, sp->GetHead ()))
+        else if (CMath::IsContained (moved_shape, sp->GetHead ()))
         {
             return true;
         }

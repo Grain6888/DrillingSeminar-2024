@@ -3,6 +3,16 @@
 #include <gl/GL.h>
 #include "CShape.h"
 
+#define COLOR_WHITE 0.95f, 0.95f, 0.95f
+#define COLOR_BLACK 0.15f, 0.15f, 0.15f
+#define COLOR_PALE_BLUE 0.70f, 0.86f, 0.98f
+#define COLOR_BLUE 0.30f, 0.40f, 0.78f
+#define COLOR_LIGHT_BLUE 0.37f, 0.80f, 0.95f
+#define COLOR_LIGHT_GREEN 0.65f, 0.91f, 0.32f
+#define COLOR_GREEN 0.36f, 0.80f, 0.68f
+#define COLOR_ORANGE 1.00f, 0.50f, 0.13f
+#define COLOR_RED 0.94f, 0.25f, 0.14f
+
 /// @brief 図形リストの管理（追加・削除・描画）を行うクラス．
 class CAdminControl {
 public:
@@ -23,7 +33,7 @@ public:
     /// @param end   辺の終点
     void DrawLine (CVertex* start, CVertex* end);
 
-    /// @brief 図形の描画を行う．
+    /// @brief 図形の輪郭線の描画を行う．
     /// @param start 図形の始点
     /// @param end   図形の終点
     void DrawShape (CShape* shape);
@@ -40,21 +50,21 @@ public:
     /// @brief マウスの近くの要素を選択する．
     /// @param mouse_x マウスの X 座標
     /// @param mouse_y マウスの Y 座標
-    void SelectShapeElements (float mouse_x, float mouse_y);
+    void SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags);
 
-    /// @brief マウスの近くの頂点を探す．
+    /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
-    /// @return 見つかれば頂点アドレス，見つからなければ NULL．
+    /// @return 選択した頂点のアドレス / NULL
     CVertex* SelectNearestVertex (CVertex* mouse);
 
-    /// @brief マウスの近くの辺を探す．
+    /// @brief マウスの近くの辺を選択する．
     /// @param mouse マウスの座標 (X,Y)
-    /// @return 見つかれば辺の始点のアドレス，見つからなければ NULL．
+    /// @return 選択した辺の始点のアドレス / NULL
     CVertex* SelectNearestLine (CVertex* mouse);
 
-    /// @brief マウスの近くの図形を探す．
+    /// @brief マウスの近くの図形を選択する．
     /// @param mouse マウスの座標 (X,Y)
-    /// @return 見つかれば図形のアドレス，見つからなければ NULL．
+    /// @return 選択した図形のアドレス / NULL
     CShape* SelectNearestShape (CVertex* mouse);
 
     /// @brief 頂点をマウスに追従する．
@@ -96,47 +106,47 @@ public:
     void SwitchAxis ();
 
     /// @brief 座標軸の表示または非表示の状態を取得する．
-    /// @return 表示中なら true，非表示中なら false．
+    /// @return 表示中 true / 非表示中 false．
     bool IsShowingAxis ();
 
     /// @brief 編集モードまたは選択モードの状態を切り替える．
     void SwitchEditMode ();
 
     /// @brief 編集モードまたは選択モードの状態を取得する．
-    /// @return 編集モードなら true，選択モードなら false．
+    /// @return 編集モード true / 選択モード false．
     bool IsEditMode ();
 
     /// @brief 新しい頂点がほかの多角形に内包されていないかを判定する．
     /// @param new_vertex 新しい頂点
-    /// @return 内包される場合は true，内包されない場合は false．
+    /// @return 内包される true / 内包されない false
     bool IsNewVertexContained (CVertex* new_vertex);
 
     /// @brief 新しい多角形がほかの多角形を内包していないかを判定する．
-    /// @return 内包する場合は true，内包しない場合は false．
+    /// @return 内包する true / 内包しない false
     bool IsNewShapeContaining ();
 
     /// @brief 新しい頂点がほかの多角形と他交差していないかを判定する．
     /// @param new_vertex 新しい頂点
-    /// @return 他交差する場合は true，他交差しない場合は false．
+    /// @return 他交差する true / 他交差しない false
     bool IsNewVertexOtherCross (CVertex* new_vertex);
 
     /// @brief 移動した頂点が不正でないかを判定する．
-    /// @return 不正な場合は true，不正でない場合は false．
+    /// @return 不正 true / 不正でない false
     bool IsInvalidMovedVertex ();
 
     /// @brief 移動した頂点が多角形と他交差していないかを判定する．
     /// @param moved_vertex 移動した頂点
-    /// @return 他交差する場合は true，他交差しない場合は false．
+    /// @return 他交差する true / 他交差しない false
     bool IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex);
 
     /// @brief 移動した頂点がほかの多角形に内包されていないかを判定する．
     /// @param moved_vertex 移動した頂点
-    /// @return 内包される場合は true，内包されない場合は false．
+    /// @return 内包される true / 内包されない false
     bool IsMovedVertexContained (CShape* my_shape, CVertex* moved_vertex);
 
     /// @brief 移動した多角形がほかの多角形を内包していないかを判定する．
     /// @param moved_shape 移動した多角形
-    /// @return 内包する場合は true，内包しない場合は false．
+    /// @return 内包する true / 内包しない false
     bool IsMovedShapeContaining (CShape* moved_shape);
 
     /// @brief すべての図形を選択状態にする．
@@ -161,9 +171,9 @@ private:
     /// @brief 図形の数．
     int shape_num;
 
-    /// @brief 座標軸の表示または非表示の状態フラグ．表示なら true，非表示なら false．
+    /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;
 
-    /// @brief 編集モードまたは選択モードの状態フラグ．編集モードなら true，選択モードなら false．
+    /// @brief 編集モードまたは選択モードの状態フラグ（編集モード true / 選択モード false）．
     bool EditModeFlag = false;
 };
