@@ -50,7 +50,7 @@ public:
     /// @brief マウスの近くの要素を選択する．
     /// @param mouse_x マウスの X 座標
     /// @param mouse_y マウスの Y 座標
-    void SelectShapeElements (float mouse_x, float mouse_y);
+    void SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags);
 
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)

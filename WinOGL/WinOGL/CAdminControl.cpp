@@ -157,12 +157,16 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     glDisable (GL_LINE_STIPPLE);
 }
 
-void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y)
+void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
     if (shape_num > 0)
     {
-        DeSelectAllShape ();
+        // Ctrl を押しながら左クリックで複数選択
+        if (!(nFlags & MK_CONTROL))
+        {
+            DeSelectAllShape ();
+        }
         SelectNearestVertex (&mouse);
         SelectNearestLine (&mouse);
         SelectNearestShape (&mouse);
@@ -221,7 +225,6 @@ CShape* CAdminControl::SelectNearestShape (CVertex* mouse)
     {
         if (CMath::IsContained (sp, mouse))
         {
-            DeSelectAllShape ();
             sp->Select ();
             return sp;
         }

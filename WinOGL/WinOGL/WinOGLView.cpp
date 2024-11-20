@@ -101,7 +101,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     else
     {
         LDragFlag = true;
-        AC.SelectShapeElements (x_Ldown, y_Ldown);
+        AC.SelectShapeElements (x_Ldown, y_Ldown, nFlags);
     }
 
     RedrawWindow ();
