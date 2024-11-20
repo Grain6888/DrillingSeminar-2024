@@ -31,12 +31,12 @@ public:
     afx_msg void OnDestroy ();
     afx_msg BOOL OnEraseBkgnd (CDC* pDC);
     afx_msg void OnSize (UINT nType, int cx, int cy);
-    afx_msg void OnSizeup ();
-    afx_msg void OnSizedown ();
+    afx_msg void OnSizeUp ();
+    afx_msg void OnSizeDown ();
     afx_msg void OnAxis ();
     afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
-    afx_msg void OnEditmode ();
-    afx_msg void OnUpdateEditmode (CCmdUI* pCmdUI);
+    afx_msg void OnEditMode ();
+    afx_msg void OnUpdateEditMode (CCmdUI* pCmdUI);
 
     /// @brief 左クリックした時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)

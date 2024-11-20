@@ -23,12 +23,12 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_SIZE ()
     ON_WM_MOUSEMOVE ()
     ON_WM_RBUTTONDOWN ()
-    ON_COMMAND (ID_SIZEUP, &CWinOGLView::OnSizeup)
-    ON_COMMAND (ID_SIZEDOWN, &CWinOGLView::OnSizedown)
+    ON_COMMAND (ID_SIZEUP, &CWinOGLView::OnSizeUp)
+    ON_COMMAND (ID_SIZEDOWN, &CWinOGLView::OnSizeDown)
     ON_COMMAND (ID_AXIS, &CWinOGLView::OnAxis)
     ON_UPDATE_COMMAND_UI (ID_AXIS, &CWinOGLView::OnUpdateAxis)
-    ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditmode)
-    ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditmode)
+    ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditMode)
+    ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditMode)
     ON_WM_LBUTTONUP ()
 END_MESSAGE_MAP ()
 
@@ -225,13 +225,13 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
     wglMakeCurrent (clientDC.m_hDC, NULL);
 }
 
-void CWinOGLView::OnSizeup ()
+void CWinOGLView::OnSizeUp ()
 {
     AC.DrawSizeUp ();
     RedrawWindow ();
 }
 
-void CWinOGLView::OnSizedown ()
+void CWinOGLView::OnSizeDown ()
 {
     AC.DrawSizeDown ();
     RedrawWindow ();
@@ -248,13 +248,13 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsShowingAxis ());
 }
 
-void CWinOGLView::OnEditmode ()
+void CWinOGLView::OnEditMode ()
 {
     AC.SwitchEditMode ();
     RedrawWindow ();
 }
 
-void CWinOGLView::OnUpdateEditmode (CCmdUI* pCmdUI)
+void CWinOGLView::OnUpdateEditMode (CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck (AC.IsEditMode ());
 }
