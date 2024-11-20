@@ -112,6 +112,8 @@ void CShape::InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVerte
     new_vertex->SetNext (next_vertex);
 
     next_vertex->SetPre (new_vertex);
+
+    vertex_num++;
 }
 
 void CShape::PopVertex ()
