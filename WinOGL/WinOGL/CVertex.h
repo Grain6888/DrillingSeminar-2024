@@ -9,13 +9,13 @@ public:
     ~CVertex ();
 
     /// @brief 頂点の X,Y 座標を設定する．
-    /// @param new_x 頂点の X 座標．
-    /// @param new_y 頂点の Y 座標．
+    /// @param new_x 頂点の X 座標
+    /// @param new_y 頂点の Y 座標
     void SetXY (float new_x, float new_y);
 
     /// @brief 移動前の頂点の X,Y 座標を設定する．
-    /// @param x 移動前の頂点の X 座標．
-    /// @param y 移動前の頂点の Y 座標．
+    /// @param x 移動前の頂点の X 座標
+    /// @param y 移動前の頂点の Y 座標
     void SetLastXY (float x, float y);
 
     /// @brief 頂点の X 座標を取得する．
@@ -53,14 +53,14 @@ public:
     /// @brief 以降の頂点を削除する．
     void FreeVertex ();
 
-    /// @brief 頂点を選択する．
+    /// @brief 頂点を選択済みにする．
     void Select ();
 
-    /// @brief 頂点の選択を解除する．
+    /// @brief 頂点を未選択にする．
     void DeSelect ();
 
     /// @brief 頂点の選択状態を取得する．
-    /// @return 選択されているなら true，選択されていないなら false．
+    /// @return 選択済み true / 未選択 false
     bool IsSelected ();
 
 private:

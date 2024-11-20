@@ -50,28 +50,28 @@ public:
 
     /// @brief 新しい頂点が自交差していないかを判定する．
     /// @param new_vertex 新しい頂点
-    /// @return 自交差する場合は true，自交差しない場合は false．
+    /// @return 自交差する true / 自交差しない false
     bool IsNewVertexSelfCross (CVertex* new_vertex);
 
     /// @brief 移動した頂点が自交差していないかを判定する．
     /// @param moved_vertex 移動した頂点
-    /// @return 自交差する場合は true，自交差しない場合は false．
+    /// @return 自交差する true / 自交差しない false
     bool IsMovedVertexSelfCross (CVertex* moved_vertex);
 
-    /// @brief すべての頂点を選択状態にする．
+    /// @brief すべての頂点を選択済みにする．
     void SelectAllVertex ();
 
-    /// @brief すべての頂点の選択状態を解除する．
+    /// @brief すべての頂点を未選択にする．
     void DeSelectAllVertex ();
 
-    /// @brief 図形を選択する．
+    /// @brief 図形を選択済みにする．
     void Select ();
 
-    /// @brief 図形の選択を解除する．
+    /// @brief 図形を未選択にする．
     void DeSelect ();
 
     /// @brief 図形の選択状態を取得する．
-    /// @return 選択されている場合は true，選択されていない場合は false．
+    /// @return 選択済み true / 未選択 false
     bool IsSelected ();
 
 private:

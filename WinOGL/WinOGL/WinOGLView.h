@@ -49,9 +49,13 @@ public:
     afx_msg void OnEditmode ();
     afx_msg void OnUpdateEditmode (CCmdUI* pCmdUI);
 
-    /// @brief デバイス座標系からワールド座標系に座標を変換する．
-    /// @param point デバイス座標系 X,Y 座標．
-    void DeviceP2WorldP (CPoint point);
+    /// @brief 左クリックした時の座標 (X,Y) を設定する．
+    /// @param point デバイス座標 (X,Y)
+    void SetLDown (CPoint point);
+
+    /// @brief マウスオーバーした時の座標 (X,Y) を設定する．
+    /// @param point デバイス座標 (X,Y)
+    void SetOver (CPoint point);
 private:
     /// @brief 左クリックした時の，X 座標．
     float x_Ldown;
@@ -64,12 +68,6 @@ private:
 
     /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
-
-    /// @brief 選択された Vertex セルの X 座標．
-    float last_vertex_x;
-
-    /// @brief 選択された Vertex セルの Y 座標．
-    float last_vertex_y;
 
     /// @brief マウスドラッグ
     bool LDragFlag = false;
