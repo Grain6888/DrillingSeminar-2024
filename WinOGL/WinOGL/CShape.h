@@ -64,6 +64,16 @@ public:
     /// @brief すべての頂点を未選択にする．
     void DeSelectAllVertex ();
 
+    /// @brief 図形を閉じる．
+    void Close ();
+
+    /// @brief 図形を開く．
+    void Open ();
+
+    /// @brief 図形が閉じているかを判定する．
+    /// @return 閉じている true / 開いている false
+    bool IsClosed ();
+
     /// @brief 図形を選択済みにする．
     void Select ();
 
@@ -89,6 +99,9 @@ private:
 
     /// @brief 頂点の数．
     int vertex_num;
+
+    /// @brief 閉じた図形のフラグ．
+    bool ClosedFlag = false;
 
     /// @brief 選択状態のフラグ．
     bool SelectedFlag = false;

@@ -98,23 +98,23 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
+    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
-    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
+    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
     {
         glColor3f (COLOR_RED);
     }
-    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
+    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
     {
         glColor3f (COLOR_RED);
     }
-    else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
+    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
     {
         glColor3f (COLOR_RED);
     }
-    else if (shape_num > 0 && IsNewVertexContained (mouse))
+    else if (EditModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
     {
         glColor3f (COLOR_RED);
     }
@@ -327,6 +327,7 @@ void CAdminControl::PushVertex (float new_x, float new_y)
     }
     else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
     {
+        shape_tail->Close ();
         AddShape ();
     }
     else
@@ -343,11 +344,11 @@ void CAdminControl::PopVertex ()
     }
     else if (shape_tail->GetVertexNum () == 0)
     {
-        shape_tail->DeleteVertex ();
         DeleteShape ();
     }
     else
     {
+        shape_tail->Open ();
         shape_tail->DeleteVertex ();
     }
 }
@@ -494,7 +495,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
 {
     if (my_shape->GetVertexNum () > 0)
     {
-        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
         {
             if (sp == my_shape)
             {
