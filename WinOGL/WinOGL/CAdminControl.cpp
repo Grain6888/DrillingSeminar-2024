@@ -470,6 +470,46 @@ bool CAdminControl::IsInvalidMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
+            //
+            // yíœz’Pƒ‚Éƒ}ƒEƒXƒJ[ƒ\ƒ‹‚É’Ç]‚·‚é‚Æ‚«‚É2“_‚ªd‚È‚é–â‘è‚ðˆêŽž“I‚É‰ðŒˆ
+            //
+            if (sp->GetVertexNum () == 2)
+            {
+                if (CMath::VertexDis (sp->GetHead (), sp->GetTail ()) == 0)
+                {
+                    return true;
+                }
+            }
+            else if (sp->GetVertexNum () == 3)
+            {
+                if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
+                {
+                    return true;
+                }
+                else if (CMath::VertexDis (sp->GetTail (), sp->GetTail ()->GetPre ()) == 0)
+                {
+                    return true;
+                }
+                else if (CMath::VertexDis (sp->GetHead (), sp->GetTail ()) == 0)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
+                {
+                    return true;
+                }
+                else if (CMath::VertexDis (sp->GetTail (), sp->GetTail ()->GetPre ()) == 0)
+                {
+                    return true;
+                }
+            }
+            //
+            //yíœz
+            //
+
             if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
             {
                 return true;
