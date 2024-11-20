@@ -99,7 +99,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     if (AC.IsEditMode () && !(nFlags & MK_SHIFT))
     {
         AC.DeSelectAllShape ();
-        AC.PushVertex (x_Ldown, y_Ldown);
+        AC.AddVertex (x_Ldown, y_Ldown);
     }
     else if (AC.IsEditMode () && (nFlags & MK_SHIFT))
     {
@@ -262,6 +262,28 @@ void CWinOGLView::OnUpdateEditMode (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsEditMode ());
 }
 
+void CWinOGLView::OnEditUndo ()
+{
+    if (AC.IsEditMode ())
+    {
+        AC.SubVertex ();
+    }
+    else
+    {
+        AC.ResetMovedVertex ();
+    }
+
+    RedrawWindow ();
+}
+
+
+void CWinOGLView::OnDeleteAll ()
+{
+    AC.DeleteAllShape ();
+
+    RedrawWindow ();
+}
+
 void CWinOGLView::SetLDown (CPoint point)
 {
     // 描画領域の大きさを取得
@@ -335,24 +357,24 @@ bool CWinOGLView::IsMouseInside ()
     CRect rect;
     GetClientRect (rect);
 
-    float left = 0.0;
-    float right = 0.0;
-    float top = 0.0;
-    float bottom = 0.0;
+    float left = 0.0f;
+    float right = 0.0f;
+    float top = 0.0f;
+    float bottom = 0.0f;
 
     if (rect.Width () > rect.Height ())
     {
-        left = -(float)rect.Width () / rect.Height () + 0.01;
-        right = (float)rect.Width () / rect.Height () - 0.01;
-        top = 0.99;
-        bottom = -0.99;
+        left = -(float)rect.Width () / rect.Height () + 0.01f;
+        right = (float)rect.Width () / rect.Height () - 0.01f;
+        top = 0.99f;
+        bottom = -0.99f;
     }
     else
     {
-        left = -0.99;
-        right = 0.99;
-        top = (float)rect.Height () / rect.Width () - 0.01;
-        bottom = -(float)rect.Height () / rect.Width () + 0.01;
+        left = -0.99f;
+        right = 0.99f;
+        top = (float)rect.Height () / rect.Width () - 0.01f;
+        bottom = -(float)rect.Height () / rect.Width () + 0.01f;
     }
 
     if (x_over <= left || x_over >= right)
@@ -365,27 +387,4 @@ bool CWinOGLView::IsMouseInside ()
     }
 
     return true;
-}
-
-
-void CWinOGLView::OnEditUndo ()
-{
-    if (AC.IsEditMode ())
-    {
-        AC.PopVertex ();
-    }
-    else
-    {
-        AC.ResetMovedVertex ();
-    }
-
-    RedrawWindow ();
-}
-
-
-void CWinOGLView::OnDeleteAll ()
-{
-    AC.DeleteAllShape ();
-
-    RedrawWindow ();
 }

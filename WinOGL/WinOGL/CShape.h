@@ -43,10 +43,17 @@ public:
     /// @brief 頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void AddVertex (float new_x, float new_y);
+    void PushVertex (float new_x, float new_y);
+
+    /// @brief 図形の頂点リストの辺上に頂点を追加する．
+    /// @param pre_vertex  前の頂点
+    /// @param new_x       頂点の X 座標
+    /// @param new_y       頂点の Y 座標
+    /// @param next_vertex 次の頂点
+    void InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex);
 
     /// @brief 頂点を削除する．
-    void DeleteVertex ();
+    void PopVertex ();
 
     /// @brief 新しい頂点が自交差していないかを判定する．
     /// @param new_vertex 新しい頂点

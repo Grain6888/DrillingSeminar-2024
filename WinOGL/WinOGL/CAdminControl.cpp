@@ -160,7 +160,13 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
-    if (shape_num > 0)
+    if (shape_num > 0 && EditModeFlag)
+    {
+        DeSelectAllShape ();
+        SelectNearestVertex (&mouse);
+        SelectNearestLine (&mouse);
+    }
+    else if (shape_num > 0 && !EditModeFlag)
     {
         // Ctrl を押しながら左クリックで複数選択
         if (!(nFlags & MK_CONTROL))
@@ -203,6 +209,11 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
                 vp->GetNext ()->Select ();
                 vp->GetNext ()->SetLastXY (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
+
+                if (EditModeFlag)
+                {
+                    sp->InsertVertex (vp, mouse->GetX (), mouse->GetY (), vp->GetNext ());
+                }
                 return vp;
             }
         }
@@ -212,6 +223,11 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
             sp->GetTail ()->Select ();
             sp->GetTail ()->SetLastXY (sp->GetTail ()->GetX (), sp->GetTail ()->GetY ());
+
+            if (EditModeFlag)
+            {
+                sp->PushVertex (mouse->GetX (), mouse->GetY ());
+            }
             return sp->GetTail ();
         }
     }
@@ -261,7 +277,7 @@ void CAdminControl::ResetMovedVertex ()
     }
 }
 
-void CAdminControl::AddShape ()
+void CAdminControl::PushShape ()
 {
     CShape* new_s = new CShape;
     CShape* pre_s = shape_tail;
@@ -279,7 +295,7 @@ void CAdminControl::AddShape ()
     shape_num++;
 }
 
-void CAdminControl::DeleteShape ()
+void CAdminControl::PopShape ()
 {
     if (shape_num == 0)
     {
@@ -318,13 +334,13 @@ int CAdminControl::GetShapeNum ()
     return shape_num;
 }
 
-void CAdminControl::PushVertex (float new_x, float new_y)
+void CAdminControl::AddVertex (float new_x, float new_y)
 {
     CVertex new_vertex (new_x, new_y, NULL, NULL);
 
     if (shape_num == 0)
     {
-        AddShape ();
+        PushShape ();
     }
 
     if (shape_num >= 2)
@@ -337,12 +353,12 @@ void CAdminControl::PushVertex (float new_x, float new_y)
 
     if (shape_tail->GetVertexNum () < 3)
     {
-        shape_tail->AddVertex (new_x, new_y);
+        shape_tail->PushVertex (new_x, new_y);
     }
     else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
     {
         shape_tail->Close ();
-        AddShape ();
+        PushShape ();
     }
     else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && IsNewShapeContaining ())
     {
@@ -350,11 +366,11 @@ void CAdminControl::PushVertex (float new_x, float new_y)
     }
     else
     {
-        shape_tail->AddVertex (new_x, new_y);
+        shape_tail->PushVertex (new_x, new_y);
     }
 }
 
-void CAdminControl::PopVertex ()
+void CAdminControl::SubVertex ()
 {
     if (shape_num == 0)
     {
@@ -362,12 +378,12 @@ void CAdminControl::PopVertex ()
     }
     else if (shape_tail->GetVertexNum () == 0)
     {
-        DeleteShape ();
+        PopShape ();
     }
     else
     {
         shape_tail->Open ();
-        shape_tail->DeleteVertex ();
+        shape_tail->PopVertex ();
     }
 }
 

@@ -76,10 +76,10 @@ public:
     void ResetMovedVertex ();
 
     /// @brief 図形を追加する．
-    void AddShape ();
+    void PushShape ();
 
     /// @brief 図形を削除する．
-    void DeleteShape ();
+    void PopShape ();
 
     /// @brief すべての図形を削除する．
     void DeleteAllShape ();
@@ -88,13 +88,13 @@ public:
     /// @return 図形の数
     int GetShapeNum ();
 
-    /// @brief 図形の頂点リストの末尾に頂点を追加する．
+    /// @brief 図形に基づいて頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void PushVertex (float new_x, float new_y);
+    void AddVertex (float new_x, float new_y);
 
-    /// @brief 図形の頂点リストの末尾の頂点を削除する．
-    void PopVertex ();
+    /// @brief 図形に基づいて頂点を削除する．
+    void SubVertex ();
 
     /// @brief 描画サイズを上げる．
     void DrawSizeUp ();
@@ -138,11 +138,13 @@ public:
     bool IsInvalidMovedVertex ();
 
     /// @brief 移動した頂点が多角形と他交差していないかを判定する．
+    /// @param my_shape     自図形
     /// @param moved_vertex 移動した頂点
     /// @return 他交差する true / 他交差しない false
     bool IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex);
 
     /// @brief 移動した頂点がほかの多角形に内包されていないかを判定する．
+    /// @param my_shape     自図形
     /// @param moved_vertex 移動した頂点
     /// @return 内包される true / 内包されない false
     bool IsMovedVertexContained (CShape* my_shape, CVertex* moved_vertex);
