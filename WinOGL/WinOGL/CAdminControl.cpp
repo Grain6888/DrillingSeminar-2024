@@ -98,7 +98,7 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
+    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse))
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
@@ -112,7 +112,7 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
     }
     else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
     {
-        glColor3f (COLOR_ORANGE);
+        glColor3f (COLOR_RED);
     }
     else if (EditModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
     {
@@ -144,7 +144,7 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
     else if (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1)
     {
-        glColor3f (COLOR_ORANGE);
+        glColor3f (COLOR_RED);
     }
     else
     {
@@ -332,6 +332,10 @@ void CAdminControl::PushVertex (float new_x, float new_y)
     {
         shape_tail->Close ();
         AddShape ();
+    }
+    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && IsNewShapeContaining ())
+    {
+        return;
     }
     else
     {
