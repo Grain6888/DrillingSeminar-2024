@@ -65,6 +65,7 @@ private:
     HGLRC m_hRC;
 public:
     afx_msg void OnEditUndo ();
+    afx_msg void OnDeleteAll ();
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

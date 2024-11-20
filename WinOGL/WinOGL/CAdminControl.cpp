@@ -302,6 +302,17 @@ void CAdminControl::DeleteShape ()
     }
 }
 
+void CAdminControl::DeleteAllShape ()
+{
+    if (shape_num > 0)
+    {
+        shape_head->FreeShape ();
+        shape_head = NULL;
+        shape_tail = NULL;
+        shape_num = 0;
+    }
+}
+
 int CAdminControl::GetShapeNum ()
 {
     return shape_num;

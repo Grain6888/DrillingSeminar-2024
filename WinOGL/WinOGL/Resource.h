@@ -16,14 +16,18 @@
 #define ID_32782                        32782
 #define ID_EDITMODE                     32783
 #define ID_BUTTON32787                  32787
-#define ID_BUTTON32793                  32793
+#define ID_32794                        32794
+#define ID_AllClear                     32795
+#define ID_DeleteAll                    32796
+#define ID_DELETE_ALL                   32797
+#define ID_BUTTON32798                  32798
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32794
+#define _APS_NEXT_COMMAND_VALUE         32799
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

@@ -81,6 +81,9 @@ public:
     /// @brief 図形を削除する．
     void DeleteShape ();
 
+    /// @brief すべての図形を削除する．
+    void DeleteAllShape ();
+
     /// @brief 図形の数を取得する．
     /// @return 図形の数
     int GetShapeNum ();

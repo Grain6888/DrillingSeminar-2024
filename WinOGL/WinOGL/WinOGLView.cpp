@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditMode)
     ON_WM_LBUTTONUP ()
     ON_COMMAND (ID_EDIT_UNDO, &CWinOGLView::OnEditUndo)
+    ON_COMMAND (ID_DELETE_ALL, &CWinOGLView::OnDeleteAll)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -377,6 +378,14 @@ void CWinOGLView::OnEditUndo ()
     {
         AC.ResetMovedVertex ();
     }
+
+    RedrawWindow ();
+}
+
+
+void CWinOGLView::OnDeleteAll ()
+{
+    AC.DeleteAllShape ();
 
     RedrawWindow ();
 }
