@@ -3,6 +3,11 @@
 #include <gl/GL.h>
 #include "CShape.h"
 
+#define COLOR_BLACK 0.15f, 0.15f, 0.15f
+#define COLOR_WHITE 0.95f, 0.95f, 0.95f
+#define COLOR_RED 0.94f, 0.25f, 0.14f
+#define COLOR_LIME_GREEN 0.36f, 0.80f, 0.68f
+
 /// @brief 図形リストの管理（追加・削除・描画）を行うクラス．
 class CAdminControl {
 public:

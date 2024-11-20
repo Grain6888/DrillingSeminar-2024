@@ -54,11 +54,11 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (0.36f, 0.80f, 0.68f);
+        glColor3f (COLOR_LIME_GREEN);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -70,11 +70,11 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (0.36f, 0.80f, 0.68f);
+        glColor3f (COLOR_LIME_GREEN);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINES);
@@ -104,15 +104,15 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
     }
     else if (shape_num > 0 && shape_tail->GetVertexNum () > 0 && (shape_tail->IsNewVertexSelfCross (mouse) || IsNewVertexOtherCross (mouse) || (CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())))
     {
-        glColor3f (0.94f, 0.25f, 0.14f);
+        glColor3f (COLOR_RED);
     }
     else if (shape_num > 0 && IsNewVertexContained (mouse))
     {
-        glColor3f (0.94f, 0.25f, 0.14f);
+        glColor3f (COLOR_RED);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -128,11 +128,11 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     glLineStipple (2, 0xF0F0);
     if (shape_tail->IsNewVertexSelfCross (&mouse) || IsNewVertexOtherCross (&mouse) || (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1))
     {
-        glColor3f (0.94f, 0.25f, 0.14f);
+        glColor3f (COLOR_RED);
     }
     else
     {
-        glColor3f (0.15f, 0.15f, 0.15f);
+        glColor3f (COLOR_BLACK);
     }
     glBegin (GL_LINES);
     glVertex2f (start->GetX (), start->GetY ());
