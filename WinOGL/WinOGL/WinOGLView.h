@@ -1,7 +1,4 @@
-﻿
-// WinOGLView.h : CWinOGLView クラスのインターフェイス
-
-#pragma once
+﻿#pragma once
 #include <gl/GL.h>
 #include "CAdminControl.h"
 
@@ -11,20 +8,12 @@ protected: // シリアル化からのみ作成します。
     CWinOGLView () noexcept;
     DECLARE_DYNCREATE (CWinOGLView)
 
-// 属性
 public:
     CWinOGLDoc* GetDocument () const;
-
-// 操作
-
-// オーバーライド
-public:
     virtual void OnDraw (CDC* pDC);  // このビューを描画するためにオーバーライドされます。
     virtual BOOL PreCreateWindow (CREATESTRUCT& cs);
-
-// 実装
-public:
     virtual ~CWinOGLView ();
+
 #ifdef _DEBUG
     virtual void AssertValid () const;
     virtual void Dump (CDumpContext& dc) const;
