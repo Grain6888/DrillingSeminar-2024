@@ -112,7 +112,7 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
     }
     else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
     {
-        glColor3f (COLOR_RED);
+        glColor3f (COLOR_ORANGE);
     }
     else if (EditModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
     {
@@ -144,7 +144,7 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
     else if (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1)
     {
-        glColor3f (COLOR_RED);
+        glColor3f (COLOR_ORANGE);
     }
     else
     {
