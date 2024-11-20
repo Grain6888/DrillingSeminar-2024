@@ -140,6 +140,10 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     {
         AC.PopVertex ();
     }
+    else if (!LDragFlag)
+    {
+        AC.ResetMovedVertex ();
+    }
 
     RedrawWindow ();
 

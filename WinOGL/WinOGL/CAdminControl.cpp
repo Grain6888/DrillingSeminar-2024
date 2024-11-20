@@ -54,7 +54,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (COLOR_LIME_GREEN);
+        glColor3f (COLOR_GREEN);
     }
     else
     {
@@ -70,7 +70,7 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (COLOR_LIME_GREEN);
+        glColor3f (COLOR_GREEN);
     }
     else
     {
