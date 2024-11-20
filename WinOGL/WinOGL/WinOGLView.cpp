@@ -95,9 +95,14 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     SetLDown (point);
 
-    if (AC.IsEditMode ())
+    if (AC.IsEditMode () && !(nFlags & MK_SHIFT))
     {
+        AC.DeSelectAllShape ();
         AC.PushVertex (x_Ldown, y_Ldown);
+    }
+    else if (AC.IsEditMode () && (nFlags & MK_SHIFT))
+    {
+        AC.SelectShapeElements (x_Ldown, y_Ldown, nFlags);
     }
     else
     {
