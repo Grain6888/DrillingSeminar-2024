@@ -287,8 +287,8 @@ bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
 
 bool CShape::IsRemoveVertexSelfCross (CVertex* remove_vertex)
 {
-    CVertex* pre_vertex = new CVertex;
-    CVertex* next_vertex = new CVertex;
+    CVertex* pre_vertex;
+    CVertex* next_vertex;
 
     if (remove_vertex == vertex_head)
     {

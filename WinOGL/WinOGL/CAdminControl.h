@@ -160,6 +160,12 @@ public:
     /// @return 他交差する true / 他交差しない false
     bool IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_vertex);
 
+    /// @brief 辺上の点を削除する場合に多角形がほかの多角形を内包していないかを判定する．
+    /// @param my_shape      自図形
+    /// @param remove_vertex 削除する頂点
+    /// @return 内包する true / 内包しない false
+    bool IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex);
+
     /// @brief すべての図形を選択状態にする．
     void SelectAllShape ();
 

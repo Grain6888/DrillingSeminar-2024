@@ -81,6 +81,61 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
     }
 }
 
+bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_vertex)
+{
+    double angle_sum = 0.0;
+
+    if (skip_vertex == my_shape->GetHead ())
+    {
+        for (CVertex* vp = my_shape->GetHead ()->GetNext (); vp != my_shape->GetTail () && vp != NULL; vp = vp->GetNext ())
+        {
+            angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
+        }
+        angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead ()->GetNext (), new_vertex);
+    }
+    else if (skip_vertex == my_shape->GetTail ())
+    {
+        for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail () && vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == skip_vertex->GetPre ())
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, my_shape->GetTail ());
+                vp = vp->GetNext ();
+            }
+            else
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
+            }
+        }
+    }
+    else
+    {
+        for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail () && vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == skip_vertex->GetPre ())
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ()->GetNext ());
+                vp = vp->GetNext ();
+            }
+            else
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
+            }
+        }
+        angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead (), new_vertex);
+    }
+
+    double difference = 2 * M_PI - fabs (angle_sum);
+    if (difference >= -0.001 && difference <= 0.001)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 float CMath::Inner (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
     CVertex* v_a = PositionVec (p_a_s, p_a_e);

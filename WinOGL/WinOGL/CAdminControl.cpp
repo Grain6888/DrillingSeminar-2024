@@ -194,7 +194,7 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
 
-                if (EditModeFlag && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp))
+                if (EditModeFlag && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp) && !IsRemoveShapeContaining (sp, vp))
                 {
                     sp->RemoveVertex (vp);
                 }
@@ -696,8 +696,8 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
 
 bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_vertex)
 {
-    CVertex* pre_vertex = new CVertex;
-    CVertex* next_vertex = new CVertex;
+    CVertex* pre_vertex;
+    CVertex* next_vertex;
 
     if (remove_vertex == my_shape->GetHead ())
     {
@@ -738,6 +738,23 @@ bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_
             }
         }
         if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), pre_vertex, next_vertex))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CAdminControl::IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex)
+{
+    for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
+    {
+        if (sp == my_shape)
+        {
+            continue;
+        }
+        if (CMath::IsContained (my_shape, sp->GetHead (), remove_vertex))
         {
             return true;
         }
