@@ -721,6 +721,7 @@ bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_
         {
             continue;
         }
+
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
             if (vp == pre_vertex)
