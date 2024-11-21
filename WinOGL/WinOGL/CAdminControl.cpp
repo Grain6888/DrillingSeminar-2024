@@ -194,11 +194,7 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
 
-                if (EditModeFlag && vp == sp->GetTail ())
-                {
-                    SubVertex ();
-                }
-                else if (EditModeFlag && vp != sp->GetTail ())
+                if (EditModeFlag && sp->GetVertexNum () > 3)
                 {
                     sp->RemoveVertex (vp);
                 }

@@ -162,6 +162,10 @@ void CShape::RemoveVertex (CVertex* remove_vertex)
         remove_vertex->FreeVertex ();
         vertex_num--;
     }
+    else if (remove_vertex == vertex_tail)
+    {
+        PopVertex ();
+    }
     else
     {
         CVertex* pre_vertex = remove_vertex->GetPre ();
