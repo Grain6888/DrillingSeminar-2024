@@ -40,20 +40,24 @@ public:
     /// @brief 以降の図形を削除する．
     void FreeShape ();
 
-    /// @brief 頂点を追加する．
+    /// @brief 末尾に頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
     void PushVertex (float new_x, float new_y);
 
-    /// @brief 図形の頂点リストの辺上に頂点を追加する．
-    /// @param pre_vertex  前の頂点
+    /// @brief 辺上に頂点を追加する．
+    /// @param pre_vertex  辺の始点
     /// @param new_x       頂点の X 座標
     /// @param new_y       頂点の Y 座標
-    /// @param next_vertex 次の頂点
+    /// @param next_vertex 辺の終点
     void InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex);
 
-    /// @brief 頂点を削除する．
+    /// @brief 末尾の頂点を削除する．
     void PopVertex ();
+
+    /// @brief 辺上の頂点を削除する．
+    /// @param remove_vertex 頂点
+    void RemoveVertex (CVertex* remove_vertex);
 
     /// @brief 新しい頂点が自交差していないかを判定する．
     /// @param new_vertex 新しい頂点

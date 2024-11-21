@@ -103,6 +103,11 @@ void CShape::PushVertex (float new_x, float new_y)
 
 void CShape::InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex)
 {
+    if (pre_vertex == NULL || next_vertex == NULL)
+    {
+        return;
+    }
+
     CVertex* new_vertex = new CVertex;
     new_vertex->SetXY (new_x, new_y);
 
@@ -138,6 +143,34 @@ void CShape::PopVertex ()
         pre_vp->SetNext (NULL);
         vertex_tail->FreeVertex ();
         vertex_tail = pre_vp;
+        vertex_num--;
+    }
+}
+
+void CShape::RemoveVertex (CVertex* remove_vertex)
+{
+    if (remove_vertex == NULL)
+    {
+        return;
+    }
+    else if (remove_vertex == vertex_head)
+    {
+        CVertex* next_vertex = remove_vertex->GetNext ();
+        next_vertex->SetPre (NULL);
+        remove_vertex->SetNext (NULL);
+        vertex_head = next_vertex;
+        remove_vertex->FreeVertex ();
+        vertex_num--;
+    }
+    else
+    {
+        CVertex* pre_vertex = remove_vertex->GetPre ();
+        CVertex* next_vertex = remove_vertex->GetNext ();
+        pre_vertex->SetNext (next_vertex);
+        next_vertex->SetPre (pre_vertex);
+        remove_vertex->SetPre (NULL);
+        remove_vertex->SetNext (NULL);
+        remove_vertex->FreeVertex ();
         vertex_num--;
     }
 }

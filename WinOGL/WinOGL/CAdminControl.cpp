@@ -160,11 +160,15 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
-    if (shape_num > 0 && EditModeFlag)
+    if (shape_num > 0 && EditModeFlag && (nFlags & MK_LBUTTON))
+    {
+        DeSelectAllShape ();
+        SelectNearestLine (&mouse);
+    }
+    else if (shape_num > 0 && EditModeFlag && (nFlags & MK_RBUTTON))
     {
         DeSelectAllShape ();
         SelectNearestVertex (&mouse);
-        SelectNearestLine (&mouse);
     }
     else if (shape_num > 0 && !EditModeFlag)
     {
@@ -189,6 +193,15 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
+
+                if (EditModeFlag && vp == sp->GetTail ())
+                {
+                    SubVertex ();
+                }
+                else if (EditModeFlag && vp != sp->GetTail ())
+                {
+                    sp->RemoveVertex (vp);
+                }
                 return vp;
             }
         }

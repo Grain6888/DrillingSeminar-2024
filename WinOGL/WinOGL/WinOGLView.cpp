@@ -36,8 +36,8 @@ END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
 {
-    x_Ldown = 0.0;
-    y_Ldown = 0.0;
+    x_down = 0.0;
+    y_down = 0.0;
     x_over = 0.0;
     y_over = 0.0;
     m_hRC = NULL;
@@ -94,20 +94,20 @@ CWinOGLDoc* CWinOGLView::GetDocument () const // デバッグ以外のバージ�
 
 void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
-    SetLDown (point);
+    SetDown (point);
 
     if (AC.IsEditMode () && !(nFlags & MK_SHIFT))
     {
         AC.DeSelectAllShape ();
-        AC.AddVertex (x_Ldown, y_Ldown);
+        AC.AddVertex (x_down, y_down);
     }
     else if (AC.IsEditMode () && (nFlags & MK_SHIFT))
     {
-        AC.SelectShapeElements (x_Ldown, y_Ldown, nFlags);
+        AC.SelectShapeElements (x_down, y_down, nFlags);
     }
     else
     {
-        AC.SelectShapeElements (x_Ldown, y_Ldown, nFlags);
+        AC.SelectShapeElements (x_down, y_down, nFlags);
     }
 
     RedrawWindow ();
@@ -132,6 +132,11 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
+    SetDown (point);
+    if (AC.IsEditMode ())
+    {
+        AC.SelectShapeElements (x_down, y_down, nFlags);
+    }
     RedrawWindow ();
 
     CView::OnRButtonDown (nFlags, point);
@@ -284,19 +289,19 @@ void CWinOGLView::OnDeleteAll ()
     RedrawWindow ();
 }
 
-void CWinOGLView::SetLDown (CPoint point)
+void CWinOGLView::SetDown (CPoint point)
 {
     // 描画領域の大きさを取得
     CRect rect;
     GetClientRect (rect);
 
     // デバイス座標系
-    x_Ldown = (float)point.x;
-    y_Ldown = (float)point.y;
+    x_down = (float)point.x;
+    y_down = (float)point.y;
 
     // デバイス座標系→正規化座標系
-    x_Ldown = x_Ldown / rect.Width ();
-    y_Ldown = 1 - (y_Ldown / rect.Height ());
+    x_down = x_down / rect.Width ();
+    y_down = 1 - (y_down / rect.Height ());
 
     // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
@@ -304,15 +309,15 @@ void CWinOGLView::SetLDown (CPoint point)
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_Ldown = (x_Ldown - (float)(1.0 - x_Ldown)) * aspect_ratio;
-        y_Ldown -= (float)(1.0 - y_Ldown);
+        x_down = (x_down - (float)(1.0 - x_down)) * aspect_ratio;
+        y_down -= (float)(1.0 - y_down);
     }
     // ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_Ldown = x_Ldown - (float)(1.0 - x_Ldown);
-        y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
+        x_down = x_down - (float)(1.0 - x_down);
+        y_down = (y_down - (float)(1.0 - y_down)) * aspect_ratio;
     }
 }
 

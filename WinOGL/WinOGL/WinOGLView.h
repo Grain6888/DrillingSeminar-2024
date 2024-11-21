@@ -40,9 +40,9 @@ public:
     afx_msg void OnEditUndo ();
     afx_msg void OnDeleteAll ();
 
-    /// @brief 左クリックした時の座標 (X,Y) を設定する．
+    /// @brief 左右クリックした時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
-    void SetLDown (CPoint point);
+    void SetDown (CPoint point);
 
     /// @brief マウスオーバーした時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
@@ -53,11 +53,11 @@ public:
     bool IsMouseInside ();
 
 private:
-    /// @brief 左クリックした時の，X 座標．
-    float x_Ldown;
+    /// @brief 左右クリックした時の，X 座標．
+    float x_down;
 
-    /// @brief 左クリックした時の，Y 座標．
-    float y_Ldown;
+    /// @brief 左右クリックした時の，Y 座標．
+    float y_down;
 
     /// @brief マウスオーバーした時の，X 座標．
     float x_over;
