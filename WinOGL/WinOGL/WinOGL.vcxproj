@@ -218,12 +218,12 @@
     <ResourceCompile Include="WinOGL.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\WinOGL.rc2" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\WinOGL.ico" />
     <Image Include="res\WinOGLDoc.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\WinOGL.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

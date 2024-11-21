@@ -5,31 +5,22 @@
 #define IDD_ABOUTBOX                    100
 #define IDR_MAINFRAME                   128
 #define IDR_WinOGLTYPE                  130
-#define ID_32771                        32771
+#define IDD_MANUALBOX                   310
 #define ID_SIZEUP                       32772
-#define ID_32775                        32775
 #define ID_SIZEDOWN                     32776
-#define ID_BUTTON32778                  32778
-#define ID_32779                        32779
-#define ID_ACIS                         32780
 #define ID_AXIS                         32781
-#define ID_32782                        32782
 #define ID_EDITMODE                     32783
-#define ID_BUTTON32787                  32787
-#define ID_32794                        32794
-#define ID_AllClear                     32795
-#define ID_DeleteAll                    32796
 #define ID_DELETE_ALL                   32797
-#define ID_BUTTON32798                  32798
-#define ID_BUTTON32799                  32799
+#define ID_MANUAL_OPEN                  32801
+#define ID_BUTTON32803                  32803
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32800
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_COMMAND_VALUE         32804
+#define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

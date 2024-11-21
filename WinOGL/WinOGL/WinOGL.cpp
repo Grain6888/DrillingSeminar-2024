@@ -24,6 +24,7 @@ BEGIN_MESSAGE_MAP (CWinOGLApp, CWinApp)
     // 標準のファイル基本ドキュメント コマンド
     ON_COMMAND (ID_FILE_NEW, &CWinApp::OnFileNew)
     ON_COMMAND (ID_FILE_OPEN, &CWinApp::OnFileOpen)
+    ON_COMMAND (ID_MANUAL_OPEN, &CWinOGLApp::OnManualOpen)
 END_MESSAGE_MAP ()
 
 
@@ -143,6 +144,36 @@ void CAboutDlg::DoDataExchange (CDataExchange* pDX)
 BEGIN_MESSAGE_MAP (CAboutDlg, CDialogEx)
 END_MESSAGE_MAP ()
 
+class CManualDlg : public CDialogEx {
+public:
+    CManualDlg () noexcept;
+
+// ダイアログ データ
+#ifdef AFX_DESIGN_TIME
+    enum {
+        IDD = IDD_MANUALBOX
+    };
+#endif
+
+protected:
+    virtual void DoDataExchange (CDataExchange* pDX);    // DDX/DDV サポート
+
+// 実装
+protected:
+    DECLARE_MESSAGE_MAP ()
+};
+
+CManualDlg::CManualDlg () noexcept : CDialogEx (IDD_MANUALBOX)
+{ }
+
+void CManualDlg::DoDataExchange (CDataExchange* pDX)
+{
+    CDialogEx::DoDataExchange (pDX);
+}
+
+BEGIN_MESSAGE_MAP (CManualDlg, CDialogEx)
+END_MESSAGE_MAP ()
+
 // ダイアログを実行するためのアプリケーション コマンド
 void CWinOGLApp::OnAppAbout ()
 {
@@ -150,7 +181,9 @@ void CWinOGLApp::OnAppAbout ()
     aboutDlg.DoModal ();
 }
 
-// CWinOGLApp メッセージ ハンドラー
+void CWinOGLApp::OnManualOpen ()
+{
 
-
-
+    CManualDlg manualDlg;
+    manualDlg.DoModal ();
+}

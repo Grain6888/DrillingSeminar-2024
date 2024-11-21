@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef __AFXWIN_H__
-	#error "PCH に対してこのファイルをインクルードする前に 'pch.h' をインクルードしてください"
+#error "PCH に対してこのファイルをインクルードする前に 'pch.h' をインクルードしてください"
 #endif
 
 #include "resource.h"       // メイン シンボル
@@ -14,19 +14,19 @@
 // このクラスの実装については、WinOGL.cpp を参照してください
 //
 
-class CWinOGLApp : public CWinApp
-{
+class CWinOGLApp : public CWinApp {
 public:
-	CWinOGLApp() noexcept;
+    CWinOGLApp () noexcept;
 
 
 // オーバーライド
 public:
-	virtual BOOL InitInstance();
+    virtual BOOL InitInstance ();
 
 // 実装
-	afx_msg void OnAppAbout();
-	DECLARE_MESSAGE_MAP()
+    afx_msg void OnAppAbout ();
+    afx_msg void OnManualOpen ();
+    DECLARE_MESSAGE_MAP ()
 };
 
 extern CWinOGLApp theApp;
