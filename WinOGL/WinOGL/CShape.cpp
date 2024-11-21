@@ -103,11 +103,6 @@ void CShape::PushVertex (float new_x, float new_y)
 
 void CShape::InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex)
 {
-    if (pre_vertex == NULL || next_vertex == NULL)
-    {
-        return;
-    }
-
     CVertex* new_vertex = new CVertex;
     new_vertex->SetXY (new_x, new_y);
 
@@ -286,7 +281,112 @@ bool CShape::IsMovedVertexSelfCross (CVertex* moved_vertex)
             }
         }
     }
+
     return false;
+}
+
+bool CShape::IsRemoveVertexSelfCross (CVertex* remove_vertex)
+{
+    bool result = false;
+
+    if (remove_vertex == vertex_head)
+    {
+        // €”õ
+        CVertex* next_vertex = remove_vertex->GetNext ();
+        next_vertex->SetPre (NULL);
+        vertex_head = next_vertex;
+        vertex_num--;
+
+        for (CVertex* vp = vertex_head; vp != vertex_tail; vp = vp->GetNext ())
+        {
+            if (vp == next_vertex)
+            {
+                continue;
+            }
+            else if (vp == vertex_tail->GetPre ())
+            {
+                continue;
+            }
+            else if (CMath::IsLineCrossing (vertex_tail, next_vertex, vp, vp->GetNext ()))
+            {
+                result = true;
+            }
+        }
+
+        // •œŒ³
+        next_vertex->SetPre (remove_vertex);
+        vertex_head = remove_vertex;
+        vertex_num++;
+    }
+    else if (remove_vertex == vertex_tail)
+    {
+        // €”õ
+        CVertex* pre_vertex = remove_vertex->GetPre ();
+        pre_vertex->SetNext (NULL);
+        vertex_tail = pre_vertex;
+        vertex_num--;
+
+        for (CVertex* vp = vertex_head; vp != vertex_tail; vp = vp->GetNext ())
+        {
+            if (vp == vertex_head)
+            {
+                continue;
+            }
+            else if (vp == pre_vertex->GetPre ())
+            {
+                continue;
+            }
+            else if (CMath::IsLineCrossing (pre_vertex, vertex_head, vp, vp->GetNext ()))
+            {
+                result = true;
+            }
+        }
+
+        // •œŒ³
+        pre_vertex->SetNext (remove_vertex);
+        vertex_tail = remove_vertex;
+        vertex_num++;
+    }
+    else
+    {
+        // €”õ
+        CVertex* pre_vertex = remove_vertex->GetPre ();
+        CVertex* next_vertex = remove_vertex->GetNext ();
+        pre_vertex->SetNext (next_vertex);
+        next_vertex->SetPre (pre_vertex);
+        vertex_num--;
+
+        for (CVertex* vp = vertex_head; vp != vertex_tail; vp = vp->GetNext ())
+        {
+            if (vp == pre_vertex->GetPre ())
+            {
+                continue;
+            }
+            else if (vp == pre_vertex)
+            {
+                continue;
+            }
+            else if (vp == next_vertex)
+            {
+                continue;
+            }
+            else if (CMath::IsLineCrossing (pre_vertex, next_vertex, vp, vp->GetNext ()))
+            {
+                result = true;
+            }
+        }
+        if (pre_vertex != vertex_head && next_vertex != vertex_tail && CMath::IsLineCrossing (pre_vertex, next_vertex, vertex_tail, vertex_head))
+        {
+            result = true;
+        }
+
+        // •œŒ³
+        pre_vertex->SetNext (remove_vertex);
+        next_vertex->SetPre (remove_vertex);
+        vertex_num++;
+    }
+
+    return result;
 }
 
 void CShape::SelectAllVertex ()

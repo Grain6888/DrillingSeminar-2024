@@ -69,6 +69,11 @@ public:
     /// @return 自交差する true / 自交差しない false
     bool IsMovedVertexSelfCross (CVertex* moved_vertex);
 
+    /// @brief 辺上の頂点を削除する場合に自交差しないかを判定する．
+    /// @param remove_vertex 削除する頂点
+    /// @return 自交差する true / 自交差しない false
+    bool IsRemoveVertexSelfCross (CVertex* remove_vertex);
+
     /// @brief すべての頂点を選択済みにする．
     void SelectAllVertex ();
 

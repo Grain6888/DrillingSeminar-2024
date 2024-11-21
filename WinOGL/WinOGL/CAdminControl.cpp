@@ -194,7 +194,7 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
 
-                if (EditModeFlag && sp->GetVertexNum () > 3)
+                if (EditModeFlag && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp))
                 {
                     sp->RemoveVertex (vp);
                 }
@@ -686,6 +686,57 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
             continue;
         }
         else if (CMath::IsContained (moved_shape, sp->GetHead ()))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_vertex)
+{
+    CVertex* pre_vertex = new CVertex;
+    CVertex* next_vertex = new CVertex;
+
+    if (remove_vertex == my_shape->GetHead ())
+    {
+        pre_vertex = my_shape->GetTail ();
+        next_vertex = remove_vertex->GetNext ();
+    }
+    else if (remove_vertex == my_shape->GetTail ())
+    {
+        pre_vertex = remove_vertex->GetPre ();
+        next_vertex = my_shape->GetHead ();
+    }
+    else
+    {
+        pre_vertex = remove_vertex->GetPre ();
+        next_vertex = remove_vertex->GetNext ();
+    }
+
+    for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
+    {
+        if (sp == my_shape)
+        {
+            continue;
+        }
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+        {
+            if (vp == pre_vertex)
+            {
+                if (CMath::IsLineCrossing (vp, vp->GetNext ()->GetNext (), pre_vertex, next_vertex))
+                {
+                    return true;
+                }
+                vp = vp->GetNext ();
+            }
+            else if (CMath::IsLineCrossing (vp, vp->GetNext (), pre_vertex, next_vertex))
+            {
+                return true;
+            }
+        }
+        if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), pre_vertex, next_vertex))
         {
             return true;
         }
