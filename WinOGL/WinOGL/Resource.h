@@ -12,7 +12,6 @@
 #define ID_EDITMODE                     32783
 #define ID_DELETE_ALL                   32797
 #define ID_MANUAL_OPEN                  32801
-#define ID_BUTTON32803                  32803
 
 // Next default values for new objects
 // 
