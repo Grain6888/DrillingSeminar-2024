@@ -200,7 +200,7 @@ void CAdminControl::EditShapeElements (float mouse_x, float mouse_y, UINT nFlags
     }
 }
 
-CShape* CAdminControl::SelectVertex (CVertex* mouse)
+CVertex* CAdminControl::SelectVertex (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
@@ -210,7 +210,7 @@ CShape* CAdminControl::SelectVertex (CVertex* mouse)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
-                return sp;
+                return vp;
             }
         }
     }
@@ -218,7 +218,7 @@ CShape* CAdminControl::SelectVertex (CVertex* mouse)
     return NULL;
 }
 
-CShape* CAdminControl::SelectLine (CVertex* mouse)
+CVertex* CAdminControl::SelectLine (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
     {
@@ -230,7 +230,7 @@ CShape* CAdminControl::SelectLine (CVertex* mouse)
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
                 vp->GetNext ()->Select ();
                 vp->GetNext ()->SetLastXY (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
-                return sp;
+                return vp;
             }
         }
         if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
@@ -239,7 +239,7 @@ CShape* CAdminControl::SelectLine (CVertex* mouse)
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
             sp->GetTail ()->Select ();
             sp->GetTail ()->SetLastXY (sp->GetTail ()->GetX (), sp->GetTail ()->GetY ());
-            return sp;
+            return sp->GetTail ();
         }
     }
 

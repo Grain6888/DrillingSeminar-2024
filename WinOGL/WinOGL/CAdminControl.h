@@ -55,12 +55,12 @@ public:
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した頂点を含む図形のアドレス / NULL
-    CShape* SelectVertex (CVertex* mouse);
+    CVertex* SelectVertex (CVertex* mouse);
 
     /// @brief マウスの近くの辺を選択する．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した辺を含む図形のアドレス / NULL
-    CShape* SelectLine (CVertex* mouse);
+    CVertex* SelectLine (CVertex* mouse);
 
     /// @brief マウスの近くの図形を選択する．
     /// @param mouse マウスの座標 (X,Y)
