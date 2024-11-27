@@ -48,10 +48,6 @@ public:
     /// @param point デバイス座標 (X,Y)
     void SetOver (CPoint point);
 
-    /// @brief マウスがビューポート内にあるかを判定する．
-    /// @return 内 true / 外 false
-    bool IsMouseInside ();
-
 private:
     /// @brief 左右クリックした時の，X 座標．
     float x_down;
@@ -64,6 +60,9 @@ private:
 
     /// @brief マウスオーバーした時の，Y 座標．
     float y_over;
+
+    /// @brief D&D 中の状態フラグ（D&D 中である true / D&D 中でない false）．
+    bool DraggingFlag = false;
 
     CAdminControl AC;
     HGLRC m_hRC;

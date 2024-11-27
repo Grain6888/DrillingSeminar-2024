@@ -105,9 +105,18 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     {
         AC.SelectShapeElements (x_down, y_down, nFlags);
     }
-    else
+    else if (!AC.IsEditMode () && !DraggingFlag)
     {
         AC.SelectShapeElements (x_down, y_down, nFlags);
+        DraggingFlag = true;
+    }
+    else if (!AC.IsEditMode () && DraggingFlag)
+    {
+        if (!AC.IsEditMode () && AC.IsInvalidMovedVertex ())
+        {
+            AC.ResetMovedVertex ();
+        }
+        DraggingFlag = false;
     }
 
     RedrawWindow ();
@@ -117,13 +126,11 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (!AC.IsEditMode ())
+    if (!AC.IsEditMode () && AC.IsInvalidMovedVertex ())
     {
-        if (AC.IsInvalidMovedVertex ())
-        {
-            AC.ResetMovedVertex ();
-        }
+        AC.ResetMovedVertex ();
     }
+    DraggingFlag = false;
 
     RedrawWindow ();
 
@@ -145,16 +152,9 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     SetOver (point);
-    if (!AC.IsEditMode () && (nFlags & MK_LBUTTON))
+    if (!AC.IsEditMode () && DraggingFlag)
     {
-        if (IsMouseInside ())
-        {
-            AC.TrackVertexToMouse (x_over, y_over);
-        }
-        else
-        {
-            AC.ResetMovedVertex ();
-        }
+        AC.TrackVertexToMouse (x_over, y_over);
     }
 
     RedrawWindow ();
@@ -353,43 +353,4 @@ void CWinOGLView::SetOver (CPoint point)
         y_over = (y_over - (float)(1.0 - y_over)) * aspect_ratio;
         y_over = y_over;
     }
-}
-
-bool CWinOGLView::IsMouseInside ()
-{
-
-    // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
-
-    float left = 0.0f;
-    float right = 0.0f;
-    float top = 0.0f;
-    float bottom = 0.0f;
-
-    if (rect.Width () > rect.Height ())
-    {
-        left = -(float)rect.Width () / rect.Height () + 0.01f;
-        right = (float)rect.Width () / rect.Height () - 0.01f;
-        top = 0.99f;
-        bottom = -0.99f;
-    }
-    else
-    {
-        left = -0.99f;
-        right = 0.99f;
-        top = (float)rect.Height () / rect.Width () - 0.01f;
-        bottom = -(float)rect.Height () / rect.Width () + 0.01f;
-    }
-
-    if (x_over <= left || x_over >= right)
-    {
-        return false;
-    }
-    else if (y_over <= bottom || y_over >= top)
-    {
-        return false;
-    }
-
-    return true;
 }
