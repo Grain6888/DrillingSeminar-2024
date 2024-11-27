@@ -176,6 +176,15 @@ void CShape::RemoveVertex (CVertex* remove_vertex)
 
 bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
 {
+    // 自図形内の頂点との重なりをチェック
+    if (vertex_num > 0 && vertex_num <= 2)
+    {
+        if (CMath::VertexDis (vertex_head, new_vertex) < 0.1)
+        {
+            return true;
+        }
+    }
+
     // 自交差をチェック
     if (vertex_num >= 3)
     {
