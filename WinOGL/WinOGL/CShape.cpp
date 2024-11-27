@@ -178,31 +178,11 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
 {
 
     // 自図形内の頂点との重なりをチェック
-    if (vertex_num == 1)
+    if (vertex_num > 0 && vertex_num <= 2)
     {
         if (CMath::VertexDis (vertex_head, new_vertex) < 0.1)
         {
             return true;
-        }
-    }
-    else if (vertex_num == 2)
-    {
-        for (CVertex* vp = vertex_head; vp != NULL; vp = vp->GetNext ())
-        {
-            if (CMath::VertexDis (vp, new_vertex) < 0.1)
-            {
-                return true;
-            }
-        }
-    }
-    else if (vertex_num >= 3)
-    {
-        for (CVertex* vp = vertex_head->GetNext (); vp != NULL; vp = vp->GetNext ())
-        {
-            if (CMath::VertexDis (vp, new_vertex) < 0.1 && CMath::VertexDis (vertex_head, new_vertex) >= 0.1)
-            {
-                return true;
-            }
         }
     }
 
