@@ -176,7 +176,6 @@ void CShape::RemoveVertex (CVertex* remove_vertex)
 
 bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
 {
-
     // 自図形内の頂点との重なりをチェック
     if (vertex_num > 0 && vertex_num <= 2)
     {

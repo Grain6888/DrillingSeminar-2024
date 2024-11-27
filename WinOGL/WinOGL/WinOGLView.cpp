@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_LBUTTONUP ()
     ON_COMMAND (ID_EDIT_UNDO, &CWinOGLView::OnEditUndo)
     ON_COMMAND (ID_DELETE_ALL, &CWinOGLView::OnDeleteAll)
+    ON_WM_LBUTTONDBLCLK ()
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -95,24 +96,29 @@ CWinOGLDoc* CWinOGLView::GetDocument () const // デバッグ以外のバージ�
 void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     SetDown (point);
+    CVertex mouse (x_down, y_down, NULL, NULL);
 
-    if (AC.IsEditMode () && !(nFlags & MK_SHIFT))
+    if (AC.IsAddMode ())
     {
         AC.DeSelectAllShape ();
         AC.AddVertex (x_down, y_down);
     }
-    else if (AC.IsEditMode () && (nFlags & MK_SHIFT))
+    else if (!AC.IsAddMode () && !DraggingFlag)
     {
-        AC.SelectShapeElements (x_down, y_down, nFlags);
-    }
-    else if (!AC.IsEditMode () && !DraggingFlag)
-    {
-        AC.SelectShapeElements (x_down, y_down, nFlags);
+        // Ctrl を押しながら左クリックで複数選択
+        if (!(nFlags & MK_CONTROL))
+        {
+            AC.DeSelectAllShape ();
+        }
+
+        AC.SelectVertex (&mouse);
+        AC.SelectLine (&mouse);
+        AC.SelectShape (&mouse);
         DraggingFlag = true;
     }
-    else if (!AC.IsEditMode () && DraggingFlag)
+    else if (!AC.IsAddMode () && DraggingFlag)
     {
-        if (!AC.IsEditMode () && AC.IsInvalidMovedVertex ())
+        if (!AC.IsAddMode () && AC.IsInvalidMovedVertex ())
         {
             AC.ResetMovedVertex ();
         }
@@ -124,9 +130,24 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     CView::OnLButtonDown (nFlags, point);
 }
 
+void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
+{
+    SetDown (point);
+    CVertex mouse (x_down, y_down, NULL, NULL);
+
+    if (!AC.IsAddMode () && !DraggingFlag && AC.SelectLine (&mouse) != NULL)
+    {
+        AC.EditShapeElements (x_down, y_down, nFlags);
+    }
+
+    RedrawWindow ();
+
+    CView::OnLButtonDblClk (nFlags, point);
+}
+
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (!AC.IsEditMode () && AC.IsInvalidMovedVertex ())
+    if (!AC.IsAddMode () && AC.IsInvalidMovedVertex ())
     {
         AC.ResetMovedVertex ();
     }
@@ -140,9 +161,9 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
     SetDown (point);
-    if (AC.IsEditMode ())
+    if (!AC.IsAddMode ())
     {
-        AC.SelectShapeElements (x_down, y_down, nFlags);
+        AC.EditShapeElements (x_down, y_down, nFlags);
     }
     RedrawWindow ();
 
@@ -152,7 +173,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     SetOver (point);
-    if (!AC.IsEditMode () && DraggingFlag)
+    if (!AC.IsAddMode () && DraggingFlag)
     {
         AC.TrackVertexToMouse (x_over, y_over);
     }
@@ -258,18 +279,18 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
 
 void CWinOGLView::OnEditMode ()
 {
-    AC.SwitchEditMode ();
+    AC.SwitchAddMode ();
     RedrawWindow ();
 }
 
 void CWinOGLView::OnUpdateEditMode (CCmdUI* pCmdUI)
 {
-    pCmdUI->SetCheck (AC.IsEditMode ());
+    pCmdUI->SetCheck (AC.IsAddMode ());
 }
 
 void CWinOGLView::OnEditUndo ()
 {
-    if (AC.IsEditMode ())
+    if (AC.IsAddMode ())
     {
         AC.SubVertex ();
     }

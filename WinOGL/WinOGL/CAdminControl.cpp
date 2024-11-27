@@ -43,7 +43,7 @@ void CAdminControl::Draw (float new_x, float new_y)
         }
 
         // 予測線を表示する．
-        if (shape_tail->GetVertexNum () > 0 && IsEditMode ())
+        if (shape_tail->GetVertexNum () > 0 && IsAddMode ())
         {
             DrawExLine (shape_tail->GetTail (), &mouse);
         }
@@ -98,23 +98,23 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse))
+    if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse))
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
-    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
+    else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
     {
         glColor3f (COLOR_RED);
     }
-    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
+    else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
     {
         glColor3f (COLOR_RED);
     }
-    else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
+    else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
     {
         glColor3f (COLOR_RED);
     }
-    else if (EditModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
+    else if (AddModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
     {
         glColor3f (COLOR_RED);
     }
@@ -157,38 +157,35 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     glDisable (GL_LINE_STIPPLE);
 }
 
-void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags)
+void CAdminControl::EditShapeElements (float mouse_x, float mouse_y, UINT nFlags)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
-    if (shape_num > 0 && EditModeFlag && (nFlags & MK_LBUTTON))
+
+    if (shape_num > 0 && (nFlags & MK_LBUTTON))
     {
-        DeSelectAllShape ();
-        CVertex* add_line_s = SelectNearestLine (&mouse);
+        CVertex* add_line_s = SelectLine (&mouse);
         for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
         {
             for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
             {
-                if (vp == add_line_s && SelectNearestVertex (&mouse) == NULL)
+                if (vp == add_line_s && SelectVertex (&mouse) == NULL)
                 {
-                    CVertex* new_point;
-                    new_point = CMath::CrossPoint (&mouse, vp, vp->GetNext ());
+                    CVertex* new_point = CMath::CrossPoint (&mouse, vp, vp->GetNext ());
                     sp->InsertVertex (vp, new_point->GetX (), new_point->GetY (), vp->GetNext ());
                     return;
                 }
             }
-            if (add_line_s == sp->GetTail () && SelectNearestVertex (&mouse) == NULL)
+            if (add_line_s == sp->GetTail () && SelectVertex (&mouse) == NULL)
             {
-                CVertex* new_point;
-                new_point = CMath::CrossPoint (&mouse, sp->GetTail (), sp->GetHead ());
+                CVertex* new_point = CMath::CrossPoint (&mouse, sp->GetTail (), sp->GetHead ());
                 sp->PushVertex (new_point->GetX (), new_point->GetY ());
                 return;
             }
         }
     }
-    else if (shape_num > 0 && EditModeFlag && (nFlags & MK_RBUTTON))
+    else if (shape_num > 0 && (nFlags & MK_RBUTTON))
     {
-        DeSelectAllShape ();
-        CVertex* remove_vertex = SelectNearestVertex (&mouse);
+        CVertex* remove_vertex = SelectVertex (&mouse);
         for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
         {
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
@@ -201,30 +198,19 @@ void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFla
             }
         }
     }
-    else if (shape_num > 0 && !EditModeFlag)
-    {
-        // Ctrl を押しながら左クリックで複数選択
-        if (!(nFlags & MK_CONTROL))
-        {
-            DeSelectAllShape ();
-        }
-        SelectNearestVertex (&mouse);
-        SelectNearestLine (&mouse);
-        SelectNearestShape (&mouse);
-    }
 }
 
-CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
+CShape* CAdminControl::SelectVertex (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (CMath::VertexDis (vp, mouse) < 0.1 && SelectNearestShape (mouse) == NULL)
+            if (CMath::VertexDis (vp, mouse) < 0.1 && SelectShape (mouse) == NULL)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
-                return vp;
+                return sp;
             }
         }
     }
@@ -232,35 +218,35 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
     return NULL;
 }
 
-CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
+CShape* CAdminControl::SelectLine (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectNearestVertex (mouse) == NULL && SelectNearestShape (mouse) == NULL)
+            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
                 vp->GetNext ()->Select ();
                 vp->GetNext ()->SetLastXY (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
-                return vp;
+                return sp;
             }
         }
-        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectNearestVertex (mouse) == NULL && SelectNearestShape (mouse) == NULL)
+        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
         {
             sp->GetHead ()->Select ();
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
             sp->GetTail ()->Select ();
             sp->GetTail ()->SetLastXY (sp->GetTail ()->GetX (), sp->GetTail ()->GetY ());
-            return sp->GetTail ();
+            return sp;
         }
     }
 
     return NULL;
 }
 
-CShape* CAdminControl::SelectNearestShape (CVertex* mouse)
+CShape* CAdminControl::SelectShape (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
     {
@@ -457,15 +443,15 @@ bool CAdminControl::IsShowingAxis ()
     return AxisFlag;
 }
 
-void CAdminControl::SwitchEditMode ()
+void CAdminControl::SwitchAddMode ()
 {
-    EditModeFlag = !EditModeFlag;
+    AddModeFlag = !AddModeFlag;
     DeSelectAllShape ();
 }
 
-bool CAdminControl::IsEditMode ()
+bool CAdminControl::IsAddMode ()
 {
-    return EditModeFlag;
+    return AddModeFlag;
 }
 
 bool CAdminControl::IsNewVertexContained (CVertex* new_vertex)

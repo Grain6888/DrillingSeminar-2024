@@ -47,25 +47,25 @@ public:
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
 
-    /// @brief マウスの近くの要素を選択する．
+    /// @brief マウスの近くの図形要素を選択する．
     /// @param mouse_x マウスの X 座標
     /// @param mouse_y マウスの Y 座標
-    void SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags);
+    void EditShapeElements (float mouse_x, float mouse_y, UINT nFlags);
 
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
-    /// @return 選択した頂点のアドレス / NULL
-    CVertex* SelectNearestVertex (CVertex* mouse);
+    /// @return 選択した頂点を含む図形のアドレス / NULL
+    CShape* SelectVertex (CVertex* mouse);
 
     /// @brief マウスの近くの辺を選択する．
     /// @param mouse マウスの座標 (X,Y)
-    /// @return 選択した辺の始点のアドレス / NULL
-    CVertex* SelectNearestLine (CVertex* mouse);
+    /// @return 選択した辺を含む図形のアドレス / NULL
+    CShape* SelectLine (CVertex* mouse);
 
     /// @brief マウスの近くの図形を選択する．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した図形のアドレス / NULL
-    CShape* SelectNearestShape (CVertex* mouse);
+    CShape* SelectShape (CVertex* mouse);
 
     /// @brief 頂点をマウスに追従する．
     /// @param mouse_x マウスの X 座標
@@ -112,12 +112,12 @@ public:
     /// @return 表示中 true / 非表示中 false．
     bool IsShowingAxis ();
 
-    /// @brief 編集モードまたは選択モードの状態を切り替える．
-    void SwitchEditMode ();
+    /// @brief 追加モードまたは編集モードの状態を切り替える．
+    void SwitchAddMode ();
 
-    /// @brief 編集モードまたは選択モードの状態を取得する．
-    /// @return 編集モード true / 選択モード false．
-    bool IsEditMode ();
+    /// @brief 追加モードまたは編集モードの状態を取得する．
+    /// @return 追加モード true / 編集モード false．
+    bool IsAddMode ();
 
     /// @brief 新しい頂点がほかの多角形に内包されていないかを判定する．
     /// @param new_vertex 新しい頂点
@@ -191,6 +191,6 @@ private:
     /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;
 
-    /// @brief 編集モードまたは選択モードの状態フラグ（編集モード true / 選択モード false）．
-    bool EditModeFlag = true;
+    /// @brief 追加モードまたは編集モードの状態フラグ（追加モード true / 編集モード false）．
+    bool AddModeFlag = true;
 };
