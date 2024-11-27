@@ -67,7 +67,7 @@ public:
     /// @return 選択した図形のアドレス / NULL
     CShape* SelectShape (CVertex* mouse);
 
-    /// @brief 頂点をマウスに追従する．
+    /// @brief !!! 作りかけの移動を禁止中 !!! 頂点をマウスに追従する．
     /// @param mouse_x マウスの X 座標
     /// @param mouse_y マウスの Y 座標
     void TrackVertexToMouse (float mouse_x, float mouse_y);
@@ -137,7 +137,7 @@ public:
     /// @return 不正 true / 不正でない false
     bool IsInvalidMovedVertex ();
 
-    /// @brief 移動した頂点が多角形と他交差していないかを判定する．
+    /// @brief !!! 閉じてない図形を移動できないバグ有り !!! 移動した頂点が多角形と他交差していないかを判定する．
     /// @param my_shape     自図形
     /// @param moved_vertex 移動した頂点
     /// @return 他交差する true / 他交差しない false

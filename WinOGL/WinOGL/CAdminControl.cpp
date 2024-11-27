@@ -262,7 +262,7 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
 
 void CAdminControl::TrackVertexToMouse (float mouse_x, float mouse_y)
 {
-    for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
@@ -622,7 +622,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
                     }
                 }
             }
-            if (moved_vertex == my_shape->GetHead ())
+            if (sp->IsClosed () == true && moved_vertex == my_shape->GetHead ())
             {
                 if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), moved_vertex, moved_vertex->GetNext ()))
                 {
@@ -633,7 +633,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
                     return true;
                 }
             }
-            else if (moved_vertex == my_shape->GetTail ())
+            else if (sp->IsClosed () == true && moved_vertex == my_shape->GetTail ())
             {
                 if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), moved_vertex, my_shape->GetHead ()))
                 {
@@ -644,7 +644,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
                     return true;
                 }
             }
-            else
+            else if (sp->IsClosed () == true)
             {
                 if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), moved_vertex, moved_vertex->GetNext ()))
                 {
