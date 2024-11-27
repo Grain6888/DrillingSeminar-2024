@@ -233,7 +233,7 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
                 return vp;
             }
         }
-        if (CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
+        if (sp->IsClosed () == true && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
         {
             sp->GetHead ()->Select ();
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
