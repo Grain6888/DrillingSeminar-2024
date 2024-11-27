@@ -367,8 +367,7 @@ void CAdminControl::AddVertex (float new_x, float new_y)
     {
         PushShape ();
     }
-
-    if (shape_num >= 2)
+    else if (shape_num >= 2)
     {
         if (IsNewVertexContained (&new_vertex) || IsNewVertexOtherCross (&new_vertex))
         {
@@ -376,7 +375,7 @@ void CAdminControl::AddVertex (float new_x, float new_y)
         }
     }
 
-    if (shape_tail->GetVertexNum () < 3)
+    if (shape_tail->GetVertexNum () < 3 && !shape_tail->IsNewVertexSelfCross (&new_vertex))
     {
         shape_tail->PushVertex (new_x, new_y);
     }
@@ -389,7 +388,7 @@ void CAdminControl::AddVertex (float new_x, float new_y)
     {
         return;
     }
-    else
+    else if (!shape_tail->IsNewVertexSelfCross (&new_vertex))
     {
         shape_tail->PushVertex (new_x, new_y);
     }

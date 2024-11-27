@@ -86,7 +86,7 @@ public:
     /// @brief 図形を開く．
     void Open ();
 
-    /// @brief 図形が閉じているかを判定する．
+    /// @brief 図形が閉じ状態を取得する．
     /// @return 閉じている true / 開いている false
     bool IsClosed ();
 
