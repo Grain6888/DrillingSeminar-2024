@@ -705,15 +705,23 @@ bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_
     CVertex* pre_vertex;
     CVertex* next_vertex;
 
-    if (remove_vertex == my_shape->GetHead ())
+    if (my_shape->IsClosed () == true && remove_vertex == my_shape->GetHead ())
     {
         pre_vertex = my_shape->GetTail ();
         next_vertex = remove_vertex->GetNext ();
     }
-    else if (remove_vertex == my_shape->GetTail ())
+    else if (my_shape->IsClosed () == false && remove_vertex == my_shape->GetHead ())
+    {
+        return false;
+    }
+    else if (my_shape->IsClosed () == true && remove_vertex == my_shape->GetTail ())
     {
         pre_vertex = remove_vertex->GetPre ();
         next_vertex = my_shape->GetHead ();
+    }
+    else if (my_shape->IsClosed () == false && remove_vertex == my_shape->GetTail ())
+    {
+        return false;
     }
     else
     {
