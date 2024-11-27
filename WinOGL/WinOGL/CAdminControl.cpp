@@ -714,6 +714,11 @@ bool CAdminControl::IsMovedVertexContained (CShape* my_shape, CVertex* moved_ver
 
 bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
 {
+    if (moved_shape->IsClosed () == false)
+    {
+        return false;
+    }
+
     for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
     {
         if (sp == moved_shape)
@@ -783,6 +788,11 @@ bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_
 
 bool CAdminControl::IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex)
 {
+    if (my_shape->IsClosed () == false)
+    {
+        return false;
+    }
+
     for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
     {
         if (sp == my_shape)
