@@ -116,10 +116,10 @@ private:
     /// @brief 頂点の数．
     int vertex_num;
 
-    /// @brief 閉じた図形のフラグ．
+    /// @brief 閉じた図形のフラグ（閉じている true / 開いている false）．
     bool ClosedFlag = false;
 
-    /// @brief 選択状態のフラグ．
+    /// @brief 選択状態のフラグ（選択済み true / 未選択 false）．
     bool SelectedFlag = false;
 };
 

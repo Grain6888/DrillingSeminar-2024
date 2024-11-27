@@ -299,15 +299,23 @@ bool CShape::IsRemoveVertexSelfCross (CVertex* remove_vertex)
     CVertex* pre_vertex;
     CVertex* next_vertex;
 
-    if (remove_vertex == vertex_head)
+    if (ClosedFlag && remove_vertex == vertex_head)
     {
         pre_vertex = vertex_tail;
         next_vertex = remove_vertex->GetNext ();
     }
-    else if (remove_vertex == vertex_tail)
+    else if (!ClosedFlag && remove_vertex == vertex_head)
+    {
+        return false;
+    }
+    else if (ClosedFlag && remove_vertex == vertex_tail)
     {
         pre_vertex = remove_vertex->GetPre ();
         next_vertex = vertex_head;
+    }
+    else if (!ClosedFlag && remove_vertex == vertex_tail)
+    {
+        return false;
     }
     else
     {
@@ -338,7 +346,7 @@ bool CShape::IsRemoveVertexSelfCross (CVertex* remove_vertex)
             return true;
         }
     }
-    if (pre_vertex != vertex_head && pre_vertex != vertex_tail && next_vertex != vertex_head && next_vertex != vertex_tail && CMath::IsLineCrossing (vertex_head, vertex_tail, pre_vertex, next_vertex))
+    if (ClosedFlag && pre_vertex != vertex_head && pre_vertex != vertex_tail && next_vertex != vertex_head && next_vertex != vertex_tail && CMath::IsLineCrossing (vertex_head, vertex_tail, pre_vertex, next_vertex))
     {
         return true;
     }
