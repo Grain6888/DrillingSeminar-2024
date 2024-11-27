@@ -76,22 +76,25 @@ public:
     void ResetMovedVertex ();
 
     /// @brief 図形を追加する．
-    void AddShape ();
+    void PushShape ();
 
     /// @brief 図形を削除する．
-    void DeleteShape ();
+    void PopShape ();
+
+    /// @brief すべての図形を削除する．
+    void DeleteAllShape ();
 
     /// @brief 図形の数を取得する．
     /// @return 図形の数
     int GetShapeNum ();
 
-    /// @brief 図形の頂点リストの末尾に頂点を追加する．
+    /// @brief 図形に基づいて頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void PushVertex (float new_x, float new_y);
+    void AddVertex (float new_x, float new_y);
 
-    /// @brief 図形の頂点リストの末尾の頂点を削除する．
-    void PopVertex ();
+    /// @brief 図形に基づいて頂点を削除する．
+    void SubVertex ();
 
     /// @brief 描画サイズを上げる．
     void DrawSizeUp ();
@@ -135,11 +138,13 @@ public:
     bool IsInvalidMovedVertex ();
 
     /// @brief 移動した頂点が多角形と他交差していないかを判定する．
+    /// @param my_shape     自図形
     /// @param moved_vertex 移動した頂点
     /// @return 他交差する true / 他交差しない false
     bool IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex);
 
     /// @brief 移動した頂点がほかの多角形に内包されていないかを判定する．
+    /// @param my_shape     自図形
     /// @param moved_vertex 移動した頂点
     /// @return 内包される true / 内包されない false
     bool IsMovedVertexContained (CShape* my_shape, CVertex* moved_vertex);
@@ -148,6 +153,18 @@ public:
     /// @param moved_shape 移動した多角形
     /// @return 内包する true / 内包しない false
     bool IsMovedShapeContaining (CShape* moved_shape);
+
+    /// @brief 辺上の点を削除する場合に他交差しないかを判定する．
+    /// @param my_shape      自図形
+    /// @param remove_vertex 削除する頂点
+    /// @return 他交差する true / 他交差しない false
+    bool IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_vertex);
+
+    /// @brief 辺上の点を削除する場合に多角形がほかの多角形を内包していないかを判定する．
+    /// @param my_shape      自図形
+    /// @param remove_vertex 削除する頂点
+    /// @return 内包する true / 内包しない false
+    bool IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex);
 
     /// @brief すべての図形を選択状態にする．
     void SelectAllShape ();
@@ -175,5 +192,5 @@ private:
     bool AxisFlag = false;
 
     /// @brief 編集モードまたは選択モードの状態フラグ（編集モード true / 選択モード false）．
-    bool EditModeFlag = false;
+    bool EditModeFlag = true;
 };

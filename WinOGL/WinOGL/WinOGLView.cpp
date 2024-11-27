@@ -30,12 +30,14 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditMode)
     ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditMode)
     ON_WM_LBUTTONUP ()
+    ON_COMMAND (ID_EDIT_UNDO, &CWinOGLView::OnEditUndo)
+    ON_COMMAND (ID_DELETE_ALL, &CWinOGLView::OnDeleteAll)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
 {
-    x_Ldown = 0.0;
-    y_Ldown = 0.0;
+    x_down = 0.0;
+    y_down = 0.0;
     x_over = 0.0;
     y_over = 0.0;
     m_hRC = NULL;
@@ -92,15 +94,20 @@ CWinOGLDoc* CWinOGLView::GetDocument () const // デバッグ以外のバージ�
 
 void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
-    SetLDown (point);
+    SetDown (point);
 
-    if (AC.IsEditMode ())
+    if (AC.IsEditMode () && !(nFlags & MK_SHIFT))
     {
-        AC.PushVertex (x_Ldown, y_Ldown);
+        AC.DeSelectAllShape ();
+        AC.AddVertex (x_down, y_down);
+    }
+    else if (AC.IsEditMode () && (nFlags & MK_SHIFT))
+    {
+        AC.SelectShapeElements (x_down, y_down, nFlags);
     }
     else
     {
-        AC.SelectShapeElements (x_Ldown, y_Ldown, nFlags);
+        AC.SelectShapeElements (x_down, y_down, nFlags);
     }
 
     RedrawWindow ();
@@ -125,15 +132,11 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
+    SetDown (point);
     if (AC.IsEditMode ())
     {
-        AC.PopVertex ();
+        AC.SelectShapeElements (x_down, y_down, nFlags);
     }
-    else if (!(nFlags & MK_LBUTTON))
-    {
-        AC.ResetMovedVertex ();
-    }
-
     RedrawWindow ();
 
     CView::OnRButtonDown (nFlags, point);
@@ -264,19 +267,41 @@ void CWinOGLView::OnUpdateEditMode (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsEditMode ());
 }
 
-void CWinOGLView::SetLDown (CPoint point)
+void CWinOGLView::OnEditUndo ()
+{
+    if (AC.IsEditMode ())
+    {
+        AC.SubVertex ();
+    }
+    else
+    {
+        AC.ResetMovedVertex ();
+    }
+
+    RedrawWindow ();
+}
+
+
+void CWinOGLView::OnDeleteAll ()
+{
+    AC.DeleteAllShape ();
+
+    RedrawWindow ();
+}
+
+void CWinOGLView::SetDown (CPoint point)
 {
     // 描画領域の大きさを取得
     CRect rect;
     GetClientRect (rect);
 
     // デバイス座標系
-    x_Ldown = (float)point.x;
-    y_Ldown = (float)point.y;
+    x_down = (float)point.x;
+    y_down = (float)point.y;
 
     // デバイス座標系→正規化座標系
-    x_Ldown = x_Ldown / rect.Width ();
-    y_Ldown = 1 - (y_Ldown / rect.Height ());
+    x_down = x_down / rect.Width ();
+    y_down = 1 - (y_down / rect.Height ());
 
     // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
@@ -284,15 +309,15 @@ void CWinOGLView::SetLDown (CPoint point)
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_Ldown = (x_Ldown - (float)(1.0 - x_Ldown)) * aspect_ratio;
-        y_Ldown -= (float)(1.0 - y_Ldown);
+        x_down = (x_down - (float)(1.0 - x_down)) * aspect_ratio;
+        y_down -= (float)(1.0 - y_down);
     }
     // ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_Ldown = x_Ldown - (float)(1.0 - x_Ldown);
-        y_Ldown = (y_Ldown - (float)(1.0 - y_Ldown)) * aspect_ratio;
+        x_down = x_down - (float)(1.0 - x_down);
+        y_down = (y_down - (float)(1.0 - y_down)) * aspect_ratio;
     }
 }
 
@@ -337,24 +362,24 @@ bool CWinOGLView::IsMouseInside ()
     CRect rect;
     GetClientRect (rect);
 
-    float left = 0.0;
-    float right = 0.0;
-    float top = 0.0;
-    float bottom = 0.0;
+    float left = 0.0f;
+    float right = 0.0f;
+    float top = 0.0f;
+    float bottom = 0.0f;
 
     if (rect.Width () > rect.Height ())
     {
-        left = -(float)rect.Width () / rect.Height () + 0.01;
-        right = (float)rect.Width () / rect.Height () - 0.01;
-        top = 0.99;
-        bottom = -0.99;
+        left = -(float)rect.Width () / rect.Height () + 0.01f;
+        right = (float)rect.Width () / rect.Height () - 0.01f;
+        top = 0.99f;
+        bottom = -0.99f;
     }
     else
     {
-        left = -0.99;
-        right = 0.99;
-        top = (float)rect.Height () / rect.Width () - 0.01;
-        bottom = -(float)rect.Height () / rect.Width () + 0.01;
+        left = -0.99f;
+        right = 0.99f;
+        top = (float)rect.Height () / rect.Width () - 0.01f;
+        bottom = -(float)rect.Height () / rect.Width () + 0.01f;
     }
 
     if (x_over <= left || x_over >= right)

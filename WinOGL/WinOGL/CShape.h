@@ -40,13 +40,24 @@ public:
     /// @brief 以降の図形を削除する．
     void FreeShape ();
 
-    /// @brief 頂点を追加する．
+    /// @brief 末尾に頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void AddVertex (float new_x, float new_y);
+    void PushVertex (float new_x, float new_y);
 
-    /// @brief 頂点を削除する．
-    void DeleteVertex ();
+    /// @brief 辺上に頂点を追加する．
+    /// @param pre_vertex  辺の始点
+    /// @param new_x       頂点の X 座標
+    /// @param new_y       頂点の Y 座標
+    /// @param next_vertex 辺の終点
+    void InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex);
+
+    /// @brief 末尾の頂点を削除する．
+    void PopVertex ();
+
+    /// @brief 辺上の頂点を削除する．
+    /// @param remove_vertex 頂点
+    void RemoveVertex (CVertex* remove_vertex);
 
     /// @brief 新しい頂点が自交差していないかを判定する．
     /// @param new_vertex 新しい頂点
@@ -57,6 +68,11 @@ public:
     /// @param moved_vertex 移動した頂点
     /// @return 自交差する true / 自交差しない false
     bool IsMovedVertexSelfCross (CVertex* moved_vertex);
+
+    /// @brief 辺上の頂点を削除する場合に自交差しないかを判定する．
+    /// @param remove_vertex 削除する頂点
+    /// @return 自交差する true / 自交差しない false
+    bool IsRemoveVertexSelfCross (CVertex* remove_vertex);
 
     /// @brief すべての頂点を選択済みにする．
     void SelectAllVertex ();

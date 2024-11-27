@@ -87,11 +87,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\WinOGL.rc2">
-      <Filter>リソース ファイル</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="res\WinOGLDoc.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
@@ -101,5 +96,10 @@
     <Image Include="res\Toolbar.bmp">
       <Filter>リソース ファイル</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\WinOGL.rc2">
+      <Filter>リソース ファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

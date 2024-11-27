@@ -98,7 +98,7 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse) && !IsNewShapeContaining ())
+    if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse))
     {
         mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
@@ -112,7 +112,7 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
     }
     else if (EditModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
     {
-        glColor3f (COLOR_ORANGE);
+        glColor3f (COLOR_RED);
     }
     else if (EditModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
     {
@@ -144,7 +144,7 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
     else if (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1)
     {
-        glColor3f (COLOR_ORANGE);
+        glColor3f (COLOR_RED);
     }
     else
     {
@@ -160,7 +160,48 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 void CAdminControl::SelectShapeElements (float mouse_x, float mouse_y, UINT nFlags)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
-    if (shape_num > 0)
+    if (shape_num > 0 && EditModeFlag && (nFlags & MK_LBUTTON))
+    {
+        DeSelectAllShape ();
+        CVertex* add_line_s = SelectNearestLine (&mouse);
+        for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+            {
+                if (vp == add_line_s && SelectNearestVertex (&mouse) == NULL)
+                {
+                    CVertex* new_point;
+                    new_point = CMath::CrossPoint (&mouse, vp, vp->GetNext ());
+                    sp->InsertVertex (vp, new_point->GetX (), new_point->GetY (), vp->GetNext ());
+                    return;
+                }
+            }
+            if (add_line_s == sp->GetTail () && SelectNearestVertex (&mouse) == NULL)
+            {
+                CVertex* new_point;
+                new_point = CMath::CrossPoint (&mouse, sp->GetTail (), sp->GetHead ());
+                sp->PushVertex (new_point->GetX (), new_point->GetY ());
+                return;
+            }
+        }
+    }
+    else if (shape_num > 0 && EditModeFlag && (nFlags & MK_RBUTTON))
+    {
+        DeSelectAllShape ();
+        CVertex* remove_vertex = SelectNearestVertex (&mouse);
+        for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                if (vp == remove_vertex && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp) && !IsRemoveShapeContaining (sp, vp))
+                {
+                    sp->RemoveVertex (vp);
+                    return;
+                }
+            }
+        }
+    }
+    else if (shape_num > 0 && !EditModeFlag)
     {
         // Ctrl を押しながら左クリックで複数選択
         if (!(nFlags & MK_CONTROL))
@@ -183,6 +224,11 @@ CVertex* CAdminControl::SelectNearestVertex (CVertex* mouse)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
+
+                //if (EditModeFlag && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp) && !IsRemoveShapeContaining (sp, vp))
+                //{
+                //    sp->RemoveVertex (vp);
+                //}
                 return vp;
             }
         }
@@ -203,6 +249,13 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
                 vp->GetNext ()->Select ();
                 vp->GetNext ()->SetLastXY (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
+
+                //if (EditModeFlag)
+                //{
+                //    CVertex* new_point;
+                //    new_point = CMath::CrossPoint (mouse, vp, vp->GetNext ());
+                //    sp->InsertVertex (vp, new_point->GetX (), new_point->GetY (), vp->GetNext ());
+                //}
                 return vp;
             }
         }
@@ -212,6 +265,13 @@ CVertex* CAdminControl::SelectNearestLine (CVertex* mouse)
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
             sp->GetTail ()->Select ();
             sp->GetTail ()->SetLastXY (sp->GetTail ()->GetX (), sp->GetTail ()->GetY ());
+
+            //if (EditModeFlag)
+            //{
+            //    CVertex* new_point;
+            //    new_point = CMath::CrossPoint (mouse, sp->GetTail (), sp->GetHead ());
+            //    sp->PushVertex (new_point->GetX (), new_point->GetY ());
+            //}
             return sp->GetTail ();
         }
     }
@@ -261,7 +321,7 @@ void CAdminControl::ResetMovedVertex ()
     }
 }
 
-void CAdminControl::AddShape ()
+void CAdminControl::PushShape ()
 {
     CShape* new_s = new CShape;
     CShape* pre_s = shape_tail;
@@ -279,7 +339,7 @@ void CAdminControl::AddShape ()
     shape_num++;
 }
 
-void CAdminControl::DeleteShape ()
+void CAdminControl::PopShape ()
 {
     if (shape_num == 0)
     {
@@ -302,18 +362,29 @@ void CAdminControl::DeleteShape ()
     }
 }
 
+void CAdminControl::DeleteAllShape ()
+{
+    if (shape_num > 0)
+    {
+        shape_head->FreeShape ();
+        shape_head = NULL;
+        shape_tail = NULL;
+        shape_num = 0;
+    }
+}
+
 int CAdminControl::GetShapeNum ()
 {
     return shape_num;
 }
 
-void CAdminControl::PushVertex (float new_x, float new_y)
+void CAdminControl::AddVertex (float new_x, float new_y)
 {
     CVertex new_vertex (new_x, new_y, NULL, NULL);
 
     if (shape_num == 0)
     {
-        AddShape ();
+        PushShape ();
     }
 
     if (shape_num >= 2)
@@ -326,20 +397,24 @@ void CAdminControl::PushVertex (float new_x, float new_y)
 
     if (shape_tail->GetVertexNum () < 3)
     {
-        shape_tail->AddVertex (new_x, new_y);
+        shape_tail->PushVertex (new_x, new_y);
     }
     else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
     {
         shape_tail->Close ();
-        AddShape ();
+        PushShape ();
+    }
+    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && IsNewShapeContaining ())
+    {
+        return;
     }
     else
     {
-        shape_tail->AddVertex (new_x, new_y);
+        shape_tail->PushVertex (new_x, new_y);
     }
 }
 
-void CAdminControl::PopVertex ()
+void CAdminControl::SubVertex ()
 {
     if (shape_num == 0)
     {
@@ -347,12 +422,12 @@ void CAdminControl::PopVertex ()
     }
     else if (shape_tail->GetVertexNum () == 0)
     {
-        DeleteShape ();
+        PopShape ();
     }
     else
     {
         shape_tail->Open ();
-        shape_tail->DeleteVertex ();
+        shape_tail->PopVertex ();
     }
 }
 
@@ -498,7 +573,7 @@ bool CAdminControl::IsInvalidMovedVertex ()
                     return true;
                 }
             }
-            else
+            else if (sp->GetVertexNum () > 3)
             {
                 if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
                 {
@@ -536,7 +611,7 @@ bool CAdminControl::IsInvalidMovedVertex ()
 
 bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex)
 {
-    if (my_shape->GetVertexNum () > 0)
+    if (my_shape->GetVertexNum () > 1)
     {
         for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
         {
@@ -646,6 +721,75 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
             continue;
         }
         else if (CMath::IsContained (moved_shape, sp->GetHead ()))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_vertex)
+{
+    CVertex* pre_vertex;
+    CVertex* next_vertex;
+
+    if (remove_vertex == my_shape->GetHead ())
+    {
+        pre_vertex = my_shape->GetTail ();
+        next_vertex = remove_vertex->GetNext ();
+    }
+    else if (remove_vertex == my_shape->GetTail ())
+    {
+        pre_vertex = remove_vertex->GetPre ();
+        next_vertex = my_shape->GetHead ();
+    }
+    else
+    {
+        pre_vertex = remove_vertex->GetPre ();
+        next_vertex = remove_vertex->GetNext ();
+    }
+
+    for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
+    {
+        if (sp == my_shape)
+        {
+            continue;
+        }
+
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+        {
+            if (vp == pre_vertex)
+            {
+                if (CMath::IsLineCrossing (vp, vp->GetNext ()->GetNext (), pre_vertex, next_vertex))
+                {
+                    return true;
+                }
+                vp = vp->GetNext ();
+            }
+            else if (CMath::IsLineCrossing (vp, vp->GetNext (), pre_vertex, next_vertex))
+            {
+                return true;
+            }
+        }
+        if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), pre_vertex, next_vertex))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CAdminControl::IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex)
+{
+    for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
+    {
+        if (sp == my_shape)
+        {
+            continue;
+        }
+        if (CMath::IsContained (my_shape, sp->GetHead (), remove_vertex))
         {
             return true;
         }

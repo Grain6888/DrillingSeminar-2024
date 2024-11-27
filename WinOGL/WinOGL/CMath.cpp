@@ -44,6 +44,46 @@ float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
     return sqrtf ((powf ((px - cx), 2) + powf ((py - cy), 2)));
 }
 
+CVertex* CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e)
+{
+    // https://ikatakos.com/pot/programming_algorithm/geometry/point_to_line
+
+    float ax = line_s->GetX ();
+    float ay = line_s->GetY ();
+    float bx = line_e->GetX ();
+    float by = line_e->GetY ();
+    float px = p->GetX ();
+    float py = p->GetY ();
+
+    float abx = bx - ax;
+    float aby = by - ay;
+    float apx = px - ax;
+    float apy = py - ay;
+
+    float t = (apx * abx + apy * aby) / (powf (abx, 2) + powf (aby, 2));
+
+    float cx = 0.0;
+    float cy = 0.0;
+    if (t <= 0)
+    {
+        cx = ax;
+        cy = ay;
+    }
+    else if (t >= 1)
+    {
+        cx = bx;
+        cy = by;
+    }
+    else
+    {
+        cx = ax + t * abx;
+        cy = ay + t * aby;
+    }
+
+    CVertex result (cx, cy, NULL, NULL);
+    return &result;
+}
+
 bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
     float outer_a_1 = Outer (a_s, a_e, a_s, b_s);
@@ -69,6 +109,61 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
         angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
     }
     angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead (), new_vertex);
+
+    double difference = 2 * M_PI - fabs (angle_sum);
+    if (difference >= -0.001 && difference <= 0.001)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_vertex)
+{
+    double angle_sum = 0.0;
+
+    if (skip_vertex == my_shape->GetHead ())
+    {
+        for (CVertex* vp = my_shape->GetHead ()->GetNext (); vp != my_shape->GetTail () && vp != NULL; vp = vp->GetNext ())
+        {
+            angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
+        }
+        angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead ()->GetNext (), new_vertex);
+    }
+    else if (skip_vertex == my_shape->GetTail ())
+    {
+        for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail () && vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == skip_vertex->GetPre ())
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, my_shape->GetTail ());
+                vp = vp->GetNext ();
+            }
+            else
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
+            }
+        }
+    }
+    else
+    {
+        for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail () && vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp == skip_vertex->GetPre ())
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ()->GetNext ());
+                vp = vp->GetNext ();
+            }
+            else
+            {
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, vp->GetNext ());
+            }
+        }
+        angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead (), new_vertex);
+    }
 
     double difference = 2 * M_PI - fabs (angle_sum);
     if (difference >= -0.001 && difference <= 0.001)

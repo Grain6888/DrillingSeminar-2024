@@ -7,17 +7,24 @@
 class CMath {
 public:
     /// @brief 2 点間の距離を計算する．
-    /// @param p1 1 つ目の点
-    /// @param p2 2 つ目の点
+    /// @param p1 1 つ目の頂点
+    /// @param p2 2 つ目の頂点
     /// @return 2 点間の距離 (0~1)
     static float VertexDis (CVertex* p1, CVertex* p2);
 
     /// @brief 点と直線間の距離を計算する．
-    /// @param p      点
+    /// @param p      頂点
     /// @param line_s 直線の始点
     /// @param line_e 直線の終点
     /// @return 点と直線間の距離 (0~1)
     static float LineDis (CVertex* p, CVertex* line_s, CVertex* line_e);
+
+    /// @brief 点の垂線と直線間の交点を計算する．
+    /// @param p      頂点
+    /// @param line_s 直線の視点
+    /// @param line_e 直線の終点
+    /// @return 点の垂線と直線間の交点 (X,Y)
+    static CVertex* CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e);
 
     /// @brief 2 本の辺が交差していないかを判定する．
     /// @param a_s 1 本目の辺の始点
@@ -29,9 +36,16 @@ public:
 
     /// @brief 多角形が点を内包していないかを判定する．
     /// @param my_shape   多角形
-    /// @param new_vertex 点
+    /// @param new_vertex 頂点
     /// @return 内包する true / 内包しない false
     static bool IsContained (CShape* my_shape, CVertex* new_vertex);
+
+    /// @brief 多角形が点を内包していないかを判定する．
+    /// @param my_shape    多角形
+    /// @param new_vertex  頂点
+    /// @param skip_vertex 削除する頂点
+    /// @return 内包する true / 内包しない false
+    static bool IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_vertex);
 
     /// @brief 2 つのベクトルの内積を計算する．
     /// @param p_a_s 1 つ目のベクトルの始点
