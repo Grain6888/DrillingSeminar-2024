@@ -478,6 +478,19 @@ bool CAdminControl::IsAddMode ()
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)
 {
+    // 作りかけの図形に点を追加するときのチェック
+    if (shape_num > 0)
+    {
+
+    }
+    if (shape_num >= 2)
+    {
+        if (IsNewVertexContained (new_vertex) || IsNewVertexOtherCross (new_vertex))
+        {
+            return false; // すでにほかの図形があるなら，点が内包されたり他交差したりするならNG
+        }
+    }
+
     return true;
 }
 
