@@ -375,30 +375,18 @@ void CAdminControl::AddVertex (float new_x, float new_y)
     {
         PushShape ();
     }
-    else if (shape_num >= 2)
-    {
-        if (IsNewVertexContained (&new_vertex) || IsNewVertexOtherCross (&new_vertex))
-        {
-            return;
-        }
-    }
 
-    if (shape_tail->GetVertexNum () < 3 && !shape_tail->IsNewVertexSelfCross (&new_vertex))
+    if (CanAddVertex (&new_vertex))
     {
-        shape_tail->PushVertex (new_x, new_y);
-    }
-    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
-    {
-        shape_tail->Close ();
-        PushShape ();
-    }
-    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && IsNewShapeContaining ())
-    {
-        return;
-    }
-    else if (!shape_tail->IsNewVertexSelfCross (&new_vertex))
-    {
-        shape_tail->PushVertex (new_x, new_y);
+        if (shape_tail->GetVertexNum () >= 2 && CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < MIN_DISTANCE)
+        {
+            shape_tail->Close ();
+            PushShape ();
+        }
+        else
+        {
+            shape_tail->PushVertex (new_x, new_y);
+        }
     }
 }
 
@@ -481,13 +469,20 @@ bool CAdminControl::CanAddVertex (CVertex* new_vertex)
     // 作りかけの図形に点を追加するときのチェック
     if (shape_num > 0)
     {
-
+        if (shape_tail->IsNewVertexSelfCross (new_vertex))
+        {
+            return false;
+        }
     }
     if (shape_num >= 2)
     {
         if (IsNewVertexContained (new_vertex) || IsNewVertexOtherCross (new_vertex))
         {
-            return false; // すでにほかの図形があるなら，点が内包されたり他交差したりするならNG
+            return false;
+        }
+        if (shape_tail->GetVertexNum () >= 2 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < 0.1 && IsNewShapeContaining ())
+        {
+            return false;
         }
     }
 
