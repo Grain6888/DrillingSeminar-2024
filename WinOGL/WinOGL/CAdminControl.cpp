@@ -262,6 +262,28 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
 
 void CAdminControl::TrackVertexToMouse (float mouse_x, float mouse_y)
 {
+    //
+    // yíœz’Pƒ‚Éƒ}ƒEƒXƒJ[ƒ\ƒ‹‚É’Ç]‚·‚é‚Æ‚«‚É2“_‚ªd‚È‚é–â‘è‚ðˆêŽž“I‚É‰ðŒˆ
+    //
+    int count = 0;
+    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected ())
+            {
+                count++;
+            }
+            if (count > 1)
+            {
+                return;
+            }
+        }
+    }
+    //
+    //yíœz
+    //
+
     for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
@@ -514,46 +536,6 @@ bool CAdminControl::IsInvalidMovedVertex ()
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            //
-            // yíœz’Pƒ‚Éƒ}ƒEƒXƒJ[ƒ\ƒ‹‚É’Ç]‚·‚é‚Æ‚«‚É2“_‚ªd‚È‚é–â‘è‚ðˆêŽž“I‚É‰ðŒˆ
-            //
-            if (sp->GetVertexNum () == 2)
-            {
-                if (CMath::VertexDis (sp->GetHead (), sp->GetTail ()) == 0)
-                {
-                    return true;
-                }
-            }
-            else if (sp->GetVertexNum () == 3)
-            {
-                if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
-                {
-                    return true;
-                }
-                else if (CMath::VertexDis (sp->GetTail (), sp->GetTail ()->GetPre ()) == 0)
-                {
-                    return true;
-                }
-                else if (CMath::VertexDis (sp->GetHead (), sp->GetTail ()) == 0)
-                {
-                    return true;
-                }
-            }
-            else if (sp->GetVertexNum () > 3)
-            {
-                if (CMath::VertexDis (sp->GetHead (), sp->GetHead ()->GetNext ()) == 0)
-                {
-                    return true;
-                }
-                else if (CMath::VertexDis (sp->GetTail (), sp->GetTail ()->GetPre ()) == 0)
-                {
-                    return true;
-                }
-            }
-            //
-            //yíœz
-            //
-
             if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
             {
                 return true;
