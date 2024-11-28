@@ -23,24 +23,6 @@ public:
 protected:
     DECLARE_MESSAGE_MAP ()
 public:
-    afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
-    afx_msg void OnLButtonDblClk (UINT nFlags, CPoint point);
-    afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
-    afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
-    afx_msg void OnMouseMove (UINT nFlags, CPoint point);
-    afx_msg int OnCreate (LPCREATESTRUCT lpCreateStruct);
-    afx_msg void OnDestroy ();
-    afx_msg BOOL OnEraseBkgnd (CDC* pDC);
-    afx_msg void OnSize (UINT nType, int cx, int cy);
-    afx_msg void OnSizeUp ();
-    afx_msg void OnSizeDown ();
-    afx_msg void OnAxis ();
-    afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
-    afx_msg void OnEditMode ();
-    afx_msg void OnUpdateEditMode (CCmdUI* pCmdUI);
-    afx_msg void OnEditUndo ();
-    afx_msg void OnDeleteAll ();
-
     /// @brief 左右クリックした時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
     void SetDown (CPoint point);
@@ -68,6 +50,23 @@ private:
     CAdminControl AC;
     HGLRC m_hRC;
 public:
+    afx_msg void OnLButtonDown (UINT nFlags, CPoint point);
+    afx_msg void OnLButtonDblClk (UINT nFlags, CPoint point);
+    afx_msg void OnLButtonUp (UINT nFlags, CPoint point);
+    afx_msg void OnRButtonDown (UINT nFlags, CPoint point);
+    afx_msg void OnMouseMove (UINT nFlags, CPoint point);
+    afx_msg int OnCreate (LPCREATESTRUCT lpCreateStruct);
+    afx_msg void OnDestroy ();
+    afx_msg BOOL OnEraseBkgnd (CDC* pDC);
+    afx_msg void OnSize (UINT nType, int cx, int cy);
+    afx_msg void OnSizeUp ();
+    afx_msg void OnSizeDown ();
+    afx_msg void OnAxis ();
+    afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
+    afx_msg void OnEditMode ();
+    afx_msg void OnUpdateEditMode (CCmdUI* pCmdUI);
+    afx_msg void OnEditUndo ();
+    afx_msg void OnDeleteAll ();
     afx_msg BOOL OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message);
 };
 
