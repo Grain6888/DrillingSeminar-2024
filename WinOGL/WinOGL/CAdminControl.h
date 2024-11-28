@@ -140,9 +140,9 @@ public:
     /// @return 他交差する true / 他交差しない false
     bool IsNewVertexOtherCross (CVertex* new_vertex);
 
-    /// @brief 移動した頂点が不正でないかを判定する．
-    /// @return 不正 true / 不正でない false
-    bool IsInvalidMovedVertex ();
+    /// @brief 頂点の移動が可能かを判定する．
+    /// @return 移動可能 true / 移動不可 false
+    bool CanMoveVertex ();
 
     /// @brief !!! 閉じてない図形を移動できないバグ有り !!! 移動した頂点が多角形と他交差していないかを判定する．
     /// @param my_shape     自図形

@@ -67,6 +67,8 @@ private:
 
     CAdminControl AC;
     HGLRC m_hRC;
+public:
+    afx_msg BOOL OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

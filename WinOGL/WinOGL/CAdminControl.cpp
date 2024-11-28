@@ -26,7 +26,7 @@ void CAdminControl::Draw (float new_x, float new_y)
     }
 
     // —\‘ª“_‚ð•\Ž¦‚·‚éD
-    DrawExVertex (&mouse);
+    //DrawExVertex (&mouse);
 
     if (shape_num > 0)
     {
@@ -108,21 +108,21 @@ void CAdminControl::DrawExVertex (CVertex* mouse)
         {
             glColor3f (COLOR_RED);
         }
+        glPointSize (POINTSIZE);
+        glBegin (GL_POINTS);
+        glVertex2f (mouse->GetX (), mouse->GetY ());
+        glEnd ();
     }
-    glPointSize (POINTSIZE);
-    glBegin (GL_POINTS);
-    glVertex2f (mouse->GetX (), mouse->GetY ());
-    glEnd ();
 }
 
 void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 {
     CVertex mouse (end->GetX (), end->GetY (), NULL, NULL);
 
-    glEnable (GL_LINE_STIPPLE);
-    glLineStipple (2, 0xF0F0);
     if (AddModeFlag)
     {
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
         if (CanAddVertex (end))
         {
             glColor3f (COLOR_BLACK);
@@ -131,12 +131,12 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
         {
             glColor3f (COLOR_RED);
         }
+        glBegin (GL_LINES);
+        glVertex2f (start->GetX (), start->GetY ());
+        glVertex2f (end->GetX (), end->GetY ());
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
     }
-    glBegin (GL_LINES);
-    glVertex2f (start->GetX (), start->GetY ());
-    glVertex2f (end->GetX (), end->GetY ());
-    glEnd ();
-    glDisable (GL_LINE_STIPPLE);
 }
 
 void CAdminControl::EditShapeElements (float mouse_x, float mouse_y, UINT nFlags)
@@ -517,7 +517,7 @@ bool CAdminControl::IsNewVertexOtherCross (CVertex* new_vertex)
     return false;
 }
 
-bool CAdminControl::IsInvalidMovedVertex ()
+bool CAdminControl::CanMoveVertex ()
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
@@ -525,23 +525,23 @@ bool CAdminControl::IsInvalidMovedVertex ()
         {
             if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
             {
-                return true;
+                return false;
             }
             if (vp->IsSelected () && IsMovedVertexContained (sp, vp))
             {
-                return true;
+                return false;
             }
             if (vp->IsSelected () && IsMovedShapeContaining (sp))
             {
-                return true;
+                return false;
             }
             if (vp->IsSelected () && IsMovedVertexOtherCross (sp, vp))
             {
-                return true;
+                return false;
             }
         }
     }
-    return false;
+    return true;
 }
 
 bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex)
