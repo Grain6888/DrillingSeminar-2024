@@ -476,6 +476,11 @@ bool CAdminControl::IsAddMode ()
     return AddModeFlag;
 }
 
+bool CAdminControl::CanAddVertex (CVertex* new_vertex)
+{
+    return true;
+}
+
 bool CAdminControl::IsNewVertexContained (CVertex* new_vertex)
 {
     for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())

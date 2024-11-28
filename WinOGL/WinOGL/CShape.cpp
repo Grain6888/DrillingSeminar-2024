@@ -89,11 +89,6 @@ void CShape::PushVertex (float new_x, float new_y)
     // 点リストに含まれる Vertex セルの個数が 2 より多い場合
     else
     {
-        if (IsNewVertexSelfCross (new_vertex))
-        {
-            new_vertex->FreeVertex ();
-            return;
-        }
         vertex_tail->SetNext (new_vertex);
         new_vertex->SetPre (pre_vertex);
     }
