@@ -426,7 +426,6 @@ bool CAdminControl::IsAddMode ()
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)
 {
-    // 作りかけの図形に点を追加するときのチェック
     if (shape_num == 1)
     {
         if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < MIN_DISTANCE)

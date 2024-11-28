@@ -121,7 +121,7 @@ public:
     /// @return 追加モード true / 編集モード false．
     bool IsAddMode ();
 
-    /// @brief 頂点の追加 / 挿入が可能かを判定する．
+    /// @brief 頂点の追加が可能かを判定する．
     /// @param new_vertex 新しい頂点
     /// @return 追加可能 true / 追加不可 false
     bool CanAddVertex (CVertex* new_vertex);
