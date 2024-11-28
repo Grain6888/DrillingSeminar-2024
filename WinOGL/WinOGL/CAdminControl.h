@@ -67,10 +67,12 @@ public:
     /// @return 選択した図形のアドレス / NULL
     CShape* SelectShape (CVertex* mouse);
 
-    /// @brief !!! 作りかけの移動を禁止中 !!! 頂点をマウスに追従する．
-    /// @param mouse_x マウスの X 座標
-    /// @param mouse_y マウスの Y 座標
-    void TrackVertexToMouse (float mouse_x, float mouse_y);
+    /// @brief 頂点をマウスに追従する．
+    /// @param mouse_before_x 移動前のマウスの X 座標
+    /// @param mouse_before_y 移動前のマウスの Y 座標
+    /// @param mouse_after_x  移動後のマウスの X 座標
+    /// @param mouse_after_y  移動後のマウスの Y 座標
+    void ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
 
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();

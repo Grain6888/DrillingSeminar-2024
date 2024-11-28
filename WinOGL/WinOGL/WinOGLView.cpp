@@ -179,7 +179,7 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     SetOver (point);
     if (!AC.IsAddMode () && DraggingFlag)
     {
-        AC.TrackVertexToMouse (x_over, y_over);
+        AC.ShiftVertex (x_down, y_down, x_over, y_over);
     }
 
     RedrawWindow ();
