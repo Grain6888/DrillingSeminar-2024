@@ -98,29 +98,16 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
-    if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse))
+    if (AddModeFlag)
     {
-        mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
-    }
-    else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
-    {
-        glColor3f (COLOR_RED);
-    }
-    else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && IsNewVertexOtherCross (mouse))
-    {
-        glColor3f (COLOR_RED);
-    }
-    else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && IsNewShapeContaining ())
-    {
-        glColor3f (COLOR_RED);
-    }
-    else if (AddModeFlag && shape_num > 0 && IsNewVertexContained (mouse))
-    {
-        glColor3f (COLOR_RED);
-    }
-    else
-    {
-        glColor3f (COLOR_BLACK);
+        if (CanAddVertex (mouse))
+        {
+            glColor3f (COLOR_BLACK);
+        }
+        else
+        {
+            glColor3f (COLOR_RED);
+        }
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
@@ -134,21 +121,16 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 
     glEnable (GL_LINE_STIPPLE);
     glLineStipple (2, 0xF0F0);
-    if (shape_tail->IsNewVertexSelfCross (&mouse))
+    if (AddModeFlag)
     {
-        glColor3f (COLOR_RED);
-    }
-    else if (IsNewVertexOtherCross (&mouse))
-    {
-        glColor3f (COLOR_RED);
-    }
-    else if (IsNewShapeContaining () && CMath::VertexDis (shape_tail->GetHead (), &mouse) < 0.1)
-    {
-        glColor3f (COLOR_RED);
-    }
-    else
-    {
-        glColor3f (COLOR_BLACK);
+        if (CanAddVertex (end))
+        {
+            glColor3f (COLOR_BLACK);
+        }
+        else
+        {
+            glColor3f (COLOR_RED);
+        }
     }
     glBegin (GL_LINES);
     glVertex2f (start->GetX (), start->GetY ());
@@ -375,30 +357,18 @@ void CAdminControl::AddVertex (float new_x, float new_y)
     {
         PushShape ();
     }
-    else if (shape_num >= 2)
-    {
-        if (IsNewVertexContained (&new_vertex) || IsNewVertexOtherCross (&new_vertex))
-        {
-            return;
-        }
-    }
 
-    if (shape_tail->GetVertexNum () < 3 && !shape_tail->IsNewVertexSelfCross (&new_vertex))
+    if (CanAddVertex (&new_vertex))
     {
-        shape_tail->PushVertex (new_x, new_y);
-    }
-    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && !shape_tail->IsNewVertexSelfCross (&new_vertex) && !IsNewShapeContaining ())
-    {
-        shape_tail->Close ();
-        PushShape ();
-    }
-    else if (CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < 0.1 && IsNewShapeContaining ())
-    {
-        return;
-    }
-    else if (!shape_tail->IsNewVertexSelfCross (&new_vertex))
-    {
-        shape_tail->PushVertex (new_x, new_y);
+        if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < MIN_DISTANCE)
+        {
+            shape_tail->Close ();
+            PushShape ();
+        }
+        else
+        {
+            shape_tail->PushVertex (new_x, new_y);
+        }
     }
 }
 
@@ -474,6 +444,45 @@ void CAdminControl::SwitchAddMode ()
 bool CAdminControl::IsAddMode ()
 {
     return AddModeFlag;
+}
+
+bool CAdminControl::CanAddVertex (CVertex* new_vertex)
+{
+    // 作りかけの図形に点を追加するときのチェック
+    if (shape_num == 1)
+    {
+        if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < MIN_DISTANCE)
+        {
+            new_vertex->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
+        }
+    }
+    if (shape_num >= 1)
+    {
+        if (shape_tail->IsNewVertexSelfCross (new_vertex))
+        {
+            return false;
+        }
+    }
+    if (shape_num >= 2)
+    {
+        if (IsNewVertexContained (new_vertex) || IsNewVertexOtherCross (new_vertex))
+        {
+            return false;
+        }
+        if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < MIN_DISTANCE)
+        {
+            if (IsNewShapeContaining ())
+            {
+                return false;
+            }
+            else
+            {
+                new_vertex->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
+            }
+        }
+    }
+
+    return true;
 }
 
 bool CAdminControl::IsNewVertexContained (CVertex* new_vertex)
