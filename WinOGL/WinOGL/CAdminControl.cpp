@@ -98,9 +98,13 @@ void CAdminControl::DrawShape (CShape* shape)
 
 void CAdminControl::DrawExVertex (CVertex* mouse)
 {
+    if (AddModeFlag)
+    {
+
+    }
     if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), mouse) < 0.1 && !shape_tail->IsNewVertexSelfCross (mouse) && !IsNewVertexOtherCross (mouse))
     {
-        mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
+        //mouse->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
     }
     else if (AddModeFlag && shape_num > 0 && shape_tail->GetVertexNum () > 0 && shape_tail->IsNewVertexSelfCross (mouse))
     {
@@ -378,7 +382,7 @@ void CAdminControl::AddVertex (float new_x, float new_y)
 
     if (CanAddVertex (&new_vertex))
     {
-        if (shape_tail->GetVertexNum () >= 2 && CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < MIN_DISTANCE)
+        if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), &new_vertex) < MIN_DISTANCE)
         {
             shape_tail->Close ();
             PushShape ();
@@ -480,9 +484,16 @@ bool CAdminControl::CanAddVertex (CVertex* new_vertex)
         {
             return false;
         }
-        if (shape_tail->GetVertexNum () >= 2 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < 0.1 && IsNewShapeContaining ())
+        if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < MIN_DISTANCE)
         {
-            return false;
+            if (IsNewShapeContaining ())
+            {
+                return false;
+            }
+            else
+            {
+                new_vertex->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
+            }
         }
     }
 
