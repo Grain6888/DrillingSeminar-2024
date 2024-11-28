@@ -383,7 +383,7 @@ void CAdminControl::AddVertex (float new_x, float new_y)
         }
     }
 
-    if (shape_tail->GetVertexNum () < 3)
+    if (shape_tail->GetVertexNum () < 3 && !shape_tail->IsNewVertexSelfCross (&new_vertex))
     {
         shape_tail->PushVertex (new_x, new_y);
     }
@@ -478,19 +478,6 @@ bool CAdminControl::IsAddMode ()
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)
 {
-    // 作りかけの図形に点を追加するときのチェック
-    if (shape_num > 0)
-    {
-
-    }
-    if (shape_num >= 2)
-    {
-        if (IsNewVertexContained (new_vertex) || IsNewVertexOtherCross (new_vertex))
-        {
-            return false; // すでにほかの図形があるなら，点が内包されたり他交差したりするならNG
-        }
-    }
-
     return true;
 }
 
