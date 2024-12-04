@@ -68,11 +68,14 @@ public:
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();
 
-    /// @brief 図形を追加する．
+    /// @brief 末尾に図形を追加する．
     void PushShape ();
 
-    /// @brief 図形を削除する．
+    /// @brief 末尾の図形を削除する．
     void PopShape ();
+
+    /// @brief 図形を削除する．
+    void RemoveShape ();
 
     /// @brief すべての図形を削除する．
     void DeleteAllShape ();
