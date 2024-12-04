@@ -25,9 +25,6 @@ void CAdminControl::Draw (float new_x, float new_y)
         DrawAxis ();
     }
 
-    // 予測点を表示する．
-    DrawExVertex (&mouse);
-
     if (shape_num > 0)
     {
         for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
@@ -96,33 +93,14 @@ void CAdminControl::DrawShape (CShape* shape)
     }
 }
 
-void CAdminControl::DrawExVertex (CVertex* mouse)
-{
-    if (AddModeFlag)
-    {
-        if (CanAddVertex (mouse))
-        {
-            glColor3f (COLOR_BLACK);
-        }
-        else
-        {
-            glColor3f (COLOR_RED);
-        }
-    }
-    glPointSize (POINTSIZE);
-    glBegin (GL_POINTS);
-    glVertex2f (mouse->GetX (), mouse->GetY ());
-    glEnd ();
-}
-
 void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 {
     CVertex mouse (end->GetX (), end->GetY (), NULL, NULL);
 
-    glEnable (GL_LINE_STIPPLE);
-    glLineStipple (2, 0xF0F0);
     if (AddModeFlag)
     {
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
         if (CanAddVertex (end))
         {
             glColor3f (COLOR_BLACK);
@@ -131,12 +109,12 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
         {
             glColor3f (COLOR_RED);
         }
+        glBegin (GL_LINES);
+        glVertex2f (start->GetX (), start->GetY ());
+        glVertex2f (end->GetX (), end->GetY ());
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
     }
-    glBegin (GL_LINES);
-    glVertex2f (start->GetX (), start->GetY ());
-    glVertex2f (end->GetX (), end->GetY ());
-    glEnd ();
-    glDisable (GL_LINE_STIPPLE);
 }
 
 void CAdminControl::EditShapeElements (float mouse_x, float mouse_y, UINT nFlags)
@@ -188,7 +166,7 @@ CVertex* CAdminControl::SelectVertex (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (CMath::VertexDis (vp, mouse) < 0.1 && SelectShape (mouse) == NULL)
+            if (CMath::VertexDis (vp, mouse) < MIN_DISTANCE)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
@@ -206,7 +184,7 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
+            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < MIN_DISTANCE)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
@@ -215,7 +193,7 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
                 return vp;
             }
         }
-        if (sp->IsClosed () == true && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
+        if (sp->IsClosed () == true && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < MIN_DISTANCE)
         {
             sp->GetHead ()->Select ();
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
@@ -242,37 +220,15 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
     return NULL;
 }
 
-void CAdminControl::TrackVertexToMouse (float mouse_x, float mouse_y)
+void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
 {
-    //
-    // 【削除】単純にマウスカーソルに追従するときに2点が重なる問題を一時的に解決
-    //
-    int count = 0;
     for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
             if (vp->IsSelected ())
             {
-                count++;
-            }
-            if (count > 1)
-            {
-                return;
-            }
-        }
-    }
-    //
-    //【削除】
-    //
-
-    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
-    {
-        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
-        {
-            if (vp->IsSelected ())
-            {
-                vp->SetXY (mouse_x, mouse_y);
+                vp->SetXY (vp->GetLastX () + (mouse_after_x - mouse_before_x), vp->GetLastY () + (mouse_after_y - mouse_before_y));
             }
         }
     }
@@ -448,7 +404,6 @@ bool CAdminControl::IsAddMode ()
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)
 {
-    // 作りかけの図形に点を追加するときのチェック
     if (shape_num == 1)
     {
         if (shape_tail->GetVertexNum () >= 3 && CMath::VertexDis (shape_tail->GetHead (), new_vertex) < MIN_DISTANCE)
@@ -539,7 +494,7 @@ bool CAdminControl::IsNewVertexOtherCross (CVertex* new_vertex)
     return false;
 }
 
-bool CAdminControl::IsInvalidMovedVertex ()
+bool CAdminControl::CanMoveVertex ()
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
@@ -547,23 +502,23 @@ bool CAdminControl::IsInvalidMovedVertex ()
         {
             if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
             {
-                return true;
+                return false;
             }
             if (vp->IsSelected () && IsMovedVertexContained (sp, vp))
             {
-                return true;
+                return false;
             }
             if (vp->IsSelected () && IsMovedShapeContaining (sp))
             {
-                return true;
+                return false;
             }
             if (vp->IsSelected () && IsMovedVertexOtherCross (sp, vp))
             {
-                return true;
+                return false;
             }
         }
     }
-    return false;
+    return true;
 }
 
 bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_vertex)

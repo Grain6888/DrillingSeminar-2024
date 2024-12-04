@@ -33,6 +33,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_EDIT_UNDO, &CWinOGLView::OnEditUndo)
     ON_COMMAND (ID_DELETE_ALL, &CWinOGLView::OnDeleteAll)
     ON_WM_LBUTTONDBLCLK ()
+    ON_WM_SETCURSOR ()
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -103,26 +104,35 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
         AC.DeSelectAllShape ();
         AC.AddVertex (x_down, y_down);
     }
-    else if (!AC.IsAddMode () && !DraggingFlag)
+    else
     {
-        // Ctrl を押しながら左クリックで複数選択
-        if (!(nFlags & MK_CONTROL))
+        if (DraggingFlag)
         {
-            AC.DeSelectAllShape ();
+            if (!AC.CanMoveVertex ())
+            {
+                AC.ResetMovedVertex ();
+            }
+            DraggingFlag = false;
         }
+        else
+        {
+            // Ctrl を押しながら左クリックで複数選択
+            if (!(nFlags & MK_CONTROL))
+            {
+                AC.DeSelectAllShape ();
+            }
 
-        AC.SelectVertex (&mouse);
-        AC.SelectLine (&mouse);
-        AC.SelectShape (&mouse);
-        DraggingFlag = true;
-    }
-    else if (!AC.IsAddMode () && DraggingFlag)
-    {
-        if (!AC.IsAddMode () && AC.IsInvalidMovedVertex ())
-        {
-            AC.ResetMovedVertex ();
+            if (AC.SelectVertex (&mouse) != NULL)
+            {
+            }
+            else if (AC.SelectLine (&mouse) != NULL)
+            {
+            }
+            else if (AC.SelectShape (&mouse) != NULL)
+            {
+            }
+            DraggingFlag = true;
         }
-        DraggingFlag = false;
     }
 
     RedrawWindow ();
@@ -148,7 +158,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (!AC.IsAddMode () && AC.IsInvalidMovedVertex ())
+    if (!AC.IsAddMode () && !AC.CanMoveVertex ())
     {
         AC.ResetMovedVertex ();
     }
@@ -179,7 +189,7 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     SetOver (point);
     if (!AC.IsAddMode () && DraggingFlag)
     {
-        AC.TrackVertexToMouse (x_over, y_over);
+        AC.ShiftVertex (x_down, y_down, x_over, y_over);
     }
 
     RedrawWindow ();
@@ -378,4 +388,42 @@ void CWinOGLView::SetOver (CPoint point)
         y_over = (y_over - (float)(1.0 - y_over)) * aspect_ratio;
         y_over = y_over;
     }
+}
+
+
+BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
+{
+    if (AC.IsAddMode ())
+    {
+        CVertex mouse_over (x_over, y_over, NULL, NULL);
+        if (AC.CanAddVertex (&mouse_over))
+        {
+            ::SetCursor (AfxGetApp ()->LoadStandardCursor (IDC_CROSS));
+        }
+        else
+        {
+            ::SetCursor (AfxGetApp ()->LoadStandardCursor (IDC_NO));
+        }
+    }
+    else
+    {
+        if (DraggingFlag)
+        {
+            if (AC.CanMoveVertex ())
+            {
+                ::SetCursor (AfxGetApp ()->LoadStandardCursor (IDC_SIZEALL));
+            }
+            else
+            {
+                ::SetCursor (AfxGetApp ()->LoadStandardCursor (IDC_NO));
+            }
+        }
+        else
+        {
+            ::SetCursor (AfxGetApp ()->LoadStandardCursor (IDC_SIZEALL));
+        }
+    }
+
+    return TRUE;
+    return CView::OnSetCursor (pWnd, nHitTest, message);
 }

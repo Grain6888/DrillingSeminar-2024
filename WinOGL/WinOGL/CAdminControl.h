@@ -38,10 +38,6 @@ public:
     /// @param end   図形の終点
     void DrawShape (CShape* shape);
 
-    /// @brief 予測点の描画を行う．
-    /// @param mouse マウスの座標 (X,Y)
-    void DrawExVertex (CVertex* mouse);
-
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
     /// @param end   予測線の終点
@@ -67,10 +63,12 @@ public:
     /// @return 選択した図形のアドレス / NULL
     CShape* SelectShape (CVertex* mouse);
 
-    /// @brief !!! 作りかけの移動を禁止中 !!! 頂点をマウスに追従する．
-    /// @param mouse_x マウスの X 座標
-    /// @param mouse_y マウスの Y 座標
-    void TrackVertexToMouse (float mouse_x, float mouse_y);
+    /// @brief 頂点をマウスに追従する．
+    /// @param mouse_before_x 移動前のマウスの X 座標
+    /// @param mouse_before_y 移動前のマウスの Y 座標
+    /// @param mouse_after_x  移動後のマウスの X 座標
+    /// @param mouse_after_y  移動後のマウスの Y 座標
+    void ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
 
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();
@@ -119,7 +117,7 @@ public:
     /// @return 追加モード true / 編集モード false．
     bool IsAddMode ();
 
-    /// @brief 頂点の追加 / 挿入が可能かを判定する．
+    /// @brief 頂点の追加が可能かを判定する．
     /// @param new_vertex 新しい頂点
     /// @return 追加可能 true / 追加不可 false
     bool CanAddVertex (CVertex* new_vertex);
@@ -138,9 +136,9 @@ public:
     /// @return 他交差する true / 他交差しない false
     bool IsNewVertexOtherCross (CVertex* new_vertex);
 
-    /// @brief 移動した頂点が不正でないかを判定する．
-    /// @return 不正 true / 不正でない false
-    bool IsInvalidMovedVertex ();
+    /// @brief 頂点の移動が可能かを判定する．
+    /// @return 移動可能 true / 移動不可 false
+    bool CanMoveVertex ();
 
     /// @brief !!! 閉じてない図形を移動できないバグ有り !!! 移動した頂点が多角形と他交差していないかを判定する．
     /// @param my_shape     自図形
