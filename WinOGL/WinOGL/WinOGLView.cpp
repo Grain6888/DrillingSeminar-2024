@@ -102,7 +102,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     if (AC.IsAddMode ())
     {
         AC.DeSelectAllShape ();
-        AC.AddVertex (x_down, y_down);
+        AC.PushVertex (x_down, y_down);
     }
     else
     {
@@ -306,7 +306,7 @@ void CWinOGLView::OnEditUndo ()
 {
     if (AC.IsAddMode ())
     {
-        AC.SubVertex ();
+        AC.PopVertex ();
     }
     else
     {

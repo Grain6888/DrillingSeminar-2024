@@ -305,7 +305,7 @@ int CAdminControl::GetShapeNum ()
     return shape_num;
 }
 
-void CAdminControl::AddVertex (float new_x, float new_y)
+void CAdminControl::PushVertex (float new_x, float new_y)
 {
     CVertex new_vertex (new_x, new_y, NULL, NULL);
 
@@ -328,7 +328,7 @@ void CAdminControl::AddVertex (float new_x, float new_y)
     }
 }
 
-void CAdminControl::SubVertex ()
+void CAdminControl::PopVertex ()
 {
     if (shape_num == 0)
     {
@@ -644,6 +644,33 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
     }
 
     return false;
+}
+
+bool CAdminControl::CanRemoveVertex (CShape* my_shape, CVertex* remove_vertex)
+{
+    for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
+            {
+                return false;
+            }
+            if (vp->IsSelected () && IsMovedVertexContained (sp, vp))
+            {
+                return false;
+            }
+            if (vp->IsSelected () && IsMovedShapeContaining (sp))
+            {
+                return false;
+            }
+            if (vp->IsSelected () && IsMovedVertexOtherCross (sp, vp))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_vertex)

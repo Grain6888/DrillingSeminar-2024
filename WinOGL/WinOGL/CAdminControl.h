@@ -89,10 +89,10 @@ public:
     /// @brief 図形に基づいて頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void AddVertex (float new_x, float new_y);
+    void PushVertex (float new_x, float new_y);
 
     /// @brief 図形に基づいて頂点を削除する．
-    void SubVertex ();
+    void PopVertex ();
 
     /// @brief 描画サイズを上げる．
     void DrawSizeUp ();
@@ -156,6 +156,10 @@ public:
     /// @param moved_shape 移動した多角形
     /// @return 内包する true / 内包しない false
     bool IsMovedShapeContaining (CShape* moved_shape);
+
+    /// @brief 頂点の削除が可能かを判定する．
+    /// @return 削除可能 true / 削除不可 false
+    bool CanRemoveVertex (CShape* my_shape, CVertex* remove_vertex);
 
     /// @brief 辺上の点を削除する場合に他交差しないかを判定する．
     /// @param my_shape      自図形
