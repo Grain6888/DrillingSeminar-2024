@@ -179,13 +179,16 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
 
 void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
 {
+    CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+    CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+
     for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
             if (vp->IsSelected ())
             {
-                vp->SetXY (vp->GetLastX () + (mouse_after_x - mouse_before_x), vp->GetLastY () + (mouse_after_y - mouse_before_y));
+                CMath::ShiftPoint (&before, &after, vp);
             }
         }
     }
