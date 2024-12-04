@@ -188,7 +188,7 @@ CVertex* CAdminControl::SelectVertex (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (CMath::VertexDis (vp, mouse) < 0.1 && SelectShape (mouse) == NULL)
+            if (CMath::VertexDis (vp, mouse) < MIN_DISTANCE)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
@@ -206,7 +206,7 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
+            if (CMath::LineDis (mouse, vp, vp->GetNext ()) < MIN_DISTANCE)
             {
                 vp->Select ();
                 vp->SetLastXY (vp->GetX (), vp->GetY ());
@@ -215,7 +215,7 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
                 return vp;
             }
         }
-        if (sp->IsClosed () == true && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < 0.1 && SelectVertex (mouse) == NULL && SelectShape (mouse) == NULL)
+        if (sp->IsClosed () == true && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < MIN_DISTANCE)
         {
             sp->GetHead ()->Select ();
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());

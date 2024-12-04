@@ -122,9 +122,15 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
                 AC.DeSelectAllShape ();
             }
 
-            AC.SelectVertex (&mouse);
-            AC.SelectLine (&mouse);
-            AC.SelectShape (&mouse);
+            if (AC.SelectVertex (&mouse) != NULL)
+            {
+            }
+            else if (AC.SelectLine (&mouse) != NULL)
+            {
+            }
+            else if (AC.SelectShape (&mouse) != NULL)
+            {
+            }
             DraggingFlag = true;
         }
     }
