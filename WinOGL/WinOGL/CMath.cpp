@@ -44,7 +44,7 @@ float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
     return sqrtf ((powf ((px - cx), 2) + powf ((py - cy), 2)));
 }
 
-CVertex* CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e)
+void CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result)
 {
     // https://ikatakos.com/pot/programming_algorithm/geometry/point_to_line
 
@@ -80,8 +80,7 @@ CVertex* CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e)
         cy = ay + t * aby;
     }
 
-    CVertex result (cx, cy, NULL, NULL);
-    return &result;
+    result->SetXY (cx, cy);
 }
 
 bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)

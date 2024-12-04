@@ -43,11 +43,6 @@ public:
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
 
-    /// @brief マウスの近くの図形要素を選択する．
-    /// @param mouse_x マウスの X 座標
-    /// @param mouse_y マウスの Y 座標
-    void EditShapeElements (float mouse_x, float mouse_y, UINT nFlags);
-
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した頂点を含む図形のアドレス / NULL
@@ -91,8 +86,16 @@ public:
     /// @param new_y 頂点の Y 座標
     void PushVertex (float new_x, float new_y);
 
+    /// @brief 辺上に頂点を追加する．
+    /// @param mouse_x マウスの X 座標
+    /// @param mouse_y マウスの Y 座標
+    void AddVertex (float mouse_x, float mouse_y);
+
     /// @brief 図形に基づいて頂点を削除する．
     void PopVertex ();
+
+    /// @brief 辺上の頂点を削除する．
+    void SubVertex ();
 
     /// @brief 描画サイズを上げる．
     void DrawSizeUp ();

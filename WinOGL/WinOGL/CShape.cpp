@@ -139,22 +139,12 @@ void CShape::PopVertex ()
 
 void CShape::RemoveVertex (CVertex* remove_vertex)
 {
-    if (remove_vertex == NULL)
-    {
-        return;
-    }
-    else if (remove_vertex == vertex_head)
+    if (remove_vertex == vertex_head)
     {
         CVertex* next_vertex = remove_vertex->GetNext ();
         next_vertex->SetPre (NULL);
         remove_vertex->SetNext (NULL);
         vertex_head = next_vertex;
-        remove_vertex->FreeVertex ();
-        vertex_num--;
-    }
-    else if (remove_vertex == vertex_tail)
-    {
-        PopVertex ();
     }
     else
     {
@@ -164,9 +154,9 @@ void CShape::RemoveVertex (CVertex* remove_vertex)
         next_vertex->SetPre (pre_vertex);
         remove_vertex->SetPre (NULL);
         remove_vertex->SetNext (NULL);
-        remove_vertex->FreeVertex ();
-        vertex_num--;
     }
+    remove_vertex->FreeVertex ();
+    vertex_num--;
 }
 
 bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)

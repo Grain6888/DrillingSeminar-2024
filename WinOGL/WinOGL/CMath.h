@@ -23,8 +23,9 @@ public:
     /// @param p      頂点
     /// @param line_s 直線の視点
     /// @param line_e 直線の終点
+    /// @param result 交点
     /// @return 点の垂線と直線間の交点 (X,Y)
-    static CVertex* CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e);
+    static void CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result);
 
     /// @brief 2 本の辺が交差していないかを判定する．
     /// @param a_s 1 本目の辺の始点

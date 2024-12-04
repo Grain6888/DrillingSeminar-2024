@@ -144,12 +144,13 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 {
     SetDown (point);
     CVertex mouse (x_down, y_down, NULL, NULL);
-    AC.DeSelectAllShape ();
 
-    if (!AC.IsAddMode () && !DraggingFlag && AC.SelectLine (&mouse) != NULL)
+    AC.DeSelectAllShape ();
+    if (!AC.IsAddMode () && !DraggingFlag && AC.SelectVertex (&mouse) == NULL && AC.SelectLine (&mouse) != NULL)
     {
-        AC.EditShapeElements (x_down, y_down, nFlags);
+        AC.AddVertex (x_down, y_down);
     }
+    AC.DeSelectAllShape ();
 
     RedrawWindow ();
 
@@ -177,7 +178,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 
     if (!AC.IsAddMode () && !DraggingFlag && AC.SelectVertex (&mouse) != NULL)
     {
-        AC.EditShapeElements (x_down, y_down, nFlags);
+        AC.SubVertex ();
     }
     RedrawWindow ();
 
