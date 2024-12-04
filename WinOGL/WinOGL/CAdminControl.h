@@ -68,6 +68,9 @@ public:
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();
 
+    /// @brief 移動した頂点の直前の位置を更新する．
+    void UpdateLastMovedVertex ();
+
     /// @brief 末尾に図形を追加する．
     void PushShape ();
 

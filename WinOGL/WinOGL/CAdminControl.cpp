@@ -205,6 +205,20 @@ void CAdminControl::ResetMovedVertex ()
     }
 }
 
+void CAdminControl::UpdateLastMovedVertex ()
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected ())
+            {
+                vp->SetLastXY (vp->GetX (), vp->GetY ());
+            }
+        }
+    }
+}
+
 void CAdminControl::PushShape ()
 {
     CShape* new_s = new CShape;

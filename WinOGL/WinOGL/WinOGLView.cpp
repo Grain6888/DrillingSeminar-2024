@@ -112,6 +112,10 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             {
                 AC.ResetMovedVertex ();
             }
+            else
+            {
+                AC.UpdateLastMovedVertex ();
+            }
             DraggingFlag = false;
         }
         else
@@ -145,9 +149,21 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
     CVertex mouse (x_down, y_down, NULL, NULL);
 
     AC.DeSelectAllShape ();
-    if (!AC.IsFreeShapeMode () && !DraggingFlag && AC.SelectVertex (&mouse) == NULL && AC.SelectLine (&mouse) != NULL)
+    if (AC.IsFreeShapeMode ())
     {
-        AC.AddVertex (x_down, y_down);
+    }
+    else
+    {
+        if (DraggingFlag)
+        {
+        }
+        else
+        {
+            if (AC.SelectVertex (&mouse) == NULL && AC.SelectLine (&mouse) != NULL)
+            {
+                AC.AddVertex (x_down, y_down);
+            }
+        }
     }
     AC.DeSelectAllShape ();
 
@@ -157,10 +173,21 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (!AC.IsFreeShapeMode () && !AC.CanMoveVertex ())
+    if (AC.IsFreeShapeMode ())
     {
-        AC.ResetMovedVertex ();
     }
+    else
+    {
+        if (DraggingFlag && !AC.CanMoveVertex ())
+        {
+            AC.ResetMovedVertex ();
+        }
+        else
+        {
+            AC.UpdateLastMovedVertex ();
+        }
+    }
+
     DraggingFlag = false;
 
     RedrawWindow ();
@@ -173,15 +200,21 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     CVertex mouse (x_down, y_down, NULL, NULL);
 
     AC.DeSelectAllShape ();
-    if (!AC.IsFreeShapeMode () && !DraggingFlag)
+    if (!AC.IsFreeShapeMode ())
     {
-        if (AC.SelectVertex (&mouse) != NULL)
+        if (DraggingFlag)
         {
-            AC.SubVertex ();
         }
-        else if (AC.SelectShape (&mouse) != NULL)
+        else
         {
-            AC.RemoveShape ();
+            if (AC.SelectVertex (&mouse) != NULL)
+            {
+                AC.SubVertex ();
+            }
+            else if (AC.SelectShape (&mouse) != NULL)
+            {
+                AC.RemoveShape ();
+            }
         }
     }
 
@@ -192,9 +225,15 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     SetOver (point);
-    if (!AC.IsFreeShapeMode () && DraggingFlag)
+    if (AC.IsFreeShapeMode ())
     {
-        AC.ShiftVertex (x_down, y_down, x_over, y_over);
+    }
+    else
+    {
+        if (DraggingFlag)
+        {
+            AC.ShiftVertex (x_down, y_down, x_over, y_over);
+        }
     }
 
     RedrawWindow ();
