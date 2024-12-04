@@ -136,7 +136,6 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     }
 
     RedrawWindow ();
-
     CView::OnLButtonDown (nFlags, point);
 }
 
@@ -153,7 +152,6 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
     AC.DeSelectAllShape ();
 
     RedrawWindow ();
-
     CView::OnLButtonDblClk (nFlags, point);
 }
 
@@ -166,7 +164,6 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
     DraggingFlag = false;
 
     RedrawWindow ();
-
     CView::OnLButtonUp (nFlags, point);
 }
 
@@ -174,14 +171,14 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
     SetDown (point);
     CVertex mouse (x_down, y_down, NULL, NULL);
-    AC.DeSelectAllShape ();
 
+    AC.DeSelectAllShape ();
     if (!AC.IsAddMode () && !DraggingFlag && AC.SelectVertex (&mouse) != NULL)
     {
         AC.SubVertex ();
     }
-    RedrawWindow ();
 
+    RedrawWindow ();
     CView::OnRButtonDown (nFlags, point);
 }
 
@@ -194,7 +191,6 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     }
 
     RedrawWindow ();
-
     CView::OnMouseMove (nFlags, point);
 }
 
@@ -265,6 +261,7 @@ void CWinOGLView::OnSize (UINT nType, int cx, int cy)
     }
 
     glMatrixMode (GL_MODELVIEW);
+
     RedrawWindow ();
     wglMakeCurrent (clientDC.m_hDC, NULL);
 }

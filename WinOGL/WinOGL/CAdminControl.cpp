@@ -335,13 +335,13 @@ void CAdminControl::SubVertex ()
 
     for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
     {
-        if (sp->GetTail ()->IsSelected () && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (sp->GetTail ()) && !IsRemoveVertexOtherCross (sp, sp->GetTail ()) && !IsRemoveShapeContaining (sp, sp->GetTail ()))
+        if (sp->GetTail ()->IsSelected () && sp->GetVertexNum () > 3 && CanRemoveVertex ())
         {
             sp->PopVertex ();
         }
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->IsSelected () && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp) && !IsRemoveShapeContaining (sp, vp))
+            if (vp->IsSelected () && sp->GetVertexNum () > 3 && CanRemoveVertex ())
             {
                 sp->RemoveVertex (vp);
                 return;
@@ -651,25 +651,21 @@ bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
     return false;
 }
 
-bool CAdminControl::CanRemoveVertex (CShape* my_shape, CVertex* remove_vertex)
+bool CAdminControl::CanRemoveVertex ()
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (vp->IsSelected () && sp->IsMovedVertexSelfCross (vp))
+            if (vp->IsSelected () && sp->IsRemoveVertexSelfCross (vp))
             {
                 return false;
             }
-            if (vp->IsSelected () && IsMovedVertexContained (sp, vp))
+            if (vp->IsSelected () && IsRemoveVertexOtherCross (sp, vp))
             {
                 return false;
             }
-            if (vp->IsSelected () && IsMovedShapeContaining (sp))
-            {
-                return false;
-            }
-            if (vp->IsSelected () && IsMovedVertexOtherCross (sp, vp))
+            if (vp->IsSelected () && IsRemoveShapeContaining (sp, vp))
             {
                 return false;
             }

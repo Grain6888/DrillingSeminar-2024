@@ -162,7 +162,7 @@ public:
 
     /// @brief 頂点の削除が可能かを判定する．
     /// @return 削除可能 true / 削除不可 false
-    bool CanRemoveVertex (CShape* my_shape, CVertex* remove_vertex);
+    bool CanRemoveVertex ();
 
     /// @brief 辺上の点を削除する場合に他交差しないかを判定する．
     /// @param my_shape      自図形
