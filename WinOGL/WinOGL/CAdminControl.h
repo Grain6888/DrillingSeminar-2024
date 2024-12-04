@@ -43,11 +43,6 @@ public:
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
 
-    /// @brief マウスの近くの図形要素を選択する．
-    /// @param mouse_x マウスの X 座標
-    /// @param mouse_y マウスの Y 座標
-    void EditShapeElements (float mouse_x, float mouse_y, UINT nFlags);
-
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した頂点を含む図形のアドレス / NULL
@@ -89,9 +84,17 @@ public:
     /// @brief 図形に基づいて頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void AddVertex (float new_x, float new_y);
+    void PushVertex (float new_x, float new_y);
 
     /// @brief 図形に基づいて頂点を削除する．
+    void PopVertex ();
+
+    /// @brief 辺上に頂点を追加する．
+    /// @param mouse_x マウスの X 座標
+    /// @param mouse_y マウスの Y 座標
+    void AddVertex (float mouse_x, float mouse_y);
+
+    /// @brief 辺上の頂点を削除する．
     void SubVertex ();
 
     /// @brief 描画サイズを上げる．
@@ -156,6 +159,10 @@ public:
     /// @param moved_shape 移動した多角形
     /// @return 内包する true / 内包しない false
     bool IsMovedShapeContaining (CShape* moved_shape);
+
+    /// @brief 頂点の削除が可能かを判定する．
+    /// @return 削除可能 true / 削除不可 false
+    bool CanRemoveVertex ();
 
     /// @brief 辺上の点を削除する場合に他交差しないかを判定する．
     /// @param my_shape      自図形
