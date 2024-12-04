@@ -63,8 +63,8 @@ public:
     afx_msg void OnSizeDown ();
     afx_msg void OnAxis ();
     afx_msg void OnUpdateAxis (CCmdUI* pCmdUI);
-    afx_msg void OnEditMode ();
-    afx_msg void OnUpdateEditMode (CCmdUI* pCmdUI);
+    afx_msg void OnFreeShapeMode ();
+    afx_msg void OnUpdateFreeShapeMode (CCmdUI* pCmdUI);
     afx_msg void OnEditUndo ();
     afx_msg void OnDeleteAll ();
     afx_msg BOOL OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message);

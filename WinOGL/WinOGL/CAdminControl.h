@@ -116,12 +116,12 @@ public:
     /// @return 表示中 true / 非表示中 false．
     bool IsShowingAxis ();
 
-    /// @brief 追加モードまたは編集モードの状態を切り替える．
-    void SwitchAddMode ();
+    /// @brief 自由図形モードの状態を切り替える．
+    void SwitchFreeShapeMode ();
 
-    /// @brief 追加モードまたは編集モードの状態を取得する．
-    /// @return 追加モード true / 編集モード false．
-    bool IsAddMode ();
+    /// @brief 自由図形モードの状態を取得する．
+    /// @return 自由図形モードである true / 自由図形モードでない false．
+    bool IsFreeShapeMode ();
 
     /// @brief 頂点の追加が可能かを判定する．
     /// @param new_vertex 新しい頂点
@@ -204,6 +204,6 @@ private:
     /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;
 
-    /// @brief 追加モードまたは編集モードの状態フラグ（追加モード true / 編集モード false）．
-    bool AddModeFlag = true;
+    /// @brief 自由図形モードの状態フラグ（自由図形モードである true / 自由図形モードでない false）．
+    bool FreeShapeModeFlag = true;
 };

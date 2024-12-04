@@ -40,7 +40,7 @@ void CAdminControl::Draw (float new_x, float new_y)
         }
 
         // —\‘ªü‚ð•\Ž¦‚·‚éD
-        if (shape_tail->GetVertexNum () > 0 && IsAddMode ())
+        if (shape_tail->GetVertexNum () > 0 && IsFreeShapeMode ())
         {
             DrawExLine (shape_tail->GetTail (), &mouse);
         }
@@ -97,7 +97,7 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
 {
     CVertex mouse (end->GetX (), end->GetY (), NULL, NULL);
 
-    if (AddModeFlag)
+    if (FreeShapeModeFlag)
     {
         glEnable (GL_LINE_STIPPLE);
         glLineStipple (2, 0xF0F0);
@@ -428,15 +428,15 @@ bool CAdminControl::IsShowingAxis ()
     return AxisFlag;
 }
 
-void CAdminControl::SwitchAddMode ()
+void CAdminControl::SwitchFreeShapeMode ()
 {
-    AddModeFlag = !AddModeFlag;
+    FreeShapeModeFlag = !FreeShapeModeFlag;
     DeSelectAllShape ();
 }
 
-bool CAdminControl::IsAddMode ()
+bool CAdminControl::IsFreeShapeMode ()
 {
-    return AddModeFlag;
+    return FreeShapeModeFlag;
 }
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)

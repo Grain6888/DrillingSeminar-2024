@@ -27,13 +27,13 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_SIZEDOWN, &CWinOGLView::OnSizeDown)
     ON_COMMAND (ID_AXIS, &CWinOGLView::OnAxis)
     ON_UPDATE_COMMAND_UI (ID_AXIS, &CWinOGLView::OnUpdateAxis)
-    ON_COMMAND (ID_EDITMODE, &CWinOGLView::OnEditMode)
-    ON_UPDATE_COMMAND_UI (ID_EDITMODE, &CWinOGLView::OnUpdateEditMode)
     ON_WM_LBUTTONUP ()
     ON_COMMAND (ID_EDIT_UNDO, &CWinOGLView::OnEditUndo)
     ON_COMMAND (ID_DELETE_ALL, &CWinOGLView::OnDeleteAll)
     ON_WM_LBUTTONDBLCLK ()
     ON_WM_SETCURSOR ()
+    ON_COMMAND (ID_FREE_SHAPE_MODE, &CWinOGLView::OnFreeShapeMode)
+    ON_UPDATE_COMMAND_UI (ID_FREE_SHAPE_MODE, &CWinOGLView::OnUpdateFreeShapeMode)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -99,7 +99,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
     SetDown (point);
     CVertex mouse (x_down, y_down, NULL, NULL);
 
-    if (AC.IsAddMode ())
+    if (AC.IsFreeShapeMode ())
     {
         AC.DeSelectAllShape ();
         AC.PushVertex (x_down, y_down);
@@ -145,7 +145,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
     CVertex mouse (x_down, y_down, NULL, NULL);
 
     AC.DeSelectAllShape ();
-    if (!AC.IsAddMode () && !DraggingFlag && AC.SelectVertex (&mouse) == NULL && AC.SelectLine (&mouse) != NULL)
+    if (!AC.IsFreeShapeMode () && !DraggingFlag && AC.SelectVertex (&mouse) == NULL && AC.SelectLine (&mouse) != NULL)
     {
         AC.AddVertex (x_down, y_down);
     }
@@ -157,7 +157,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    if (!AC.IsAddMode () && !AC.CanMoveVertex ())
+    if (!AC.IsFreeShapeMode () && !AC.CanMoveVertex ())
     {
         AC.ResetMovedVertex ();
     }
@@ -173,7 +173,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     CVertex mouse (x_down, y_down, NULL, NULL);
 
     AC.DeSelectAllShape ();
-    if (!AC.IsAddMode () && !DraggingFlag)
+    if (!AC.IsFreeShapeMode () && !DraggingFlag)
     {
         if (AC.SelectVertex (&mouse) != NULL)
         {
@@ -192,7 +192,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
     SetOver (point);
-    if (!AC.IsAddMode () && DraggingFlag)
+    if (!AC.IsFreeShapeMode () && DraggingFlag)
     {
         AC.ShiftVertex (x_down, y_down, x_over, y_over);
     }
@@ -296,20 +296,20 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsShowingAxis ());
 }
 
-void CWinOGLView::OnEditMode ()
+void CWinOGLView::OnFreeShapeMode ()
 {
-    AC.SwitchAddMode ();
+    AC.SwitchFreeShapeMode ();
     RedrawWindow ();
 }
 
-void CWinOGLView::OnUpdateEditMode (CCmdUI* pCmdUI)
+void CWinOGLView::OnUpdateFreeShapeMode (CCmdUI* pCmdUI)
 {
-    pCmdUI->SetCheck (AC.IsAddMode ());
+    pCmdUI->SetCheck (AC.IsFreeShapeMode ());
 }
 
 void CWinOGLView::OnEditUndo ()
 {
-    if (AC.IsAddMode ())
+    if (AC.IsFreeShapeMode ())
     {
         AC.PopVertex ();
     }
@@ -398,7 +398,7 @@ void CWinOGLView::SetOver (CPoint point)
 
 BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 {
-    if (AC.IsAddMode ())
+    if (AC.IsFreeShapeMode ())
     {
         CVertex mouse_over (x_over, y_over, NULL, NULL);
         if (AC.CanAddVertex (&mouse_over))
