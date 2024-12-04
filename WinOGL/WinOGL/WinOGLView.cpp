@@ -173,9 +173,16 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     CVertex mouse (x_down, y_down, NULL, NULL);
 
     AC.DeSelectAllShape ();
-    if (!AC.IsAddMode () && !DraggingFlag && AC.SelectVertex (&mouse) != NULL)
+    if (!AC.IsAddMode () && !DraggingFlag)
     {
-        AC.SubVertex ();
+        if (AC.SelectVertex (&mouse) != NULL)
+        {
+            AC.SubVertex ();
+        }
+        else if (AC.SelectShape (&mouse) != NULL)
+        {
+            AC.RemoveShape ();
+        }
     }
 
     RedrawWindow ();

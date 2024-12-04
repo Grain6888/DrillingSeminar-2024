@@ -246,6 +246,40 @@ void CAdminControl::PopShape ()
     }
 }
 
+void CAdminControl::RemoveShape ()
+{
+    CShape* pre_shape;
+    CShape* next_shape;
+
+    if (shape_head->IsSelected ())
+    {
+        next_shape = shape_head->GetNext ();
+        next_shape->SetPre (NULL);
+        shape_head->SetNext (NULL);
+        shape_head->FreeShape ();
+        shape_head = next_shape;
+    }
+    else
+    {
+        for (CShape* sp = shape_head->GetNext (); sp != shape_tail; sp = sp->GetNext ())
+        {
+            if (sp->IsSelected ())
+            {
+                pre_shape = sp->GetPre ();
+                next_shape = sp->GetNext ();
+                pre_shape->SetNext (next_shape);
+                next_shape->SetPre (pre_shape);
+                sp->SetPre (NULL);
+                sp->SetNext (NULL);
+                sp->FreeShape ();
+                break;
+            }
+        }
+    }
+
+    shape_num--;
+}
+
 void CAdminControl::DeleteAllShape ()
 {
     if (shape_num > 0)
@@ -331,8 +365,6 @@ void CAdminControl::AddVertex (float mouse_x, float mouse_y)
 
 void CAdminControl::SubVertex ()
 {
-    CVertex remove_vertex;
-
     for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
     {
         if (sp->GetTail ()->IsSelected () && sp->GetVertexNum () > 3 && CanRemoveVertex ())
