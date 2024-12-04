@@ -223,33 +223,6 @@ void CAdminControl::PushShape ()
     shape_num++;
 }
 
-void CAdminControl::AddVertex (float mouse_x, float mouse_y)
-{
-    CVertex mouse (mouse_x, mouse_y, NULL, NULL);
-
-    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
-    {
-        if (sp->GetHead ()->IsSelected () && sp->GetTail ()->IsSelected ())
-        {
-            CVertex new_vertex;
-            CMath::CrossPoint (&mouse, sp->GetTail (), sp->GetHead (), &new_vertex);
-            sp->PushVertex (new_vertex.GetX (), new_vertex.GetY ());
-            return;
-        }
-
-        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
-        {
-            if (vp->IsSelected ())
-            {
-                CVertex new_vertex;
-                CMath::CrossPoint (&mouse, vp, vp->GetNext (), &new_vertex);
-                sp->InsertVertex (vp, new_vertex.GetX (), new_vertex.GetY (), vp->GetNext ());
-                return;
-            }
-        }
-    }
-}
-
 void CAdminControl::PopShape ()
 {
     if (shape_num == 0)
@@ -270,27 +243,6 @@ void CAdminControl::PopShape ()
         shape_tail->FreeShape ();
         shape_tail = pre_sp;
         shape_num--;
-    }
-}
-
-void CAdminControl::SubVertex ()
-{
-    CVertex remove_vertex;
-
-    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
-    {
-        if (sp->GetTail ()->IsSelected () && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (sp->GetTail ()) && !IsRemoveVertexOtherCross (sp, sp->GetTail ()) && !IsRemoveShapeContaining (sp, sp->GetTail ()))
-        {
-            sp->PopVertex ();
-        }
-        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
-        {
-            if (vp->IsSelected () && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp) && !IsRemoveShapeContaining (sp, vp))
-            {
-                sp->RemoveVertex (vp);
-                return;
-            }
-        }
     }
 }
 
@@ -347,6 +299,54 @@ void CAdminControl::PopVertex ()
     {
         shape_tail->Open ();
         shape_tail->PopVertex ();
+    }
+}
+
+void CAdminControl::AddVertex (float mouse_x, float mouse_y)
+{
+    CVertex mouse (mouse_x, mouse_y, NULL, NULL);
+
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->GetHead ()->IsSelected () && sp->GetTail ()->IsSelected ())
+        {
+            CVertex new_vertex;
+            CMath::CrossPoint (&mouse, sp->GetTail (), sp->GetHead (), &new_vertex);
+            sp->PushVertex (new_vertex.GetX (), new_vertex.GetY ());
+            return;
+        }
+
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+        {
+            if (vp->IsSelected ())
+            {
+                CVertex new_vertex;
+                CMath::CrossPoint (&mouse, vp, vp->GetNext (), &new_vertex);
+                sp->InsertVertex (vp, new_vertex.GetX (), new_vertex.GetY (), vp->GetNext ());
+                return;
+            }
+        }
+    }
+}
+
+void CAdminControl::SubVertex ()
+{
+    CVertex remove_vertex;
+
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->GetTail ()->IsSelected () && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (sp->GetTail ()) && !IsRemoveVertexOtherCross (sp, sp->GetTail ()) && !IsRemoveShapeContaining (sp, sp->GetTail ()))
+        {
+            sp->PopVertex ();
+        }
+        for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected () && sp->GetVertexNum () > 3 && !sp->IsRemoveVertexSelfCross (vp) && !IsRemoveVertexOtherCross (sp, vp) && !IsRemoveShapeContaining (sp, vp))
+            {
+                sp->RemoveVertex (vp);
+                return;
+            }
+        }
     }
 }
 

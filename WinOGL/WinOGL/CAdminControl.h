@@ -86,13 +86,13 @@ public:
     /// @param new_y 頂点の Y 座標
     void PushVertex (float new_x, float new_y);
 
+    /// @brief 図形に基づいて頂点を削除する．
+    void PopVertex ();
+
     /// @brief 辺上に頂点を追加する．
     /// @param mouse_x マウスの X 座標
     /// @param mouse_y マウスの Y 座標
     void AddVertex (float mouse_x, float mouse_y);
-
-    /// @brief 図形に基づいて頂点を削除する．
-    void PopVertex ();
 
     /// @brief 辺上の頂点を削除する．
     void SubVertex ();
