@@ -38,10 +38,6 @@ public:
     /// @param end   図形の終点
     void DrawShape (CShape* shape);
 
-    /// @brief 予測点の描画を行う．
-    /// @param mouse マウスの座標 (X,Y)
-    void DrawExVertex (CVertex* mouse);
-
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
     /// @param end   予測線の終点

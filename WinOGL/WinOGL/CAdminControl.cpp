@@ -25,9 +25,6 @@ void CAdminControl::Draw (float new_x, float new_y)
         DrawAxis ();
     }
 
-    // —\‘ª“_‚ğ•\¦‚·‚éD
-    //DrawExVertex (&mouse);
-
     if (shape_num > 0)
     {
         for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
@@ -93,25 +90,6 @@ void CAdminControl::DrawShape (CShape* shape)
     if (shape != shape_tail)
     {
         DrawLine (shape->GetHead (), shape->GetTail ());
-    }
-}
-
-void CAdminControl::DrawExVertex (CVertex* mouse)
-{
-    if (AddModeFlag)
-    {
-        if (CanAddVertex (mouse))
-        {
-            glColor3f (COLOR_BLACK);
-        }
-        else
-        {
-            glColor3f (COLOR_RED);
-        }
-        glPointSize (POINTSIZE);
-        glBegin (GL_POINTS);
-        glVertex2f (mouse->GetX (), mouse->GetY ());
-        glEnd ();
     }
 }
 
