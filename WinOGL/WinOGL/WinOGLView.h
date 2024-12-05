@@ -31,24 +31,26 @@ public:
     /// @param point デバイス座標 (X,Y)
     void SetOver (CPoint point);
 
-    void SetMouseDown (CPoint point);
+    void SetMDown (CPoint point);
 
 private:
-    /// @brief 左右クリックした時の，X 座標．
+    /// @brief 左右クリックした時の X 座標．
     float x_down;
 
-    /// @brief 左右クリックした時の，Y 座標．
+    /// @brief 左右クリックした時の Y 座標．
     float y_down;
 
-    /// @brief マウスオーバーした時の，X 座標．
+    /// @brief マウスオーバーした時の X 座標．
     float x_over;
 
-    /// @brief マウスオーバーした時の，Y 座標．
+    /// @brief マウスオーバーした時の Y 座標．
     float y_over;
 
-    float x_mouse_down;
+    /// @brief ホイールクリックしたときの X 座標．
+    float x_Mdown;
 
-    float y_mouse_down;
+    /// @brief ホイールクリックしたときの Y 座標．
+    float y_Mdown;
 
     /// @brief D&D 中の状態フラグ（D&D 中である true / D&D 中でない false）．
     bool DraggingFlag = false;
@@ -75,6 +77,7 @@ public:
     afx_msg void OnDeleteAll ();
     afx_msg BOOL OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message);
     afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
+    afx_msg void OnMButtonDown (UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

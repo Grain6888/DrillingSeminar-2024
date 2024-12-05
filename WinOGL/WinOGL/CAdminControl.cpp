@@ -38,7 +38,7 @@ void CAdminControl::Draw (float new_x, float new_y)
             // —ÖŠsü‚ð•`‰æ‚·‚éD
             DrawShape (sp);
         }
-        DrawRangeSelection ();
+        DrawRangeSelection (&mouse);
 
         // —\‘ªü‚ð•\Ž¦‚·‚éD
         if (shape_tail->GetVertexNum () > 0 && IsFreeShapeMode ())
@@ -118,7 +118,7 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
 }
 
-void CAdminControl::DrawRangeSelection ()
+void CAdminControl::DrawRangeSelection (CVertex* base_p)
 {
     bool selected_flag = false;
     float max_x = shape_head->GetHead ()->GetX ();
@@ -154,6 +154,7 @@ void CAdminControl::DrawRangeSelection ()
 
     if (selected_flag)
     {
+        DrawVertex (base_p);
         CVertex top_left (min_x, max_y, NULL, NULL);
         CVertex bottom_left (min_x, min_y, NULL, NULL);
         CVertex bottom_right (max_x, min_y, NULL, NULL);
@@ -286,6 +287,34 @@ void CAdminControl::ScaleDownShape (CVertex* base_p)
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
             {
                 CMath::ScaleDownPoint (base_p, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::RotateLeftShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::RotatePoint (10, base_p, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::RotateRightShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::RotatePoint (-10, base_p, vp);
             }
         }
     }
@@ -546,6 +575,10 @@ void CAdminControl::SwitchFreeShapeMode ()
 {
     FreeShapeModeFlag = !FreeShapeModeFlag;
     DeSelectAllShape ();
+
+    ShiftingModeFlag = false;
+    ScalingModeFlag = false;
+    RotatingModeFlag = false;
 }
 
 bool CAdminControl::IsFreeShapeMode ()

@@ -98,18 +98,29 @@ void CMath::ScalePoint (CVertex* before, CVertex* after, CVertex* result)
 
 void CMath::ScaleUpPoint (CVertex* base_p, CVertex* result)
 {
-    float s_x = 1.05;
-    float s_y = 1.05;
+    float s_x = 1.05f;
+    float s_y = 1.05f;
 
-    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX (), s_y * (result->GetLastY () - base_p->GetX ()) + base_p->GetX ());
+    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX (), s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ());
 }
 
 void CMath::ScaleDownPoint (CVertex* base_p, CVertex* result)
 {
-    float s_x = 0.95;
-    float s_y = 0.95;
+    float s_x = 0.95f;
+    float s_y = 0.95f;
 
-    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX (), s_y * (result->GetLastY () - base_p->GetX ()) + base_p->GetX ());
+    float x = s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
+    float y = s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
+
+    result->SetXY (x, y);
+}
+
+void CMath::RotatePoint (float degree, CVertex* base_p, CVertex* result)
+{
+    float theta = (float)degree / 180 * M_PI;
+    float x = (float)(result->GetLastX () - base_p->GetX ()) * cos (theta) - (result->GetLastY () - base_p->GetY ()) * sin (theta) + base_p->GetX ();
+    float y = (float)(result->GetLastX () - base_p->GetX ()) * sin (theta) + (result->GetLastY () - base_p->GetY ()) * cos (theta) + base_p->GetY ();
+    result->SetXY (x, y);
 }
 
 bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)

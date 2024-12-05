@@ -44,7 +44,8 @@ public:
     void DrawExLine (CVertex* start, CVertex* end);
 
     /// @brief 選択した図形の範囲の描画を行う．
-    void DrawRangeSelection ();
+    /// @param base_p 基点
+    void DrawRangeSelection (CVertex* base_p);
 
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
@@ -75,11 +76,21 @@ public:
     /// @param mouse_after_y  移動後のマウスの Y 座標
     void ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
 
-
+    /// @brief 形状を拡大する．
+    /// @param base_p 基点
     void ScaleUpShape (CVertex* base_p);
 
-
+    /// @brief 形状を縮小する．
+    /// @param base_p 基点
     void ScaleDownShape (CVertex* base_p);
+
+    /// @brief 形状を左回転する．
+    /// @param base_p 基点
+    void RotateLeftShape (CVertex* base_p);
+
+    /// @brief 形状を右回転する．
+    /// @param base_p 基点
+    void RotateRightShape (CVertex* base_p);
 
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();

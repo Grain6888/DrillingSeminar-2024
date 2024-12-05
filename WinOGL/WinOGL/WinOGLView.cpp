@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_FREE_SHAPE_MODE, &CWinOGLView::OnFreeShapeMode)
     ON_UPDATE_COMMAND_UI (ID_FREE_SHAPE_MODE, &CWinOGLView::OnUpdateFreeShapeMode)
     ON_WM_MOUSEWHEEL ()
+    ON_WM_MBUTTONDOWN ()
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -43,8 +44,8 @@ CWinOGLView::CWinOGLView () noexcept
     y_down = 0.0;
     x_over = 0.0;
     y_over = 0.0;
-    x_mouse_down = 0.0;
-    y_mouse_down = 0.0;
+    x_Mdown = 0.0;
+    y_Mdown = 0.0;
     m_hRC = NULL;
 }
 
@@ -71,7 +72,14 @@ void CWinOGLView::OnDraw (CDC* pDC)
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
 
-    AC.Draw (x_over, y_over);
+    if (AC.IsScalingMode () || AC.IsRotatingMode ())
+    {
+        AC.Draw (x_Mdown, y_Mdown);
+    }
+    else
+    {
+        AC.Draw (x_over, y_over);
+    }
 
     glFlush ();
     SwapBuffers (pDC->m_hDC);
@@ -253,6 +261,53 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
     RedrawWindow ();
     CView::OnMouseMove (nFlags, point);
+}
+
+BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
+{
+    CVertex base_p (x_Mdown, y_Mdown, NULL, NULL);
+
+    if (AC.IsScalingMode ())
+    {
+        if (zDelta > 0)
+        {
+            AC.ScaleUpShape (&base_p);
+        }
+        else
+        {
+            AC.ScaleDownShape (&base_p);
+        }
+    }
+    else if (AC.IsRotatingMode ())
+    {
+        if (zDelta > 0)
+        {
+            AC.RotateLeftShape (&base_p);
+        }
+        else
+        {
+            AC.RotateRightShape (&base_p);
+        }
+    }
+    if (AC.CanMoveVertex ())
+    {
+        AC.UpdateLastMovedVertex ();
+    }
+    else
+    {
+        AC.ResetMovedVertex ();
+    }
+
+    RedrawWindow ();
+    return CView::OnMouseWheel (nFlags, zDelta, pt);
+}
+
+void CWinOGLView::OnMButtonDown (UINT nFlags, CPoint point)
+{
+    SetMDown (point);
+
+    RedrawWindow ();
+    CView::OnMButtonDown (nFlags, point);
 }
 
 int CWinOGLView::OnCreate (LPCREATESTRUCT lpCreateStruct)
@@ -445,33 +500,33 @@ void CWinOGLView::SetOver (CPoint point)
     }
 }
 
-void CWinOGLView::SetMouseDown (CPoint point)
+void CWinOGLView::SetMDown (CPoint point)
 {
     // 描画領域の大きさを取得
     CRect rect;
     GetClientRect (rect);
 
     // デバイス座標系
-    x_mouse_down = (float)point.x;
-    y_mouse_down = (float)point.y;
+    x_Mdown = (float)point.x;
+    y_Mdown = (float)point.y;
 
     // デバイス座標系→正規化座標系
-    x_mouse_down = x_mouse_down / rect.Width ();
-    y_mouse_down = 1 - (y_mouse_down / rect.Height ());
+    x_Mdown = x_Mdown / rect.Width ();
+    y_Mdown = 1 - (y_Mdown / rect.Height ());
 
     // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_mouse_down = (x_mouse_down - (float)(1.0 - x_mouse_down)) * aspect_ratio;
-        y_mouse_down -= (float)(1.0 - y_mouse_down);
+        x_Mdown = (x_Mdown - (float)(1.0 - x_Mdown)) * aspect_ratio;
+        y_Mdown -= (float)(1.0 - y_Mdown);
     }
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_mouse_down = x_mouse_down - (float)(1.0 - x_mouse_down);
-        y_mouse_down = (y_mouse_down - (float)(1.0 - y_mouse_down)) * aspect_ratio;
+        x_Mdown = x_Mdown - (float)(1.0 - x_Mdown);
+        y_Mdown = (y_Mdown - (float)(1.0 - y_Mdown)) * aspect_ratio;
     }
 }
 
@@ -511,28 +566,4 @@ BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 
     return TRUE;
     return CView::OnSetCursor (pWnd, nHitTest, message);
-}
-
-
-BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
-{
-    CVertex base_p (0, 0, NULL, NULL);
-
-    if (AC.IsScalingMode ())
-    {
-        if (zDelta > 0)
-        {
-            AC.ScaleUpShape (&base_p);
-            OutputDebugStringA ("scale up\n");
-        }
-        else if (zDelta < 0)
-        {
-            AC.ScaleDownShape (&base_p);
-            OutputDebugStringA ("scale down\n");
-        }
-    }
-    AC.UpdateLastMovedVertex ();
-
-    RedrawWindow ();
-    return CView::OnMouseWheel (nFlags, zDelta, pt);
 }
