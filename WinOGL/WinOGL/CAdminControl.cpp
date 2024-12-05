@@ -15,9 +15,9 @@ CAdminControl::~CAdminControl ()
     shape_head->FreeShape ();
 }
 
-void CAdminControl::Draw (float new_x, float new_y)
+void CAdminControl::Draw (float mouse_x, float mouse_y)
 {
-    CVertex mouse (new_x, new_y, NULL, NULL);
+    CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
     // 座標軸を表示する
     if (IsShowingAxis ())
@@ -49,7 +49,7 @@ void CAdminControl::Draw (float new_x, float new_y)
         }
 
         // 予測線を表示する．
-        if (shape_tail->GetVertexNum () > 0 && IsFreeShapeMode ())
+        if (IsFreeShapeMode () && shape_tail->GetVertexNum () > 0)
         {
             DrawExLine (shape_tail->GetTail (), &mouse);
         }
@@ -660,8 +660,7 @@ void CAdminControl::SwitchFreeShapeMode ()
     FreeShapeModeFlag = !FreeShapeModeFlag;
     DeSelectAllShape ();
 
-    ScalingModeFlag = false;
-    RotatingModeFlag = false;
+    ClearAffineTransMode ();
 }
 
 bool CAdminControl::IsFreeShapeMode ()
@@ -687,6 +686,13 @@ void CAdminControl::SwitchAffineTransMode ()
         RotatingModeFlag = false;
     }
 }
+
+void CAdminControl::ClearAffineTransMode ()
+{
+    ScalingModeFlag = false;
+    RotatingModeFlag = false;
+}
+
 bool CAdminControl::IsScaleMode ()
 {
     return ScalingModeFlag;

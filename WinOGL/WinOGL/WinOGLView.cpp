@@ -147,6 +147,10 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             {
                 AC.SwitchAffineTransMode ();
             }
+            else
+            {
+                AC.ClearAffineTransMode ();
+            }
             DraggingFlag = true;
         }
     }

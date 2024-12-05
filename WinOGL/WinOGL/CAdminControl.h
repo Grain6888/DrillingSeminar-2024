@@ -20,9 +20,9 @@ public:
     ~CAdminControl ();
 
     /// @brief すべての描画を行う．
-    /// @param new_x マウスの X 座標
-    /// @param new_y マウスの Y 座標
-    void Draw (float new_x, float new_y);
+    /// @param mouse_x マウスの X 座標
+    /// @param mouse_y マウスの Y 座標
+    void Draw (float mouse_x, float mouse_y);
 
     /// @brief 頂点の描画を行う．
     /// @param vertex 頂点
@@ -159,6 +159,9 @@ public:
 
     /// @brief アフィン変換のモードを変更する（拡大縮小 → 回転）．
     void SwitchAffineTransMode ();
+
+    /// @brief アフィン変換のモードをすべて解除する．
+    void ClearAffineTransMode ();
 
     /// @brief 拡大縮小モードの状態を取得する．
     /// @return 拡大縮小モードである true / 拡大縮小モードでない false
