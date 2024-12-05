@@ -43,6 +43,9 @@ public:
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
 
+    /// @brief 選択した図形の範囲の描画を行う．
+    void DrawRangeSelection ();
+
     /// @brief マウスの近くの頂点を選択する．
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した頂点を含む図形のアドレス / NULL
@@ -58,12 +61,25 @@ public:
     /// @return 選択した図形のアドレス / NULL
     CShape* SelectShape (CVertex* mouse);
 
-    /// @brief 頂点をマウスに追従する．
+    /// @brief 頂点を平行移動する．
     /// @param mouse_before_x 移動前のマウスの X 座標
     /// @param mouse_before_y 移動前のマウスの Y 座標
     /// @param mouse_after_x  移動後のマウスの X 座標
     /// @param mouse_after_y  移動後のマウスの Y 座標
     void ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+
+    /// @brief 形状を拡大縮小する．
+    /// @param mouse_before_x 移動前のマウスの X 座標
+    /// @param mouse_before_y 移動前のマウスの Y 座標
+    /// @param mouse_after_x  移動後のマウスの X 座標
+    /// @param mouse_after_y  移動後のマウスの Y 座標
+    void ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+
+
+    void ScaleUpShape (CVertex* base_p);
+
+
+    void ScaleDownShape (CVertex* base_p);
 
     /// @brief 頂点を移動前の位置に戻す．
     void ResetMovedVertex ();
@@ -116,15 +132,30 @@ public:
     void SwitchAxis ();
 
     /// @brief 座標軸の表示または非表示の状態を取得する．
-    /// @return 表示中 true / 非表示中 false．
+    /// @return 表示中 true / 非表示中 false
     bool IsShowingAxis ();
 
     /// @brief 自由図形モードの状態を切り替える．
     void SwitchFreeShapeMode ();
 
     /// @brief 自由図形モードの状態を取得する．
-    /// @return 自由図形モードである true / 自由図形モードでない false．
+    /// @return 自由図形モードである true / 自由図形モードでない false
     bool IsFreeShapeMode ();
+
+    /// @brief アフィン変換のモードを変更する（移動 → 拡大縮小 → 回転）．
+    void SwitchAffineTransMode ();
+
+    /// @brief 移動モードの状態を取得する．
+    /// @return 移動モードである true / 移動モードでない false
+    bool IsShiftingMode ();
+
+    /// @brief 拡大縮小モードの状態を取得する．
+    /// @return 拡大縮小モードである true / 拡大縮小モードでない false
+    bool IsScalingMode ();
+
+    /// @brief 回転モードの状態を取得する．
+    /// @return 回転モードである true / 回転モードでない false
+    bool IsRotatingMode ();
 
     /// @brief 頂点の追加が可能かを判定する．
     /// @param new_vertex 新しい頂点
@@ -209,4 +240,12 @@ private:
 
     /// @brief 自由図形モードの状態フラグ（自由図形モードである true / 自由図形モードでない false）．
     bool FreeShapeModeFlag = true;
+
+    bool ShiftingModeFlag = false;
+
+    /// @brief 拡大縮小モードの状態フラグ（拡大縮小モードである true / 拡大縮小モードでない false）．
+    bool ScalingModeFlag = false;
+
+    /// @brief 回転モードの状態フラグ（回転モードである true / 回転モードでない false）．
+    bool RotatingModeFlag = false;
 };

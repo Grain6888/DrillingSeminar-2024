@@ -38,6 +38,7 @@ void CAdminControl::Draw (float new_x, float new_y)
             // —ÖŠsü‚ð•`‰æ‚·‚éD
             DrawShape (sp);
         }
+        DrawRangeSelection ();
 
         // —\‘ªü‚ð•\Ž¦‚·‚éD
         if (shape_tail->GetVertexNum () > 0 && IsFreeShapeMode ())
@@ -117,6 +118,57 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
 }
 
+void CAdminControl::DrawRangeSelection ()
+{
+    bool selected_flag = false;
+    float max_x = shape_head->GetHead ()->GetX ();
+    float min_x = shape_head->GetHead ()->GetX ();
+    float max_y = shape_head->GetHead ()->GetY ();
+    float min_y = shape_head->GetHead ()->GetY ();
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            selected_flag = true;
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                if (vp->GetX () > max_x)
+                {
+                    max_x = vp->GetX ();
+                }
+                else if (vp->GetX () < min_x)
+                {
+                    min_x = vp->GetX ();
+                }
+                if (vp->GetY () > max_y)
+                {
+                    max_y = vp->GetY ();
+                }
+                else if (vp->GetY () < min_y)
+                {
+                    min_y = vp->GetY ();
+                }
+            }
+        }
+    }
+
+    if (selected_flag)
+    {
+        CVertex top_left (min_x, max_y, NULL, NULL);
+        CVertex bottom_left (min_x, min_y, NULL, NULL);
+        CVertex bottom_right (max_x, min_y, NULL, NULL);
+        CVertex top_right (max_x, max_y, NULL, NULL);
+        DrawVertex (&top_left);
+        DrawLine (&top_left, &bottom_left);
+        DrawVertex (&bottom_left);
+        DrawLine (&bottom_left, &bottom_right);
+        DrawVertex (&bottom_right);
+        DrawLine (&bottom_right, &top_right);
+        DrawVertex (&top_right);
+        DrawLine (&top_right, &top_left);
+    }
+}
+
 CVertex* CAdminControl::SelectVertex (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
@@ -189,6 +241,51 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
             if (vp->IsSelected ())
             {
                 CMath::ShiftPoint (&before, &after, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+{
+    CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+    CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+
+    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::ScalePoint (&before, &after, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::ScaleUpShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::ScaleUpPoint (base_p, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::ScaleDownShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::ScaleDownPoint (base_p, vp);
             }
         }
     }
@@ -454,6 +551,53 @@ void CAdminControl::SwitchFreeShapeMode ()
 bool CAdminControl::IsFreeShapeMode ()
 {
     return FreeShapeModeFlag;
+}
+
+void CAdminControl::SwitchAffineTransMode ()
+{
+    if (!ShiftingModeFlag && !ScalingModeFlag && !RotatingModeFlag)
+    {
+        ShiftingModeFlag = true;
+        ScalingModeFlag = false;
+        RotatingModeFlag = false;
+        OutputDebugStringA ("shift mode\n");
+    }
+    else if (ShiftingModeFlag)
+    {
+        ShiftingModeFlag = false;
+        ScalingModeFlag = true;
+        RotatingModeFlag = false;
+        OutputDebugStringA ("scale mode\n");
+    }
+    else if (ScalingModeFlag)
+    {
+        ShiftingModeFlag = false;
+        ScalingModeFlag = false;
+        RotatingModeFlag = true;
+        OutputDebugStringA ("rotate mode\n");
+    }
+    else if (RotatingModeFlag)
+    {
+        ShiftingModeFlag = true;
+        ScalingModeFlag = false;
+        RotatingModeFlag = false;
+        OutputDebugStringA ("shift mode\n");
+    }
+}
+
+bool CAdminControl::IsShiftingMode ()
+{
+    return ShiftingModeFlag;
+}
+
+bool CAdminControl::IsScalingMode ()
+{
+    return ScalingModeFlag;
+}
+
+bool CAdminControl::IsRotatingMode ()
+{
+    return RotatingModeFlag;
 }
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)

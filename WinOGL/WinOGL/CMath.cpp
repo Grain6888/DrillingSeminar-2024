@@ -88,12 +88,28 @@ void CMath::ShiftPoint (CVertex* before, CVertex* after, CVertex* result)
     result->SetXY (result->GetLastX () + (after->GetX () - before->GetX ()), result->GetLastY () + (after->GetY () - before->GetY ()));
 }
 
-void CMath::ScalingPoint (CVertex* before, CVertex* after, CVertex* result)
+void CMath::ScalePoint (CVertex* before, CVertex* after, CVertex* result)
 {
     float s_x = after->GetX () - before->GetX ();
     float s_y = after->GetY () - before->GetY ();
 
-    result->SetXY (s_x * (result->GetX () - before->GetX ()) + before->GetX (), s_y * (result->GetY () - before->GetY () + before->GetY ()));
+    result->SetXY (s_x * (result->GetLastX () - before->GetX ()) + before->GetLastX (), s_y * (result->GetLastY () - before->GetY ()) + before->GetLastY ());
+}
+
+void CMath::ScaleUpPoint (CVertex* base_p, CVertex* result)
+{
+    float s_x = 1.05;
+    float s_y = 1.05;
+
+    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX (), s_y * (result->GetLastY () - base_p->GetX ()) + base_p->GetX ());
+}
+
+void CMath::ScaleDownPoint (CVertex* base_p, CVertex* result)
+{
+    float s_x = 0.95;
+    float s_y = 0.95;
+
+    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX (), s_y * (result->GetLastY () - base_p->GetX ()) + base_p->GetX ());
 }
 
 bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)

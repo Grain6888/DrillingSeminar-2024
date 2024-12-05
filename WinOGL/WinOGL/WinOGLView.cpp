@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_SETCURSOR ()
     ON_COMMAND (ID_FREE_SHAPE_MODE, &CWinOGLView::OnFreeShapeMode)
     ON_UPDATE_COMMAND_UI (ID_FREE_SHAPE_MODE, &CWinOGLView::OnUpdateFreeShapeMode)
+    ON_WM_MOUSEWHEEL ()
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -42,6 +43,8 @@ CWinOGLView::CWinOGLView () noexcept
     y_down = 0.0;
     x_over = 0.0;
     y_over = 0.0;
+    x_mouse_down = 0.0;
+    y_mouse_down = 0.0;
     m_hRC = NULL;
 }
 
@@ -134,6 +137,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             }
             else if (AC.SelectShape (&mouse) != NULL)
             {
+                AC.SwitchAffineTransMode ();
             }
             DraggingFlag = true;
         }
@@ -232,7 +236,18 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     {
         if (DraggingFlag)
         {
-            AC.ShiftVertex (x_down, y_down, x_over, y_over);
+            if (AC.IsShiftingMode ())
+            {
+                AC.ShiftVertex (x_down, y_down, x_over, y_over);
+            }
+            else if (AC.IsScalingMode ())
+            {
+                AC.ScaleShape (x_down, y_down, x_over, y_over);
+            }
+            else if (AC.IsRotatingMode ())
+            {
+
+            }
         }
     }
 
@@ -420,17 +435,43 @@ void CWinOGLView::SetOver (CPoint point)
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
         x_over = (x_over - (float)(1.0 - x_over)) * aspect_ratio;
-        x_over = x_over;
         y_over -= (float)(1.0 - y_over);
-        y_over = y_over;
     }
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
         x_over = x_over - (float)(1.0 - x_over);
-        x_over = x_over;
         y_over = (y_over - (float)(1.0 - y_over)) * aspect_ratio;
-        y_over = y_over;
+    }
+}
+
+void CWinOGLView::SetMouseDown (CPoint point)
+{
+    // 描画領域の大きさを取得
+    CRect rect;
+    GetClientRect (rect);
+
+    // デバイス座標系
+    x_mouse_down = (float)point.x;
+    y_mouse_down = (float)point.y;
+
+    // デバイス座標系→正規化座標系
+    x_mouse_down = x_mouse_down / rect.Width ();
+    y_mouse_down = 1 - (y_mouse_down / rect.Height ());
+
+    // 正規化座標系→ワールド座標系
+    float aspect_ratio = 0.0;
+    if (rect.Width () > rect.Height ())
+    {
+        aspect_ratio = (float)rect.Width () / rect.Height ();
+        x_mouse_down = (x_mouse_down - (float)(1.0 - x_mouse_down)) * aspect_ratio;
+        y_mouse_down -= (float)(1.0 - y_mouse_down);
+    }
+    else
+    {
+        aspect_ratio = (float)rect.Height () / rect.Width ();
+        x_mouse_down = x_mouse_down - (float)(1.0 - x_mouse_down);
+        y_mouse_down = (y_mouse_down - (float)(1.0 - y_mouse_down)) * aspect_ratio;
     }
 }
 
@@ -470,4 +511,28 @@ BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 
     return TRUE;
     return CView::OnSetCursor (pWnd, nHitTest, message);
+}
+
+
+BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
+{
+    CVertex base_p (0, 0, NULL, NULL);
+
+    if (AC.IsScalingMode ())
+    {
+        if (zDelta > 0)
+        {
+            AC.ScaleUpShape (&base_p);
+            OutputDebugStringA ("scale up\n");
+        }
+        else if (zDelta < 0)
+        {
+            AC.ScaleDownShape (&base_p);
+            OutputDebugStringA ("scale down\n");
+        }
+    }
+    AC.UpdateLastMovedVertex ();
+
+    RedrawWindow ();
+    return CView::OnMouseWheel (nFlags, zDelta, pt);
 }

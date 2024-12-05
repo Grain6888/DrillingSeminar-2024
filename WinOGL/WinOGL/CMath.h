@@ -37,7 +37,11 @@ public:
     /// @param before 移動前のマウスの位置
     /// @param after  移動後のマウスの位置
     /// @param result 頂点
-    static void ScalingPoint (CVertex* before, CVertex* after, CVertex* result);
+    static void ScalePoint (CVertex* before, CVertex* after, CVertex* result);
+
+    static void ScaleUpPoint (CVertex* base_p, CVertex* result);
+
+    static void ScaleDownPoint (CVertex* base_p, CVertex* result);
 
     /// @brief 2 本の辺が交差していないかを判定する．
     /// @param a_s 1 本目の辺の始点
