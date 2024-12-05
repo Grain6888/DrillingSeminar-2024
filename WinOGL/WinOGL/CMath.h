@@ -33,6 +33,12 @@ public:
     /// @param result 頂点
     static void ShiftPoint (CVertex* before, CVertex* after, CVertex* result);
 
+    /// @brief マウスの移動量と方向に基づいて点を拡大 / 縮小移動する．
+    /// @param before 移動前のマウスの位置
+    /// @param after  移動後のマウスの位置
+    /// @param result 頂点
+    static void ScalingPoint (CVertex* before, CVertex* after, CVertex* result);
+
     /// @brief 2 本の辺が交差していないかを判定する．
     /// @param a_s 1 本目の辺の始点
     /// @param a_e 1 本目の辺の終点

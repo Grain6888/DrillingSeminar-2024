@@ -88,6 +88,14 @@ void CMath::ShiftPoint (CVertex* before, CVertex* after, CVertex* result)
     result->SetXY (result->GetLastX () + (after->GetX () - before->GetX ()), result->GetLastY () + (after->GetY () - before->GetY ()));
 }
 
+void CMath::ScalingPoint (CVertex* before, CVertex* after, CVertex* result)
+{
+    float s_x = after->GetX () - before->GetX ();
+    float s_y = after->GetY () - before->GetY ();
+
+    result->SetXY (s_x * (result->GetX () - before->GetX ()) + before->GetX (), s_y * (result->GetY () - before->GetY () + before->GetY ()));
+}
+
 bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
     float outer_a_1 = Outer (a_s, a_e, a_s, b_s);
