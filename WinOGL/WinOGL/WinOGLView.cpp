@@ -72,7 +72,7 @@ void CWinOGLView::OnDraw (CDC* pDC)
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
 
-    if (AC.IsScalingMode () || AC.IsRotatingMode ())
+    if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
         AC.Draw (x_Mdown, y_Mdown);
     }
@@ -146,10 +146,6 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             else if (AC.SelectShape (&mouse) != NULL)
             {
                 AC.SwitchAffineTransMode ();
-            }
-            else
-            {
-                AC.SetShiftingMode ();
             }
             DraggingFlag = true;
         }
@@ -254,16 +250,7 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     {
         if (DraggingFlag)
         {
-            if (AC.IsShiftingMode ())
-            {
-                AC.ShiftVertex (x_down, y_down, x_over, y_over);
-            }
-            else if (AC.IsScalingMode ())
-            {
-            }
-            else if (AC.IsRotatingMode ())
-            {
-            }
+            AC.ShiftVertex (x_down, y_down, x_over, y_over);
         }
     }
 
@@ -275,7 +262,7 @@ BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 {
     CVertex base_p (x_Mdown, y_Mdown, NULL, NULL);
 
-    if (AC.IsScalingMode ())
+    if (AC.IsScaleMode ())
     {
         if (zDelta > 0)
         {
@@ -286,7 +273,7 @@ BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
             AC.ScaleDownShape (&base_p);
         }
     }
-    else if (AC.IsRotatingMode ())
+    else if (AC.IsRotateMode ())
     {
         if (zDelta > 0)
         {

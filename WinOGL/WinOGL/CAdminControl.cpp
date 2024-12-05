@@ -39,15 +39,11 @@ void CAdminControl::Draw (float new_x, float new_y)
             DrawShape (sp);
         }
 
-        if (IsShiftingMode ())
-        {
-            DrawShiftingGuide ();
-        }
-        else if (IsScalingMode ())
+        if (IsScaleMode ())
         {
             DrawScalingGuide (&mouse);
         }
-        else if (IsRotatingMode ())
+        else if (IsRotateMode ())
         {
             DrawRotatingGuide (&mouse);
         }
@@ -128,69 +124,6 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
         glEnd ();
         glDisable (GL_LINE_STIPPLE);
     }
-}
-
-void CAdminControl::DrawShiftingGuide ()
-{
-    bool selected_flag = false;
-    float max_x = 0.0;
-    float min_x = 0.0;
-    float max_y = 0.0;
-    float min_y = 0.0;
-
-    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
-    {
-        if (sp->IsSelected ())
-        {
-            if (!selected_flag)
-            {
-                max_x = sp->GetHead ()->GetX ();
-                min_x = sp->GetHead ()->GetX ();
-                max_y = sp->GetHead ()->GetY ();
-                min_y = sp->GetHead ()->GetY ();
-                selected_flag = true;
-            }
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
-            {
-                if (vp->GetX () > max_x)
-                {
-                    max_x = vp->GetX ();
-                }
-                else if (vp->GetX () < min_x)
-                {
-                    min_x = vp->GetX ();
-                }
-                if (vp->GetY () > max_y)
-                {
-                    max_y = vp->GetY ();
-                }
-                else if (vp->GetY () < min_y)
-                {
-                    min_y = vp->GetY ();
-                }
-            }
-        }
-    }
-
-    glColor3f (COLOR_PALE_BLUE);
-    glPointSize (POINTSIZE);
-    glBegin (GL_POINTS);
-    glVertex2f (min_x, max_y); // 左上
-    glVertex2f (min_x, min_y); // 左下
-    glVertex2f (max_x, min_y); // 右下
-    glVertex2f (max_x, max_y); // 右上
-    glEnd ();
-
-    glEnable (GL_LINE_STIPPLE);
-    glLineStipple (2, 0xF0F0);
-    glColor3f (COLOR_PALE_BLUE);
-    glBegin (GL_LINE_LOOP);
-    glVertex2f (min_x, max_y); // 左上
-    glVertex2f (min_x, min_y); // 左下
-    glVertex2f (max_x, min_y); // 右下
-    glVertex2f (max_x, max_y); // 右上
-    glEnd ();
-    glDisable (GL_LINE_STIPPLE);
 }
 
 void CAdminControl::DrawScalingGuide (CVertex* base_p)
@@ -727,7 +660,6 @@ void CAdminControl::SwitchFreeShapeMode ()
     FreeShapeModeFlag = !FreeShapeModeFlag;
     DeSelectAllShape ();
 
-    ShiftingModeFlag = false;
     ScalingModeFlag = false;
     RotatingModeFlag = false;
 }
@@ -739,50 +671,28 @@ bool CAdminControl::IsFreeShapeMode ()
 
 void CAdminControl::SwitchAffineTransMode ()
 {
-    if (!ShiftingModeFlag && !ScalingModeFlag && !RotatingModeFlag)
+    if (!ScalingModeFlag && !RotatingModeFlag)
     {
-        ShiftingModeFlag = true;
-        ScalingModeFlag = false;
-        RotatingModeFlag = false;
-    }
-    else if (ShiftingModeFlag)
-    {
-        ShiftingModeFlag = false;
         ScalingModeFlag = true;
         RotatingModeFlag = false;
     }
     else if (ScalingModeFlag)
     {
-        ShiftingModeFlag = false;
         ScalingModeFlag = false;
         RotatingModeFlag = true;
     }
     else if (RotatingModeFlag)
     {
-        ShiftingModeFlag = true;
-        ScalingModeFlag = false;
+        ScalingModeFlag = true;
         RotatingModeFlag = false;
     }
 }
-
-void CAdminControl::SetShiftingMode ()
-{
-    ShiftingModeFlag = true;
-    ScalingModeFlag = false;
-    RotatingModeFlag = false;
-}
-
-bool CAdminControl::IsShiftingMode ()
-{
-    return ShiftingModeFlag;
-}
-
-bool CAdminControl::IsScalingMode ()
+bool CAdminControl::IsScaleMode ()
 {
     return ScalingModeFlag;
 }
 
-bool CAdminControl::IsRotatingMode ()
+bool CAdminControl::IsRotateMode ()
 {
     return RotatingModeFlag;
 }

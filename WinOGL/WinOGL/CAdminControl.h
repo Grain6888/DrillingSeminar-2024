@@ -43,9 +43,6 @@ public:
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
 
-    /// @brief 移動モードの補助線の描画を行う．
-    void DrawShiftingGuide ();
-
     /// @brief 拡大縮小モードの補助線と基点の描画を行う．
     /// @param base_p 基点
     void DrawScalingGuide (CVertex* base_p);
@@ -160,23 +157,16 @@ public:
     /// @return 自由図形モードである true / 自由図形モードでない false
     bool IsFreeShapeMode ();
 
-    /// @brief アフィン変換のモードを変更する（移動 → 拡大縮小 → 回転）．
+    /// @brief アフィン変換のモードを変更する（拡大縮小 → 回転）．
     void SwitchAffineTransMode ();
-
-    /// @brief 移動モードを設定する．
-    void SetShiftingMode ();
-
-    /// @brief 移動モードの状態を取得する．
-    /// @return 移動モードである true / 移動モードでない false
-    bool IsShiftingMode ();
 
     /// @brief 拡大縮小モードの状態を取得する．
     /// @return 拡大縮小モードである true / 拡大縮小モードでない false
-    bool IsScalingMode ();
+    bool IsScaleMode ();
 
     /// @brief 回転モードの状態を取得する．
     /// @return 回転モードである true / 回転モードでない false
-    bool IsRotatingMode ();
+    bool IsRotateMode ();
 
     /// @brief 頂点の追加が可能かを判定する．
     /// @param new_vertex 新しい頂点
@@ -261,9 +251,6 @@ private:
 
     /// @brief 自由図形モードの状態フラグ（自由図形モードである true / 自由図形モードでない false）．
     bool FreeShapeModeFlag = true;
-
-    /// @brief 移動モードの状態フラグ（移動モードである true / 移動モードでない false）．
-    bool ShiftingModeFlag = false;
 
     /// @brief 拡大縮小モードの状態フラグ（拡大縮小モードである true / 拡大縮小モードでない false）．
     bool ScalingModeFlag = false;
