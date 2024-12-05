@@ -147,6 +147,10 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             {
                 AC.SwitchAffineTransMode ();
             }
+            else
+            {
+                AC.SetShiftingMode ();
+            }
             DraggingFlag = true;
         }
     }
@@ -185,18 +189,24 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
+    SetDown (point);
+    CVertex mouse (x_down, y_down, NULL, NULL);
+
     if (AC.IsFreeShapeMode ())
     {
     }
     else
     {
-        if (DraggingFlag && !AC.CanMoveVertex ())
+        if (DraggingFlag)
         {
-            AC.ResetMovedVertex ();
-        }
-        else
-        {
-            AC.UpdateLastMovedVertex ();
+            if (AC.CanMoveVertex ())
+            {
+                AC.UpdateLastMovedVertex ();
+            }
+            else
+            {
+                AC.ResetMovedVertex ();
+            }
         }
     }
 
@@ -250,11 +260,9 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
             }
             else if (AC.IsScalingMode ())
             {
-                AC.ScaleShape (x_down, y_down, x_over, y_over);
             }
             else if (AC.IsRotatingMode ())
             {
-
             }
         }
     }

@@ -96,19 +96,19 @@ void CMath::ScalePoint (CVertex* before, CVertex* after, CVertex* result)
     result->SetXY (s_x * (result->GetLastX () - before->GetX ()) + before->GetLastX (), s_y * (result->GetLastY () - before->GetY ()) + before->GetLastY ());
 }
 
-void CMath::ScalePoint (float degree, CVertex* base_p, CVertex* result)
+void CMath::ScalePoint (float scale, CVertex* base_p, CVertex* result)
 {
-    float x = degree * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
-    float y = degree * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
+    float x = scale * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
+    float y = scale * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
 
     result->SetXY (x, y);
 }
 
 void CMath::RotatePoint (float degree, CVertex* base_p, CVertex* result)
 {
-    float theta = (float)degree / 180 * M_PI;
-    float x = (float)(result->GetLastX () - base_p->GetX ()) * cos (theta) - (result->GetLastY () - base_p->GetY ()) * sin (theta) + base_p->GetX ();
-    float y = (float)(result->GetLastX () - base_p->GetX ()) * sin (theta) + (result->GetLastY () - base_p->GetY ()) * cos (theta) + base_p->GetY ();
+    float theta = degree / 180 * (float)M_PI;
+    float x = (result->GetLastX () - base_p->GetX ()) * cosf (theta) - (result->GetLastY () - base_p->GetY ()) * sinf (theta) + base_p->GetX ();
+    float y = (result->GetLastX () - base_p->GetX ()) * sinf (theta) + (result->GetLastY () - base_p->GetY ()) * cosf (theta) + base_p->GetY ();
     result->SetXY (x, y);
 }
 
