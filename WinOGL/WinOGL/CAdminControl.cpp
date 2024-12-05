@@ -272,7 +272,7 @@ void CAdminControl::ScaleUpShape (CVertex* base_p)
         {
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
             {
-                CMath::ScaleUpPoint (base_p, vp);
+                CMath::ScalePoint (1.05f, base_p, vp);
             }
         }
     }
@@ -286,7 +286,7 @@ void CAdminControl::ScaleDownShape (CVertex* base_p)
         {
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
             {
-                CMath::ScaleDownPoint (base_p, vp);
+                CMath::ScalePoint (0.95f, base_p, vp);
             }
         }
     }

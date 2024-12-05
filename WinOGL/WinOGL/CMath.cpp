@@ -96,21 +96,10 @@ void CMath::ScalePoint (CVertex* before, CVertex* after, CVertex* result)
     result->SetXY (s_x * (result->GetLastX () - before->GetX ()) + before->GetLastX (), s_y * (result->GetLastY () - before->GetY ()) + before->GetLastY ());
 }
 
-void CMath::ScaleUpPoint (CVertex* base_p, CVertex* result)
+void CMath::ScalePoint (float degree, CVertex* base_p, CVertex* result)
 {
-    float s_x = 1.05f;
-    float s_y = 1.05f;
-
-    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX (), s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ());
-}
-
-void CMath::ScaleDownPoint (CVertex* base_p, CVertex* result)
-{
-    float s_x = 0.95f;
-    float s_y = 0.95f;
-
-    float x = s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
-    float y = s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
+    float x = degree * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
+    float y = degree * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
 
     result->SetXY (x, y);
 }

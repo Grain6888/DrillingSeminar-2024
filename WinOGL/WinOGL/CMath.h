@@ -39,18 +39,14 @@ public:
     /// @param result 頂点
     static void ScalePoint (CVertex* before, CVertex* after, CVertex* result);
 
-    /// @brief 基点に基づいて点を拡大移動する．
+    /// @brief 基点に基づいて点を拡大 / 縮小移動する．
+    /// @param scale  拡大率（scale > 1.0 拡大 / scale < 1.0 縮小）
     /// @param base_p 基点
     /// @param result 頂点
-    static void ScaleUpPoint (CVertex* base_p, CVertex* result);
+    static void ScalePoint (float scale, CVertex* base_p, CVertex* result);
 
-    /// @brief 基点に基づいて点を縮小移動する．
-    /// @param base_p 基点
-    /// @param result 頂点
-    static void ScaleDownPoint (CVertex* base_p, CVertex* result);
-
-    /// @brief 基点に基づいて点を回転する．
-    /// @param degree  回転角度（0~360°）
+    /// @brief 基点に基づいて点を回転移動する．
+    /// @param degree 回転角度 (degree > 0.0 左回転 / degree < 0.0 右回転)
     /// @param base_p 基点
     /// @param result 頂点
     static void RotatePoint (float degree, CVertex* base_p, CVertex* result);
