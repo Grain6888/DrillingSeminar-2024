@@ -248,7 +248,6 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
             else if (AC.SelectShape (&mouse) != NULL)
             {
                 AC.RemoveShape ();
-                AC.DestroyBoundingBox ();
             }
         }
     }

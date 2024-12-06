@@ -446,6 +446,8 @@ void CAdminControl::RemoveShape ()
         }
     }
 
+    DestroyBoundingBox ();
+
     shape_num--;
 }
 
