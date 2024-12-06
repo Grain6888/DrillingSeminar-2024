@@ -233,6 +233,10 @@ public:
     /// @brief すべての図形の選択状態を解除する．
     void DeSelectAllShape ();
 
+    void CreateBoundingBox ();
+
+    void DestroyBoundingBox ();
+
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;
@@ -245,6 +249,9 @@ private:
 
     /// @brief 末尾の図形．
     CShape* shape_tail;
+
+    /// @brief バウンディングボックス
+    CShape* bounding_box;
 
     /// @brief 図形の数．
     int shape_num;

@@ -8,6 +8,7 @@ CAdminControl::CAdminControl ()
     shape_head = NULL;
     shape_tail = NULL;
     shape_num = 0;
+    bounding_box = NULL;
 }
 
 CAdminControl::~CAdminControl ()
@@ -1066,4 +1067,60 @@ void CAdminControl::DeSelectAllShape ()
     {
         sp->DeSelect ();
     }
+}
+
+void CAdminControl::CreateBoundingBox ()
+{
+    CShape* box = new CShape;
+    bounding_box = box;
+
+    bool selected_flag = false;
+    float max_x = 0.0;
+    float min_x = 0.0;
+    float max_y = 0.0;
+    float min_y = 0.0;
+
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            if (!selected_flag)
+            {
+                max_x = sp->GetHead ()->GetX ();
+                min_x = sp->GetHead ()->GetX ();
+                max_y = sp->GetHead ()->GetY ();
+                min_y = sp->GetHead ()->GetY ();
+                selected_flag = true;
+            }
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                if (vp->GetX () > max_x)
+                {
+                    max_x = vp->GetX ();
+                }
+                else if (vp->GetX () < min_x)
+                {
+                    min_x = vp->GetX ();
+                }
+                if (vp->GetY () > max_y)
+                {
+                    max_y = vp->GetY ();
+                }
+                else if (vp->GetY () < min_y)
+                {
+                    min_y = vp->GetY ();
+                }
+            }
+        }
+    }
+
+    bounding_box->PushVertex (min_x, max_y); // ¶ã
+    bounding_box->PushVertex (min_x, min_y); // ¶‰º
+    bounding_box->PushVertex (max_x, min_y); // ‰E‰º
+    bounding_box->PushVertex (max_x, max_y); // ‰Eã
+}
+
+void CAdminControl::DestroyBoundingBox ()
+{
+    bounding_box->FreeShape ();
 }
