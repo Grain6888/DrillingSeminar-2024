@@ -33,6 +33,24 @@ public:
     /// @param result 頂点
     static void ShiftPoint (CVertex* before, CVertex* after, CVertex* result);
 
+    /// @brief マウスの移動量と方向に基づいて点を拡大 / 縮小移動する．
+    /// @param base_p 移動前のマウスの位置
+    /// @param goal_p 移動後のマウスの位置
+    /// @param result 頂点
+    static void ScalePoint (CVertex* base_p, CVertex* goal_p, CVertex* result);
+
+    /// @brief 基点に基づいて点を拡大 / 縮小移動する．
+    /// @param scale  拡大率（scale > 1.0 拡大 / scale < 1.0 縮小）
+    /// @param base_p 基点
+    /// @param result 頂点
+    static void ScalePoint (float scale, CVertex* base_p, CVertex* result);
+
+    /// @brief 基点に基づいて点を回転移動する．
+    /// @param degree 回転角度 (degree > 0.0 左回転 / degree < 0.0 右回転)
+    /// @param base_p 基点
+    /// @param result 頂点
+    static void RotatePoint (float degree, CVertex* base_p, CVertex* result);
+
     /// @brief 2 本の辺が交差していないかを判定する．
     /// @param a_s 1 本目の辺の始点
     /// @param a_e 1 本目の辺の終点

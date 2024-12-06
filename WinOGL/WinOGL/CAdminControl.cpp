@@ -15,9 +15,9 @@ CAdminControl::~CAdminControl ()
     shape_head->FreeShape ();
 }
 
-void CAdminControl::Draw (float new_x, float new_y)
+void CAdminControl::Draw (float mouse_x, float mouse_y)
 {
-    CVertex mouse (new_x, new_y, NULL, NULL);
+    CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
     // 座標軸を表示する
     if (IsShowingAxis ())
@@ -39,8 +39,17 @@ void CAdminControl::Draw (float new_x, float new_y)
             DrawShape (sp);
         }
 
+        if (IsScaleMode ())
+        {
+            DrawScalingGuide (&mouse);
+        }
+        else if (IsRotateMode ())
+        {
+            DrawRotatingGuide (&mouse);
+        }
+
         // 予測線を表示する．
-        if (shape_tail->GetVertexNum () > 0 && IsFreeShapeMode ())
+        if (IsFreeShapeMode () && shape_tail->GetVertexNum () > 0)
         {
             DrawExLine (shape_tail->GetTail (), &mouse);
         }
@@ -117,6 +126,134 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
 }
 
+void CAdminControl::DrawScalingGuide (CVertex* base_p)
+{
+    bool selected_flag = false;
+    float max_x = 0.0;
+    float min_x = 0.0;
+    float max_y = 0.0;
+    float min_y = 0.0;
+
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            if (!selected_flag)
+            {
+                max_x = sp->GetHead ()->GetX ();
+                min_x = sp->GetHead ()->GetX ();
+                max_y = sp->GetHead ()->GetY ();
+                min_y = sp->GetHead ()->GetY ();
+                selected_flag = true;
+            }
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                if (vp->GetX () > max_x)
+                {
+                    max_x = vp->GetX ();
+                }
+                else if (vp->GetX () < min_x)
+                {
+                    min_x = vp->GetX ();
+                }
+                if (vp->GetY () > max_y)
+                {
+                    max_y = vp->GetY ();
+                }
+                else if (vp->GetY () < min_y)
+                {
+                    min_y = vp->GetY ();
+                }
+            }
+        }
+    }
+
+    glColor3f (COLOR_ORANGE);
+    glPointSize (POINTSIZE);
+    glBegin (GL_POINTS);
+    glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
+    glVertex2f (min_x, max_y); // 左上
+    glVertex2f (min_x, min_y); // 左下
+    glVertex2f (max_x, min_y); // 右下
+    glVertex2f (max_x, max_y); // 右上
+    glEnd ();
+
+    glEnable (GL_LINE_STIPPLE);
+    glLineStipple (2, 0xF0F0);
+    glColor3f (COLOR_ORANGE);
+    glBegin (GL_LINE_LOOP);
+    glVertex2f (min_x, max_y); // 左上
+    glVertex2f (min_x, min_y); // 左下
+    glVertex2f (max_x, min_y); // 右下
+    glVertex2f (max_x, max_y); // 右上
+    glEnd ();
+    glDisable (GL_LINE_STIPPLE);
+}
+
+void CAdminControl::DrawRotatingGuide (CVertex* base_p)
+{
+    bool selected_flag = false;
+    float max_x = 0.0;
+    float min_x = 0.0;
+    float max_y = 0.0;
+    float min_y = 0.0;
+
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            if (!selected_flag)
+            {
+                max_x = sp->GetHead ()->GetX ();
+                min_x = sp->GetHead ()->GetX ();
+                max_y = sp->GetHead ()->GetY ();
+                min_y = sp->GetHead ()->GetY ();
+                selected_flag = true;
+            }
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                if (vp->GetX () > max_x)
+                {
+                    max_x = vp->GetX ();
+                }
+                else if (vp->GetX () < min_x)
+                {
+                    min_x = vp->GetX ();
+                }
+                if (vp->GetY () > max_y)
+                {
+                    max_y = vp->GetY ();
+                }
+                else if (vp->GetY () < min_y)
+                {
+                    min_y = vp->GetY ();
+                }
+            }
+        }
+    }
+
+    glColor3f (COLOR_BLUE);
+    glPointSize (POINTSIZE);
+    glBegin (GL_POINTS);
+    glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
+    glVertex2f (min_x, max_y); // 左上
+    glVertex2f (min_x, min_y); // 左下
+    glVertex2f (max_x, min_y); // 右下
+    glVertex2f (max_x, max_y); // 右上
+    glEnd ();
+
+    glEnable (GL_LINE_STIPPLE);
+    glLineStipple (2, 0xF0F0);
+    glColor3f (COLOR_BLUE);
+    glBegin (GL_LINE_LOOP);
+    glVertex2f (min_x, max_y); // 左上
+    glVertex2f (min_x, min_y); // 左下
+    glVertex2f (max_x, min_y); // 右下
+    glVertex2f (max_x, max_y); // 右上
+    glEnd ();
+    glDisable (GL_LINE_STIPPLE);
+}
+
 CVertex* CAdminControl::SelectVertex (CVertex* mouse)
 {
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
@@ -189,6 +326,79 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
             if (vp->IsSelected ())
             {
                 CMath::ShiftPoint (&before, &after, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+{
+    CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+    CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+
+    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::ScalePoint (&before, &after, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::ScaleUpShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::ScalePoint (1.05f, base_p, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::ScaleDownShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::ScalePoint (0.95f, base_p, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::RotateLeftShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::RotatePoint (10, base_p, vp);
+            }
+        }
+    }
+}
+
+void CAdminControl::RotateRightShape (CVertex* base_p)
+{
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    {
+        if (sp->IsSelected ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                CMath::RotatePoint (-10, base_p, vp);
             }
         }
     }
@@ -449,11 +659,48 @@ void CAdminControl::SwitchFreeShapeMode ()
 {
     FreeShapeModeFlag = !FreeShapeModeFlag;
     DeSelectAllShape ();
+
+    ClearAffineTransMode ();
 }
 
 bool CAdminControl::IsFreeShapeMode ()
 {
     return FreeShapeModeFlag;
+}
+
+void CAdminControl::SwitchAffineTransMode ()
+{
+    if (!ScalingModeFlag && !RotatingModeFlag)
+    {
+        ScalingModeFlag = true;
+        RotatingModeFlag = false;
+    }
+    else if (ScalingModeFlag)
+    {
+        ScalingModeFlag = false;
+        RotatingModeFlag = true;
+    }
+    else if (RotatingModeFlag)
+    {
+        ScalingModeFlag = true;
+        RotatingModeFlag = false;
+    }
+}
+
+void CAdminControl::ClearAffineTransMode ()
+{
+    ScalingModeFlag = false;
+    RotatingModeFlag = false;
+}
+
+bool CAdminControl::IsScaleMode ()
+{
+    return ScalingModeFlag;
+}
+
+bool CAdminControl::IsRotateMode ()
+{
+    return RotatingModeFlag;
 }
 
 bool CAdminControl::CanAddVertex (CVertex* new_vertex)
