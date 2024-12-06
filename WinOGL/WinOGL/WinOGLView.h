@@ -35,22 +35,22 @@ public:
 
 private:
     /// @brief 左右クリックした時の X 座標．
-    float x_down;
+    float x_LR_down;
 
     /// @brief 左右クリックした時の Y 座標．
-    float y_down;
+    float y_LR_down;
 
     /// @brief マウスオーバーした時の X 座標．
-    float x_over;
+    float x_LR_over;
 
     /// @brief マウスオーバーした時の Y 座標．
-    float y_over;
+    float y_LR_over;
 
     /// @brief ホイールクリックしたときの X 座標．
-    float x_Mdown;
+    float x_M_down;
 
     /// @brief ホイールクリックしたときの Y 座標．
-    float y_Mdown;
+    float y_M_down;
 
     /// @brief D&D 中の状態フラグ（D&D 中である true / D&D 中でない false）．
     bool DraggingFlag = false;
