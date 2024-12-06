@@ -34,10 +34,10 @@ public:
     static void ShiftPoint (CVertex* before, CVertex* after, CVertex* result);
 
     /// @brief マウスの移動量と方向に基づいて点を拡大 / 縮小移動する．
-    /// @param before 移動前のマウスの位置
-    /// @param after  移動後のマウスの位置
+    /// @param base_p 移動前のマウスの位置
+    /// @param goal_p 移動後のマウスの位置
     /// @param result 頂点
-    static void ScalePoint (CVertex* before, CVertex* after, CVertex* result);
+    static void ScalePoint (CVertex* base_p, CVertex* goal_p, CVertex* result);
 
     /// @brief 基点に基づいて点を拡大 / 縮小移動する．
     /// @param scale  拡大率（scale > 1.0 拡大 / scale < 1.0 縮小）

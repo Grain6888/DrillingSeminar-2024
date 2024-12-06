@@ -88,12 +88,12 @@ void CMath::ShiftPoint (CVertex* before, CVertex* after, CVertex* result)
     result->SetXY (result->GetLastX () + (after->GetX () - before->GetX ()), result->GetLastY () + (after->GetY () - before->GetY ()));
 }
 
-void CMath::ScalePoint (CVertex* before, CVertex* after, CVertex* result)
+void CMath::ScalePoint (CVertex* base_p, CVertex* goal_p, CVertex* result)
 {
-    float s_x = after->GetX () - before->GetX ();
-    float s_y = after->GetY () - before->GetY ();
+    float s_x = goal_p->GetX () - base_p->GetX ();
+    float s_y = goal_p->GetY () - base_p->GetY ();
 
-    result->SetXY (s_x * (result->GetLastX () - before->GetX ()) + before->GetLastX (), s_y * (result->GetLastY () - before->GetY ()) + before->GetLastY ());
+    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetLastX (), s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetLastY ());
 }
 
 void CMath::ScalePoint (float scale, CVertex* base_p, CVertex* result)
