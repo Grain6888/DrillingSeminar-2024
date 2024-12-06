@@ -38,9 +38,10 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
             }
 
             // 輪郭線を描画する．
-            DrawShape (sp);
+            DrawOutline (sp);
         }
 
+        // バウンディングボックスを描画する．
         if (IsScaleMode ())
         {
             DrawScalingGuide (&mouse);
@@ -91,7 +92,7 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
     glEnd ();
 }
 
-void CAdminControl::DrawShape (CShape* shape)
+void CAdminControl::DrawOutline (CShape* shape)
 {
     for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
     {
@@ -358,6 +359,8 @@ void CAdminControl::ResetMovedVertex ()
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::UpdateLastMovedVertex ()

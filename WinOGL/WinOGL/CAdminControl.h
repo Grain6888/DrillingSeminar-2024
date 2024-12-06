@@ -36,7 +36,7 @@ public:
     /// @brief 図形の輪郭線の描画を行う．
     /// @param start 図形の始点
     /// @param end   図形の終点
-    void DrawShape (CShape* shape);
+    void DrawOutline (CShape* shape);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
