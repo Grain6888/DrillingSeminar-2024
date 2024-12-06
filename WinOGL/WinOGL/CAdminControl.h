@@ -235,6 +235,8 @@ public:
 
     void CreateBoundingBox ();
 
+    void UpdateBoundingBox ();
+
     void DestroyBoundingBox ();
 
 private:

@@ -148,6 +148,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             }
             else
             {
+                AC.DestroyBoundingBox ();
                 AC.ClearAffineTransMode ();
             }
         }
@@ -247,6 +248,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
             else if (AC.SelectShape (&mouse) != NULL)
             {
                 AC.RemoveShape ();
+                AC.DestroyBoundingBox ();
             }
         }
     }
@@ -304,6 +306,7 @@ BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
             AC.RotateRightShape (&base_p);
         }
     }
+
     if (AC.CanMoveVertex ())
     {
         AC.UpdateLastMovedVertex ();
