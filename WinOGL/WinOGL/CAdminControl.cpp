@@ -182,7 +182,7 @@ void CAdminControl::DrawScalingGuide (CVertex* base_p)
             glVertex2f (vp->GetX (), vp->GetY ());
         }
 
-        glColor3f (COLOR_GREEN);
+        glColor3f (COLOR_RED);
         glVertex2f (base_p->GetX (), base_p->GetY ()); // Šî“_
         glEnd ();
 
@@ -218,7 +218,7 @@ void CAdminControl::DrawRotatingGuide (CVertex* base_p)
             glVertex2f (vp->GetX (), vp->GetY ());
         }
 
-        glColor3f (COLOR_BLUE);
+        glColor3f (COLOR_RED);
         glVertex2f (base_p->GetX (), base_p->GetY ()); // Šî“_
         glEnd ();
 
@@ -322,30 +322,12 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
     UpdateBoundingBox ();
 }
 
-void CAdminControl::ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+void CAdminControl::ScaleShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
 {
     if (bounding_box != NULL)
     {
         CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
         CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
-        CVertex* base_p = NULL;
-
-        if (bounding_box->GetHead ()->IsSelected ())
-        {
-            base_p = bounding_box->GetTail ()->GetPre ();
-        }
-        else if (bounding_box->GetHead ()->GetNext ()->IsSelected ())
-        {
-            base_p = bounding_box->GetTail ();
-        }
-        else if (bounding_box->GetTail ()->GetPre ()->IsSelected ())
-        {
-            base_p = bounding_box->GetHead ();
-        }
-        else if (bounding_box->GetTail ()->IsSelected ())
-        {
-            base_p = bounding_box->GetHead ()->GetNext ();
-        }
 
         for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
         {
@@ -400,25 +382,6 @@ void CAdminControl::RotateShape (CVertex* base_p, float mouse_before_x, float mo
     {
         CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
         CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
-
-        //CVertex* base_p = NULL;
-
-        //if (bounding_box->GetHead ()->IsSelected ())
-        //{
-        //    base_p = bounding_box->GetTail ()->GetPre ();
-        //}
-        //else if (bounding_box->GetHead ()->GetNext ()->IsSelected ())
-        //{
-        //    base_p = bounding_box->GetTail ();
-        //}
-        //else if (bounding_box->GetTail ()->GetPre ()->IsSelected ())
-        //{
-        //    base_p = bounding_box->GetHead ();
-        //}
-        //else if (bounding_box->GetTail ()->IsSelected ())
-        //{
-        //    base_p = bounding_box->GetHead ()->GetNext ();
-        //}
 
         for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
         {
@@ -1275,6 +1238,29 @@ CVertex* CAdminControl::SelectHandle (CVertex* mouse)
             }
         }
         return NULL;
+    }
+}
+
+void CAdminControl::AutoSetBasePoint (CVertex* result)
+{
+    if (bounding_box != NULL)
+    {
+        if (bounding_box->GetHead ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetTail ()->GetPre ()->GetX (), bounding_box->GetTail ()->GetPre ()->GetY ());
+        }
+        else if (bounding_box->GetHead ()->GetNext ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetTail ()->GetX (), bounding_box->GetTail ()->GetY ());
+        }
+        else if (bounding_box->GetTail ()->GetPre ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetHead ()->GetX (), bounding_box->GetHead ()->GetY ());
+        }
+        else if (bounding_box->GetTail ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetHead ()->GetNext ()->GetX (), bounding_box->GetHead ()->GetNext ()->GetY ());
+        }
     }
 }
 

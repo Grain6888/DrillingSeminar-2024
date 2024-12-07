@@ -136,6 +136,13 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             {
                 AC.DeSelectAllShape ();
             }
+            else
+            {
+                CVertex base_p;
+                AC.AutoSetBasePoint (&base_p);
+                x_M_down = base_p.GetX ();
+                y_M_down = base_p.GetY ();
+            }
 
             if (AC.SelectVertex (&mouse) != NULL)
             {
@@ -273,7 +280,8 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
         {
             if (AC.IsScaleMode () && AC.IsHandleSelected ())
             {
-                AC.ScaleShape (x_LR_down, y_LR_down, x_LR_over, y_LR_over);
+                CVertex base_p (x_M_down, y_M_down, NULL, NULL);
+                AC.ScaleShape (&base_p, x_LR_down, y_LR_down, x_LR_over, y_LR_over);
             }
             else if (AC.IsRotateMode () && AC.IsHandleSelected ())
             {
