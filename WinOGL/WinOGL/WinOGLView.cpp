@@ -233,7 +233,6 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     SetDown (point);
     CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
-    AC.DeSelectAllShape ();
     if (!AC.IsFreeShapeMode ())
     {
         if (DraggingFlag)
@@ -241,6 +240,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
         }
         else
         {
+            AC.DeSelectAllShape ();
             if (AC.SelectVertex (&mouse) != NULL)
             {
                 AC.SubVertex ();
