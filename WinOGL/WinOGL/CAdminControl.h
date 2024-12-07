@@ -43,6 +43,9 @@ public:
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
 
+    /// @brief 図形が選択された場合の補助線の描画を行う．
+    void DrawNormalGuide ();
+
     /// @brief 拡大縮小モードの補助線と基点の描画を行う．
     /// @param base_p 基点
     void DrawScalingGuide (CVertex* base_p);
@@ -241,6 +244,8 @@ public:
 
     /// @brief バウンディングボックスを破棄する．
     void DestroyBoundingBox ();
+
+    CVertex* SelectHandle (CVertex* mouse);
 
 private:
     /// @brief 点の描画サイズ．

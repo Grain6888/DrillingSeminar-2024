@@ -41,20 +41,28 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
             DrawOutline (sp);
         }
 
-        // バウンディングボックスを描画する．
-        if (IsScaleMode ())
+        // 補助線を表示する．
+        if (IsFreeShapeMode ())
         {
-            DrawScalingGuide (&mouse);
+            if (shape_tail->GetVertexNum () > 0)
+            {
+                DrawExLine (shape_tail->GetTail (), &mouse);
+            }
         }
-        else if (IsRotateMode ())
+        else
         {
-            DrawRotatingGuide (&mouse);
-        }
-
-        // 予測線を表示する．
-        if (IsFreeShapeMode () && shape_tail->GetVertexNum () > 0)
-        {
-            DrawExLine (shape_tail->GetTail (), &mouse);
+            if (IsScaleMode ())
+            {
+                DrawScalingGuide (&mouse);
+            }
+            else if (IsRotateMode ())
+            {
+                DrawRotatingGuide (&mouse);
+            }
+            else
+            {
+                DrawNormalGuide ();
+            }
         }
     }
 }
@@ -63,7 +71,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (COLOR_GREEN);
+        glColor3f (COLOR_ORANGE);
     }
     else
     {
@@ -79,7 +87,7 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (COLOR_GREEN);
+        glColor3f (COLOR_ORANGE);
     }
     else
     {
@@ -129,23 +137,58 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
 }
 
-void CAdminControl::DrawScalingGuide (CVertex* base_p)
+void CAdminControl::DrawNormalGuide ()
 {
     if (bounding_box != NULL)
     {
-        glColor3f (COLOR_ORANGE);
         glPointSize (POINTSIZE);
         glBegin (GL_POINTS);
+        glColor3f (COLOR_BLACK);
         for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
             glVertex2f (vp->GetX (), vp->GetY ());
         }
+        glEnd ();
+
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
+        glColor3f (COLOR_BLACK);
+        glBegin (GL_LINE_LOOP);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            glVertex2f (vp->GetX (), vp->GetY ());
+        }
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
+    }
+}
+
+void CAdminControl::DrawScalingGuide (CVertex* base_p)
+{
+    if (bounding_box != NULL)
+    {
+        glPointSize (POINTSIZE);
+        glBegin (GL_POINTS);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected ())
+            {
+                glColor3f (COLOR_LIGHT_GREEN);
+            }
+            else
+            {
+                glColor3f (COLOR_GREEN);
+            }
+            glVertex2f (vp->GetX (), vp->GetY ());
+        }
+
+        glColor3f (COLOR_GREEN);
         glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
         glEnd ();
 
         glEnable (GL_LINE_STIPPLE);
         glLineStipple (2, 0xF0F0);
-        glColor3f (COLOR_ORANGE);
+        glColor3f (COLOR_GREEN);
         glBegin (GL_LINE_LOOP);
         for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
@@ -160,13 +203,22 @@ void CAdminControl::DrawRotatingGuide (CVertex* base_p)
 {
     if (bounding_box != NULL)
     {
-        glColor3f (COLOR_BLUE);
         glPointSize (POINTSIZE);
         glBegin (GL_POINTS);
         for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
+            if (vp->IsSelected ())
+            {
+                glColor3f (COLOR_LIGHT_BLUE);
+            }
+            else
+            {
+                glColor3f (COLOR_BLUE);
+            }
             glVertex2f (vp->GetX (), vp->GetY ());
         }
+
+        glColor3f (COLOR_BLUE);
         glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
         glEnd ();
 
@@ -236,8 +288,14 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
         if (CMath::IsContained (sp, mouse))
         {
             sp->Select ();
-            CreateBoundingBox ();
-            UpdateBoundingBox ();
+            if (bounding_box == NULL)
+            {
+                CreateBoundingBox ();
+            }
+            else
+            {
+                UpdateBoundingBox ();
+            }
             return sp;
         }
     }
@@ -1133,5 +1191,27 @@ void CAdminControl::DestroyBoundingBox ()
     {
         bounding_box->FreeShape ();
         bounding_box = NULL;
+    }
+}
+
+CVertex* CAdminControl::SelectHandle (CVertex* mouse)
+{
+    if (bounding_box == NULL)
+    {
+        return NULL;
+    }
+    else
+    {
+        bounding_box->DeSelectAllVertex ();
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (CMath::VertexDis (vp, mouse) < MIN_DISTANCE)
+            {
+                vp->Select ();
+                vp->SetLastXY (vp->GetX (), vp->GetY ());
+                return vp;
+            }
+        }
+        return NULL;
     }
 }

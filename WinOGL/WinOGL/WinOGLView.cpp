@@ -132,7 +132,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
         else
         {
             // Ctrl を押しながら左クリックで複数選択
-            if (!(nFlags & MK_CONTROL))
+            if (AC.SelectHandle (&mouse) == NULL && !(nFlags & MK_CONTROL))
             {
                 AC.DeSelectAllShape ();
             }
@@ -146,7 +146,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             else if (AC.SelectShape (&mouse) != NULL)
             {
             }
-            else
+            else if (AC.SelectHandle (&mouse) == NULL && !(nFlags & MK_CONTROL))
             {
                 AC.DestroyBoundingBox ();
                 AC.ClearAffineTransMode ();
