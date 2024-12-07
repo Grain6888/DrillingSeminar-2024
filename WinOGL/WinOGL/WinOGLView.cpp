@@ -135,6 +135,20 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
             if (AC.SelectHandle (&mouse) == NULL && !(nFlags & MK_CONTROL))
             {
                 AC.DeSelectAllShape ();
+                if (AC.SelectVertex (&mouse) != NULL)
+                {
+                }
+                else if (AC.SelectLine (&mouse) != NULL)
+                {
+                }
+                else if (AC.SelectShape (&mouse) != NULL)
+                {
+                }
+                else
+                {
+                    AC.DestroyBoundingBox ();
+                    AC.ClearAffineTransMode ();
+                }
             }
             else
             {
@@ -144,20 +158,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
                 y_M_down = base_p.GetY ();
             }
 
-            if (AC.SelectVertex (&mouse) != NULL)
-            {
-            }
-            else if (AC.SelectLine (&mouse) != NULL)
-            {
-            }
-            else if (AC.SelectShape (&mouse) != NULL)
-            {
-            }
-            else if (AC.SelectHandle (&mouse) == NULL && !(nFlags & MK_CONTROL))
-            {
-                AC.DestroyBoundingBox ();
-                AC.ClearAffineTransMode ();
-            }
+
         }
     }
 
