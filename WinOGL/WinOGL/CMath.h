@@ -27,6 +27,11 @@ public:
     /// @return 点の垂線と直線間の交点 (X,Y)
     static void CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result);
 
+    /// @brief 自図形の重心を計算する
+    /// @param my_shape 自図形
+    /// @param result   重心
+    static void GravityPoint (CShape* my_shape, CVertex* result);
+
     /// @brief マウスの移動量と方向に基づいて点を平行移動する．
     /// @param before 移動前のマウスの位置
     /// @param after  移動後のマウスの位置
@@ -34,16 +39,24 @@ public:
     static void ShiftPoint (CVertex* before, CVertex* after, CVertex* result);
 
     /// @brief マウスの移動量と方向に基づいて点を拡大 / 縮小移動する．
-    /// @param base_p 移動前のマウスの位置
-    /// @param goal_p 移動後のマウスの位置
+    /// @param base_p 基点
+    /// @param before 移動前のマウスの位置
+    /// @param after  移動後のマウスの位置
     /// @param result 頂点
-    static void ScalePoint (CVertex* base_p, CVertex* goal_p, CVertex* result);
+    static void ScalePoint (CVertex* base_p, CVertex* before, CVertex* after, CVertex* result);
 
     /// @brief 基点に基づいて点を拡大 / 縮小移動する．
     /// @param scale  拡大率（scale > 1.0 拡大 / scale < 1.0 縮小）
     /// @param base_p 基点
     /// @param result 頂点
     static void ScalePoint (float scale, CVertex* base_p, CVertex* result);
+
+    /// @brief マウスの移動量と方向に基づいて点を回転移動する．
+    /// @param base_p 基点
+    /// @param before 移動前のマウスの位置
+    /// @param after  移動後のマウスの位置
+    /// @param result 頂点
+    static void RotatePoint (CVertex* base_p, CVertex* before, CVertex* after, CVertex* result);
 
     /// @brief 基点に基づいて点を回転移動する．
     /// @param degree 回転角度 (degree > 0.0 左回転 / degree < 0.0 右回転)
@@ -100,6 +113,6 @@ public:
     /// @param p_b_s 2 つ目のベクトルの始点
     /// @param p_b_e 2 つ目のベクトルの終点
     /// @return 2 つのベクトルのなす角度 (-π~π)
-    static double VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
+    static float VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
 };
 

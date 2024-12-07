@@ -324,16 +324,37 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
 
 void CAdminControl::ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
 {
-    CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
-    CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
-
-    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+    if (bounding_box != NULL)
     {
-        if (sp->IsSelected ())
+        CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+        CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+        CVertex* base_p = NULL;
+
+        if (bounding_box->GetHead ()->IsSelected ())
         {
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            base_p = bounding_box->GetTail ()->GetPre ();
+        }
+        else if (bounding_box->GetHead ()->GetNext ()->IsSelected ())
+        {
+            base_p = bounding_box->GetTail ();
+        }
+        else if (bounding_box->GetTail ()->GetPre ()->IsSelected ())
+        {
+            base_p = bounding_box->GetHead ();
+        }
+        else if (bounding_box->GetTail ()->IsSelected ())
+        {
+            base_p = bounding_box->GetHead ()->GetNext ();
+        }
+
+        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+        {
+            if (sp->IsSelected ())
             {
-                CMath::ScalePoint (&before, &after, vp);
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    CMath::ScalePoint (base_p, &before, &after, vp);
+                }
             }
         }
     }
@@ -366,6 +387,47 @@ void CAdminControl::ScaleDownShape (CVertex* base_p)
             for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
             {
                 CMath::ScalePoint (0.95f, base_p, vp);
+            }
+        }
+    }
+
+    UpdateBoundingBox ();
+}
+
+void CAdminControl::RotateShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+{
+    if (bounding_box != NULL)
+    {
+        CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+        CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+
+        //CVertex* base_p = NULL;
+
+        //if (bounding_box->GetHead ()->IsSelected ())
+        //{
+        //    base_p = bounding_box->GetTail ()->GetPre ();
+        //}
+        //else if (bounding_box->GetHead ()->GetNext ()->IsSelected ())
+        //{
+        //    base_p = bounding_box->GetTail ();
+        //}
+        //else if (bounding_box->GetTail ()->GetPre ()->IsSelected ())
+        //{
+        //    base_p = bounding_box->GetHead ();
+        //}
+        //else if (bounding_box->GetTail ()->IsSelected ())
+        //{
+        //    base_p = bounding_box->GetHead ()->GetNext ();
+        //}
+
+        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+        {
+            if (sp->IsSelected ())
+            {
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    CMath::RotatePoint (base_p, &before, &after, vp);
+                }
             }
         }
     }
@@ -1213,5 +1275,24 @@ CVertex* CAdminControl::SelectHandle (CVertex* mouse)
             }
         }
         return NULL;
+    }
+}
+
+bool CAdminControl::IsHandleSelected ()
+{
+    if (bounding_box == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected ())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

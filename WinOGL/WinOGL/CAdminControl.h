@@ -91,6 +91,14 @@ public:
     /// @param base_p 基点
     void ScaleDownShape (CVertex* base_p);
 
+    /// @brief 形状を回転する．
+    /// @param base_p         基点
+    /// @param mouse_before_x 移動前のマウスの X 座標
+    /// @param mouse_before_y 移動前のマウスの Y 座標
+    /// @param mouse_after_x  移動後のマウスの X 座標
+    /// @param mouse_after_y  移動後のマウスの Y 座標
+    void RotateShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+
     /// @brief 形状を左回転する．
     /// @param base_p 基点
     void RotateLeftShape (CVertex* base_p);
@@ -245,7 +253,14 @@ public:
     /// @brief バウンディングボックスを破棄する．
     void DestroyBoundingBox ();
 
+    /// @brief バウンディングボックスのハンドルを選択する．
+    /// @param mouse マウスの座標 (X,Y)
+    /// @return ハンドル
     CVertex* SelectHandle (CVertex* mouse);
+
+    /// @brief ハンドルが選択されているかを判定する．
+    /// @return 選択済 true / 未選択 false
+    bool IsHandleSelected ();
 
 private:
     /// @brief 点の描画サイズ．
