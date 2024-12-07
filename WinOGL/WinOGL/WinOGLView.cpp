@@ -40,12 +40,12 @@ END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
 {
-    x_down = 0.0;
-    y_down = 0.0;
-    x_over = 0.0;
-    y_over = 0.0;
-    x_Mdown = 0.0;
-    y_Mdown = 0.0;
+    x_LR_down = 0.0;
+    y_LR_down = 0.0;
+    x_LR_over = 0.0;
+    y_LR_over = 0.0;
+    x_M_down = 0.0;
+    y_M_down = 0.0;
     m_hRC = NULL;
 }
 
@@ -74,11 +74,11 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
-        AC.Draw (x_Mdown, y_Mdown);
+        AC.Draw (x_M_down, y_M_down);
     }
     else
     {
-        AC.Draw (x_over, y_over);
+        AC.Draw (x_LR_over, y_LR_over);
     }
 
     glFlush ();
@@ -108,12 +108,12 @@ CWinOGLDoc* CWinOGLView::GetDocument () const // デバッグ以外のバージ�
 void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 {
     SetDown (point);
-    CVertex mouse (x_down, y_down, NULL, NULL);
+    CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
     if (AC.IsFreeShapeMode ())
     {
         AC.DeSelectAllShape ();
-        AC.PushVertex (x_down, y_down);
+        AC.PushVertex (x_LR_down, y_LR_down);
     }
     else
     {
@@ -132,24 +132,33 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
         else
         {
             // Ctrl を押しながら左クリックで複数選択
-            if (!(nFlags & MK_CONTROL))
+            if (AC.SelectHandle (&mouse) == NULL && !(nFlags & MK_CONTROL))
             {
                 AC.DeSelectAllShape ();
-            }
-
-            if (AC.SelectVertex (&mouse) != NULL)
-            {
-            }
-            else if (AC.SelectLine (&mouse) != NULL)
-            {
-            }
-            else if (AC.SelectShape (&mouse) != NULL)
-            {
+                if (AC.SelectVertex (&mouse) != NULL)
+                {
+                }
+                else if (AC.SelectLine (&mouse) != NULL)
+                {
+                }
+                else if (AC.SelectShape (&mouse) != NULL)
+                {
+                }
+                else
+                {
+                    AC.DestroyBoundingBox ();
+                    AC.ClearAffineTransMode ();
+                }
             }
             else
             {
-                AC.ClearAffineTransMode ();
+                CVertex base_p;
+                AC.AutoSetBasePoint (&base_p);
+                x_M_down = base_p.GetX ();
+                y_M_down = base_p.GetY ();
             }
+
+
         }
     }
 
@@ -160,7 +169,7 @@ void CWinOGLView::OnLButtonDown (UINT nFlags, CPoint point)
 void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 {
     SetDown (point);
-    CVertex mouse (x_down, y_down, NULL, NULL);
+    CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
     AC.DeSelectAllShape ();
     if (AC.IsFreeShapeMode ())
@@ -175,7 +184,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
         {
             if (AC.SelectVertex (&mouse) == NULL && AC.SelectLine (&mouse) != NULL)
             {
-                AC.AddVertex (x_down, y_down);
+                AC.AddVertex (x_LR_down, y_LR_down);
             }
         }
     }
@@ -188,7 +197,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
     SetDown (point);
-    CVertex mouse (x_down, y_down, NULL, NULL);
+    CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
     if (AC.IsFreeShapeMode ())
     {
@@ -230,9 +239,8 @@ void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 {
     SetDown (point);
-    CVertex mouse (x_down, y_down, NULL, NULL);
+    CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
-    AC.DeSelectAllShape ();
     if (!AC.IsFreeShapeMode ())
     {
         if (DraggingFlag)
@@ -240,6 +248,7 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
         }
         else
         {
+            AC.DeSelectAllShape ();
             if (AC.SelectVertex (&mouse) != NULL)
             {
                 AC.SubVertex ();
@@ -270,7 +279,20 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
     {
         if (DraggingFlag)
         {
-            AC.ShiftVertex (x_down, y_down, x_over, y_over);
+            if (AC.IsScaleMode () && AC.IsHandleSelected ())
+            {
+                CVertex base_p (x_M_down, y_M_down, NULL, NULL);
+                AC.ScaleShape (&base_p, x_LR_down, y_LR_down, x_LR_over, y_LR_over);
+            }
+            else if (AC.IsRotateMode () && AC.IsHandleSelected ())
+            {
+                CVertex base_p (x_M_down, y_M_down, NULL, NULL);
+                AC.RotateShape (&base_p, x_LR_down, y_LR_down, x_LR_over, y_LR_over);
+            }
+            else
+            {
+                AC.ShiftVertex (x_LR_down, y_LR_down, x_LR_over, y_LR_over);
+            }
         }
     }
 
@@ -280,7 +302,7 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
 BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 {
-    CVertex base_p (x_Mdown, y_Mdown, NULL, NULL);
+    CVertex base_p (x_M_down, y_M_down, NULL, NULL);
 
     if (AC.IsScaleMode ())
     {
@@ -304,6 +326,7 @@ BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
             AC.RotateRightShape (&base_p);
         }
     }
+
     if (AC.CanMoveVertex ())
     {
         AC.UpdateLastMovedVertex ();
@@ -460,12 +483,12 @@ void CWinOGLView::SetDown (CPoint point)
     GetClientRect (rect);
 
     // デバイス座標系
-    x_down = (float)point.x;
-    y_down = (float)point.y;
+    x_LR_down = (float)point.x;
+    y_LR_down = (float)point.y;
 
     // デバイス座標系→正規化座標系
-    x_down = x_down / rect.Width ();
-    y_down = 1 - (y_down / rect.Height ());
+    x_LR_down = x_LR_down / rect.Width ();
+    y_LR_down = 1 - (y_LR_down / rect.Height ());
 
     // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
@@ -473,15 +496,15 @@ void CWinOGLView::SetDown (CPoint point)
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_down = (x_down - (float)(1.0 - x_down)) * aspect_ratio;
-        y_down -= (float)(1.0 - y_down);
+        x_LR_down = (x_LR_down - (float)(1.0 - x_LR_down)) * aspect_ratio;
+        y_LR_down -= (float)(1.0 - y_LR_down);
     }
     // ウィンドウが縦長の場合
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_down = x_down - (float)(1.0 - x_down);
-        y_down = (y_down - (float)(1.0 - y_down)) * aspect_ratio;
+        x_LR_down = x_LR_down - (float)(1.0 - x_LR_down);
+        y_LR_down = (y_LR_down - (float)(1.0 - y_LR_down)) * aspect_ratio;
     }
 }
 
@@ -492,26 +515,26 @@ void CWinOGLView::SetOver (CPoint point)
     GetClientRect (rect);
 
     // デバイス座標系
-    x_over = (float)point.x;
-    y_over = (float)point.y;
+    x_LR_over = (float)point.x;
+    y_LR_over = (float)point.y;
 
     // デバイス座標系→正規化座標系
-    x_over = x_over / rect.Width ();
-    y_over = 1 - (y_over / rect.Height ());
+    x_LR_over = x_LR_over / rect.Width ();
+    y_LR_over = 1 - (y_LR_over / rect.Height ());
 
     // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_over = (x_over - (float)(1.0 - x_over)) * aspect_ratio;
-        y_over -= (float)(1.0 - y_over);
+        x_LR_over = (x_LR_over - (float)(1.0 - x_LR_over)) * aspect_ratio;
+        y_LR_over -= (float)(1.0 - y_LR_over);
     }
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_over = x_over - (float)(1.0 - x_over);
-        y_over = (y_over - (float)(1.0 - y_over)) * aspect_ratio;
+        x_LR_over = x_LR_over - (float)(1.0 - x_LR_over);
+        y_LR_over = (y_LR_over - (float)(1.0 - y_LR_over)) * aspect_ratio;
     }
 }
 
@@ -522,26 +545,26 @@ void CWinOGLView::SetMDown (CPoint point)
     GetClientRect (rect);
 
     // デバイス座標系
-    x_Mdown = (float)point.x;
-    y_Mdown = (float)point.y;
+    x_M_down = (float)point.x;
+    y_M_down = (float)point.y;
 
     // デバイス座標系→正規化座標系
-    x_Mdown = x_Mdown / rect.Width ();
-    y_Mdown = 1 - (y_Mdown / rect.Height ());
+    x_M_down = x_M_down / rect.Width ();
+    y_M_down = 1 - (y_M_down / rect.Height ());
 
     // 正規化座標系→ワールド座標系
     float aspect_ratio = 0.0;
     if (rect.Width () > rect.Height ())
     {
         aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_Mdown = (x_Mdown - (float)(1.0 - x_Mdown)) * aspect_ratio;
-        y_Mdown -= (float)(1.0 - y_Mdown);
+        x_M_down = (x_M_down - (float)(1.0 - x_M_down)) * aspect_ratio;
+        y_M_down -= (float)(1.0 - y_M_down);
     }
     else
     {
         aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_Mdown = x_Mdown - (float)(1.0 - x_Mdown);
-        y_Mdown = (y_Mdown - (float)(1.0 - y_Mdown)) * aspect_ratio;
+        x_M_down = x_M_down - (float)(1.0 - x_M_down);
+        y_M_down = (y_M_down - (float)(1.0 - y_M_down)) * aspect_ratio;
     }
 }
 
@@ -550,7 +573,7 @@ BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 {
     if (AC.IsFreeShapeMode ())
     {
-        CVertex mouse_over (x_over, y_over, NULL, NULL);
+        CVertex mouse_over (x_LR_over, y_LR_over, NULL, NULL);
         if (AC.CanAddVertex (&mouse_over))
         {
             ::SetCursor (AfxGetApp ()->LoadStandardCursor (IDC_CROSS));

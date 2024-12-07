@@ -83,17 +83,34 @@ void CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* r
     result->SetXY (cx, cy);
 }
 
+void CMath::GravityPoint (CShape* my_shape, CVertex* result)
+{
+    float sum_x = 0.0;
+    float sum_y = 0.0;
+
+    for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
+    {
+        sum_x += vp->GetX ();
+        sum_y += vp->GetY ();
+    }
+
+    result->SetXY (sum_x / my_shape->GetVertexNum (), sum_y / my_shape->GetVertexNum ());
+}
+
 void CMath::ShiftPoint (CVertex* before, CVertex* after, CVertex* result)
 {
     result->SetXY (result->GetLastX () + (after->GetX () - before->GetX ()), result->GetLastY () + (after->GetY () - before->GetY ()));
 }
 
-void CMath::ScalePoint (CVertex* base_p, CVertex* goal_p, CVertex* result)
+void CMath::ScalePoint (CVertex* base_p, CVertex* before, CVertex* after, CVertex* result)
 {
-    float s_x = goal_p->GetX () - base_p->GetX ();
-    float s_y = goal_p->GetY () - base_p->GetY ();
+    float s_x = (after->GetX () - base_p->GetX ()) / (before->GetX () - base_p->GetX ());
+    float s_y = (after->GetY () - base_p->GetY ()) / (before->GetY () - base_p->GetY ());
 
-    result->SetXY (s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetLastX (), s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetLastY ());
+    float x = s_x * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
+    float y = s_y * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
+
+    result->SetXY (x, y);
 }
 
 void CMath::ScalePoint (float scale, CVertex* base_p, CVertex* result)
@@ -101,6 +118,14 @@ void CMath::ScalePoint (float scale, CVertex* base_p, CVertex* result)
     float x = scale * (result->GetLastX () - base_p->GetX ()) + base_p->GetX ();
     float y = scale * (result->GetLastY () - base_p->GetY ()) + base_p->GetY ();
 
+    result->SetXY (x, y);
+}
+
+void CMath::RotatePoint (CVertex* base_p, CVertex* before, CVertex* after, CVertex* result)
+{
+    float theta = VecAngle (base_p, before, base_p, after);
+    float x = (result->GetLastX () - base_p->GetX ()) * cosf (theta) - (result->GetLastY () - base_p->GetY ()) * sinf (theta) + base_p->GetX ();
+    float y = (result->GetLastX () - base_p->GetX ()) * sinf (theta) + (result->GetLastY () - base_p->GetY ()) * cosf (theta) + base_p->GetY ();
     result->SetXY (x, y);
 }
 
@@ -233,9 +258,9 @@ CVertex* CMath::PositionVec (CVertex* p_s, CVertex* p_e)
     return new_point_vector;
 }
 
-double CMath::VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+float CMath::VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
     float outer_product = Outer (p_a_s, p_a_e, p_b_s, p_b_e);
     float inner_product = Inner (p_a_s, p_a_e, p_b_s, p_b_e);
-    return atan2 (outer_product, inner_product);
+    return atan2f (outer_product, inner_product);
 }

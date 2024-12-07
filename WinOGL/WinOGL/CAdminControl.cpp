@@ -8,11 +8,13 @@ CAdminControl::CAdminControl ()
     shape_head = NULL;
     shape_tail = NULL;
     shape_num = 0;
+    bounding_box = NULL;
 }
 
 CAdminControl::~CAdminControl ()
 {
     shape_head->FreeShape ();
+    DestroyBoundingBox ();
 }
 
 void CAdminControl::Draw (float mouse_x, float mouse_y)
@@ -36,22 +38,31 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
             }
 
             // 輪郭線を描画する．
-            DrawShape (sp);
+            DrawOutline (sp);
         }
 
-        if (IsScaleMode ())
+        // 補助線を表示する．
+        if (IsFreeShapeMode ())
         {
-            DrawScalingGuide (&mouse);
+            if (shape_tail->GetVertexNum () > 0)
+            {
+                DrawExLine (shape_tail->GetTail (), &mouse);
+            }
         }
-        else if (IsRotateMode ())
+        else
         {
-            DrawRotatingGuide (&mouse);
-        }
-
-        // 予測線を表示する．
-        if (IsFreeShapeMode () && shape_tail->GetVertexNum () > 0)
-        {
-            DrawExLine (shape_tail->GetTail (), &mouse);
+            if (IsScaleMode ())
+            {
+                DrawScalingGuide (&mouse);
+            }
+            else if (IsRotateMode ())
+            {
+                DrawRotatingGuide (&mouse);
+            }
+            else
+            {
+                DrawNormalGuide ();
+            }
         }
     }
 }
@@ -60,7 +71,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
 {
     if (vertex->IsSelected ())
     {
-        glColor3f (COLOR_GREEN);
+        glColor3f (COLOR_ORANGE);
     }
     else
     {
@@ -76,7 +87,7 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
 {
     if (start->IsSelected () && end->IsSelected ())
     {
-        glColor3f (COLOR_GREEN);
+        glColor3f (COLOR_ORANGE);
     }
     else
     {
@@ -89,7 +100,7 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
     glEnd ();
 }
 
-void CAdminControl::DrawShape (CShape* shape)
+void CAdminControl::DrawOutline (CShape* shape)
 {
     for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
     {
@@ -126,132 +137,102 @@ void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
     }
 }
 
+void CAdminControl::DrawNormalGuide ()
+{
+    if (bounding_box != NULL)
+    {
+        glPointSize (POINTSIZE);
+        glBegin (GL_POINTS);
+        glColor3f (COLOR_BLACK);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            glVertex2f (vp->GetX (), vp->GetY ());
+        }
+        glEnd ();
+
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
+        glColor3f (COLOR_BLACK);
+        glBegin (GL_LINE_LOOP);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            glVertex2f (vp->GetX (), vp->GetY ());
+        }
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
+    }
+}
+
 void CAdminControl::DrawScalingGuide (CVertex* base_p)
 {
-    bool selected_flag = false;
-    float max_x = 0.0;
-    float min_x = 0.0;
-    float max_y = 0.0;
-    float min_y = 0.0;
-
-    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    if (bounding_box != NULL)
     {
-        if (sp->IsSelected ())
+        glPointSize (POINTSIZE);
+        glBegin (GL_POINTS);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (!selected_flag)
+            if (vp->IsSelected ())
             {
-                max_x = sp->GetHead ()->GetX ();
-                min_x = sp->GetHead ()->GetX ();
-                max_y = sp->GetHead ()->GetY ();
-                min_y = sp->GetHead ()->GetY ();
-                selected_flag = true;
+                glColor3f (COLOR_LIGHT_GREEN);
             }
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            else
             {
-                if (vp->GetX () > max_x)
-                {
-                    max_x = vp->GetX ();
-                }
-                else if (vp->GetX () < min_x)
-                {
-                    min_x = vp->GetX ();
-                }
-                if (vp->GetY () > max_y)
-                {
-                    max_y = vp->GetY ();
-                }
-                else if (vp->GetY () < min_y)
-                {
-                    min_y = vp->GetY ();
-                }
+                glColor3f (COLOR_GREEN);
             }
+            glVertex2f (vp->GetX (), vp->GetY ());
         }
+
+        glColor3f (COLOR_RED);
+        glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
+        glEnd ();
+
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
+        glColor3f (COLOR_GREEN);
+        glBegin (GL_LINE_LOOP);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            glVertex2f (vp->GetX (), vp->GetY ());
+        }
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
     }
-
-    glColor3f (COLOR_ORANGE);
-    glPointSize (POINTSIZE);
-    glBegin (GL_POINTS);
-    glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
-    glVertex2f (min_x, max_y); // 左上
-    glVertex2f (min_x, min_y); // 左下
-    glVertex2f (max_x, min_y); // 右下
-    glVertex2f (max_x, max_y); // 右上
-    glEnd ();
-
-    glEnable (GL_LINE_STIPPLE);
-    glLineStipple (2, 0xF0F0);
-    glColor3f (COLOR_ORANGE);
-    glBegin (GL_LINE_LOOP);
-    glVertex2f (min_x, max_y); // 左上
-    glVertex2f (min_x, min_y); // 左下
-    glVertex2f (max_x, min_y); // 右下
-    glVertex2f (max_x, max_y); // 右上
-    glEnd ();
-    glDisable (GL_LINE_STIPPLE);
 }
 
 void CAdminControl::DrawRotatingGuide (CVertex* base_p)
 {
-    bool selected_flag = false;
-    float max_x = 0.0;
-    float min_x = 0.0;
-    float max_y = 0.0;
-    float min_y = 0.0;
-
-    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+    if (bounding_box != NULL)
     {
-        if (sp->IsSelected ())
+        glPointSize (POINTSIZE);
+        glBegin (GL_POINTS);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
-            if (!selected_flag)
+            if (vp->IsSelected ())
             {
-                max_x = sp->GetHead ()->GetX ();
-                min_x = sp->GetHead ()->GetX ();
-                max_y = sp->GetHead ()->GetY ();
-                min_y = sp->GetHead ()->GetY ();
-                selected_flag = true;
+                glColor3f (COLOR_LIGHT_BLUE);
             }
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            else
             {
-                if (vp->GetX () > max_x)
-                {
-                    max_x = vp->GetX ();
-                }
-                else if (vp->GetX () < min_x)
-                {
-                    min_x = vp->GetX ();
-                }
-                if (vp->GetY () > max_y)
-                {
-                    max_y = vp->GetY ();
-                }
-                else if (vp->GetY () < min_y)
-                {
-                    min_y = vp->GetY ();
-                }
+                glColor3f (COLOR_BLUE);
             }
+            glVertex2f (vp->GetX (), vp->GetY ());
         }
+
+        glColor3f (COLOR_RED);
+        glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
+        glEnd ();
+
+        glEnable (GL_LINE_STIPPLE);
+        glLineStipple (2, 0xF0F0);
+        glColor3f (COLOR_BLUE);
+        glBegin (GL_LINE_LOOP);
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            glVertex2f (vp->GetX (), vp->GetY ());
+        }
+        glEnd ();
+        glDisable (GL_LINE_STIPPLE);
     }
-
-    glColor3f (COLOR_BLUE);
-    glPointSize (POINTSIZE);
-    glBegin (GL_POINTS);
-    glVertex2f (base_p->GetX (), base_p->GetY ()); // 基点
-    glVertex2f (min_x, max_y); // 左上
-    glVertex2f (min_x, min_y); // 左下
-    glVertex2f (max_x, min_y); // 右下
-    glVertex2f (max_x, max_y); // 右上
-    glEnd ();
-
-    glEnable (GL_LINE_STIPPLE);
-    glLineStipple (2, 0xF0F0);
-    glColor3f (COLOR_BLUE);
-    glBegin (GL_LINE_LOOP);
-    glVertex2f (min_x, max_y); // 左上
-    glVertex2f (min_x, min_y); // 左下
-    glVertex2f (max_x, min_y); // 右下
-    glVertex2f (max_x, max_y); // 右上
-    glEnd ();
-    glDisable (GL_LINE_STIPPLE);
 }
 
 CVertex* CAdminControl::SelectVertex (CVertex* mouse)
@@ -307,6 +288,14 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
         if (CMath::IsContained (sp, mouse))
         {
             sp->Select ();
+            if (bounding_box == NULL)
+            {
+                CreateBoundingBox ();
+            }
+            else
+            {
+                UpdateBoundingBox ();
+            }
             return sp;
         }
     }
@@ -329,23 +318,30 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
-void CAdminControl::ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+void CAdminControl::ScaleShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
 {
-    CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
-    CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
-
-    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+    if (bounding_box != NULL)
     {
-        if (sp->IsSelected ())
+        CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+        CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+
+        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
         {
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            if (sp->IsSelected ())
             {
-                CMath::ScalePoint (&before, &after, vp);
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    CMath::ScalePoint (base_p, &before, &after, vp);
+                }
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::ScaleUpShape (CVertex* base_p)
@@ -360,6 +356,8 @@ void CAdminControl::ScaleUpShape (CVertex* base_p)
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::ScaleDownShape (CVertex* base_p)
@@ -374,6 +372,30 @@ void CAdminControl::ScaleDownShape (CVertex* base_p)
             }
         }
     }
+
+    UpdateBoundingBox ();
+}
+
+void CAdminControl::RotateShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+{
+    if (bounding_box != NULL)
+    {
+        CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
+        CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
+
+        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+        {
+            if (sp->IsSelected ())
+            {
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    CMath::RotatePoint (base_p, &before, &after, vp);
+                }
+            }
+        }
+    }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::RotateLeftShape (CVertex* base_p)
@@ -388,6 +410,8 @@ void CAdminControl::RotateLeftShape (CVertex* base_p)
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::RotateRightShape (CVertex* base_p)
@@ -402,6 +426,8 @@ void CAdminControl::RotateRightShape (CVertex* base_p)
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::ResetMovedVertex ()
@@ -416,6 +442,8 @@ void CAdminControl::ResetMovedVertex ()
             }
         }
     }
+
+    UpdateBoundingBox ();
 }
 
 void CAdminControl::UpdateLastMovedVertex ()
@@ -503,6 +531,8 @@ void CAdminControl::RemoveShape ()
             }
         }
     }
+
+    DestroyBoundingBox ();
 
     shape_num--;
 }
@@ -1065,5 +1095,190 @@ void CAdminControl::DeSelectAllShape ()
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
         sp->DeSelect ();
+    }
+    DestroyBoundingBox ();
+}
+
+void CAdminControl::CreateBoundingBox ()
+{
+    if (bounding_box == NULL)
+    {
+        CShape* box = new CShape;
+        bounding_box = box;
+
+        bool selected_flag = false;
+        float max_x = 0.0;
+        float min_x = 0.0;
+        float max_y = 0.0;
+        float min_y = 0.0;
+
+        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        {
+            if (sp->IsSelected ())
+            {
+                if (!selected_flag)
+                {
+                    max_x = sp->GetHead ()->GetX ();
+                    min_x = sp->GetHead ()->GetX ();
+                    max_y = sp->GetHead ()->GetY ();
+                    min_y = sp->GetHead ()->GetY ();
+                    selected_flag = true;
+                }
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    if (vp->GetX () > max_x)
+                    {
+                        max_x = vp->GetX ();
+                    }
+                    else if (vp->GetX () < min_x)
+                    {
+                        min_x = vp->GetX ();
+                    }
+
+                    if (vp->GetY () > max_y)
+                    {
+                        max_y = vp->GetY ();
+                    }
+                    else if (vp->GetY () < min_y)
+                    {
+                        min_y = vp->GetY ();
+                    }
+                }
+            }
+        }
+
+        bounding_box->PushVertex (min_x, max_y); // 左上
+        bounding_box->PushVertex (min_x, min_y); // 左下
+        bounding_box->PushVertex (max_x, min_y); // 右下
+        bounding_box->PushVertex (max_x, max_y); // 右上
+    }
+}
+
+void CAdminControl::UpdateBoundingBox ()
+{
+    if (bounding_box != NULL)
+    {
+        bool selected_flag = false;
+        float max_x = 0.0;
+        float min_x = 0.0;
+        float max_y = 0.0;
+        float min_y = 0.0;
+
+        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        {
+            if (sp->IsSelected ())
+            {
+                if (!selected_flag)
+                {
+                    max_x = sp->GetHead ()->GetX ();
+                    min_x = sp->GetHead ()->GetX ();
+                    max_y = sp->GetHead ()->GetY ();
+                    min_y = sp->GetHead ()->GetY ();
+                    selected_flag = true;
+                }
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    if (vp->GetX () > max_x)
+                    {
+                        max_x = vp->GetX ();
+                    }
+                    else if (vp->GetX () < min_x)
+                    {
+                        min_x = vp->GetX ();
+                    }
+
+                    if (vp->GetY () > max_y)
+                    {
+                        max_y = vp->GetY ();
+                    }
+                    else if (vp->GetY () < min_y)
+                    {
+                        min_y = vp->GetY ();
+                    }
+                }
+            }
+        }
+
+        bounding_box->GetHead ()->SetXY (min_x, max_y); // 左上
+        bounding_box->GetHead ()->GetNext ()->SetXY (min_x, min_y); // 左下
+        bounding_box->GetTail ()->GetPre ()->SetXY (max_x, min_y); // 右下
+        bounding_box->GetTail ()->SetXY (max_x, max_y); // 右上
+    }
+}
+
+void CAdminControl::DestroyBoundingBox ()
+{
+    if (bounding_box == NULL)
+    {
+        return;
+    }
+    else
+    {
+        bounding_box->FreeShape ();
+        bounding_box = NULL;
+    }
+}
+
+CVertex* CAdminControl::SelectHandle (CVertex* mouse)
+{
+    if (bounding_box == NULL)
+    {
+        return NULL;
+    }
+    else
+    {
+        bounding_box->DeSelectAllVertex ();
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (CMath::VertexDis (vp, mouse) < MIN_DISTANCE)
+            {
+                vp->Select ();
+                vp->SetLastXY (vp->GetX (), vp->GetY ());
+                return vp;
+            }
+        }
+        return NULL;
+    }
+}
+
+void CAdminControl::AutoSetBasePoint (CVertex* result)
+{
+    if (bounding_box != NULL)
+    {
+        if (bounding_box->GetHead ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetTail ()->GetPre ()->GetX (), bounding_box->GetTail ()->GetPre ()->GetY ());
+        }
+        else if (bounding_box->GetHead ()->GetNext ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetTail ()->GetX (), bounding_box->GetTail ()->GetY ());
+        }
+        else if (bounding_box->GetTail ()->GetPre ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetHead ()->GetX (), bounding_box->GetHead ()->GetY ());
+        }
+        else if (bounding_box->GetTail ()->IsSelected ())
+        {
+            result->SetXY (bounding_box->GetHead ()->GetNext ()->GetX (), bounding_box->GetHead ()->GetNext ()->GetY ());
+        }
+    }
+}
+
+bool CAdminControl::IsHandleSelected ()
+{
+    if (bounding_box == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        for (CVertex* vp = bounding_box->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (vp->IsSelected ())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

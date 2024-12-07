@@ -36,12 +36,15 @@ public:
     /// @brief 図形の輪郭線の描画を行う．
     /// @param start 図形の始点
     /// @param end   図形の終点
-    void DrawShape (CShape* shape);
+    void DrawOutline (CShape* shape);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
     /// @param end   予測線の終点
     void DrawExLine (CVertex* start, CVertex* end);
+
+    /// @brief 図形が選択された場合の補助線の描画を行う．
+    void DrawNormalGuide ();
 
     /// @brief 拡大縮小モードの補助線と基点の描画を行う．
     /// @param base_p 基点
@@ -74,11 +77,12 @@ public:
     void ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
 
     /// @brief 形状を拡大縮小する．
+    /// @param base_p         基点
     /// @param mouse_before_x 移動前のマウスの X 座標
     /// @param mouse_before_y 移動前のマウスの Y 座標
     /// @param mouse_after_x  移動後のマウスの X 座標
     /// @param mouse_after_y  移動後のマウスの Y 座標
-    void ScaleShape (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+    void ScaleShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
 
     /// @brief 形状を拡大する．
     /// @param base_p 基点
@@ -87,6 +91,14 @@ public:
     /// @brief 形状を縮小する．
     /// @param base_p 基点
     void ScaleDownShape (CVertex* base_p);
+
+    /// @brief 形状を回転する．
+    /// @param base_p         基点
+    /// @param mouse_before_x 移動前のマウスの X 座標
+    /// @param mouse_before_y 移動前のマウスの Y 座標
+    /// @param mouse_after_x  移動後のマウスの X 座標
+    /// @param mouse_after_y  移動後のマウスの Y 座標
+    void RotateShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
 
     /// @brief 形状を左回転する．
     /// @param base_p 基点
@@ -233,6 +245,28 @@ public:
     /// @brief すべての図形の選択状態を解除する．
     void DeSelectAllShape ();
 
+    /// @brief バウンディングボックスを生成する．
+    void CreateBoundingBox ();
+
+    /// @brief バウンディングボックスを更新する．
+    void UpdateBoundingBox ();
+
+    /// @brief バウンディングボックスを破棄する．
+    void DestroyBoundingBox ();
+
+    /// @brief バウンディングボックスのハンドルを選択する．
+    /// @param mouse マウスの座標 (X,Y)
+    /// @return ハンドル
+    CVertex* SelectHandle (CVertex* mouse);
+
+    /// @brief ハンドルに対応する基点を設定する．
+    /// @param result 基点
+    void AutoSetBasePoint (CVertex* result);
+
+    /// @brief ハンドルが選択されているかを判定する．
+    /// @return 選択済 true / 未選択 false
+    bool IsHandleSelected ();
+
 private:
     /// @brief 点の描画サイズ．
     float POINTSIZE = 10.0;
@@ -245,6 +279,9 @@ private:
 
     /// @brief 末尾の図形．
     CShape* shape_tail;
+
+    /// @brief バウンディングボックス
+    CShape* bounding_box;
 
     /// @brief 図形の数．
     int shape_num;
