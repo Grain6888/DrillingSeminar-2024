@@ -233,10 +233,13 @@ public:
     /// @brief すべての図形の選択状態を解除する．
     void DeSelectAllShape ();
 
+    /// @brief バウンディングボックスを生成する．
     void CreateBoundingBox ();
 
+    /// @brief バウンディングボックスを更新する．
     void UpdateBoundingBox ();
 
+    /// @brief バウンディングボックスを破棄する．
     void DestroyBoundingBox ();
 
 private:
