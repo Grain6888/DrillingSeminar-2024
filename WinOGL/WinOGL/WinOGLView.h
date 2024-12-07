@@ -31,6 +31,8 @@ public:
     /// @param point デバイス座標 (X,Y)
     void SetOver (CPoint point);
 
+    /// @brief ホイールクリックしたときの座標 (X,Y) を設定する．
+    /// @param point デバイス座標 (X,Y)
     void SetMDown (CPoint point);
 
 private:

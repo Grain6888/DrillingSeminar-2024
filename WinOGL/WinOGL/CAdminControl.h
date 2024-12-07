@@ -259,6 +259,8 @@ public:
     /// @return ハンドル
     CVertex* SelectHandle (CVertex* mouse);
 
+    /// @brief ハンドルに対応する基点を設定する．
+    /// @param result 基点
     void AutoSetBasePoint (CVertex* result);
 
     /// @brief ハンドルが選択されているかを判定する．
