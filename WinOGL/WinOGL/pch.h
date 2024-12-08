@@ -12,4 +12,4 @@
 
 #endif //PCH_H
 
-#define MIN_DISTANCE 0.1
+#define MIN_DISTANCE 0.02
