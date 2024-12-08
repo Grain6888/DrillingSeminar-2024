@@ -241,10 +241,23 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
     SetDown (point);
     CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
-    if (!AC.IsFreeShapeMode ())
+    if (AC.IsFreeShapeMode ())
+    {
+    }
+    else
     {
         if (DraggingFlag)
         {
+            if (AC.CanMoveVertex ())
+            {
+                AC.UpdateLastMovedVertex ();
+            }
+            else
+            {
+                AC.ResetMovedVertex ();
+            }
+            AC.DeSelectAllShape ();
+            DraggingFlag = false;
         }
         else
         {
