@@ -2,6 +2,7 @@
 #include "pch.h"
 #include <gl/GL.h>
 #include "CShape.h"
+#include <vector>
 
 #define COLOR_WHITE 0.95f, 0.95f, 0.95f
 #define COLOR_BLACK 0.15f, 0.15f, 0.15f
@@ -34,9 +35,12 @@ public:
     void DrawLine (CVertex* start, CVertex* end);
 
     /// @brief 図形の輪郭線の描画を行う．
-    /// @param start 図形の始点
-    /// @param end   図形の終点
+    /// @param shape 自図形
     void DrawOutline (CShape* shape);
+
+    /// @brief 図形の面の描画を行う．
+    /// @param shape 自図形
+    void DrawSurface (CShape* shape);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点

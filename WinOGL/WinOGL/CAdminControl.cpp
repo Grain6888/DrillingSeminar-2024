@@ -37,11 +37,20 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
                 DrawVertex (vp);
             }
 
-            // —ÖŠsü‚ð•`‰æ‚·‚éD
+            // —ÖŠsü‚ð•`‰æ‚·‚é
             DrawOutline (sp);
         }
 
-        // •â•ü‚ð•\Ž¦‚·‚éD
+        // –Ê‚ð•`‰æ‚·‚é
+        if (IsDrawingSurface ())
+        {
+            for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+            {
+                DrawSurface (sp);
+            }
+        }
+
+        // •â•ü‚ð•\Ž¦‚·‚é
         if (IsFreeShapeMode ())
         {
             if (shape_tail->GetVertexNum () > 0)
@@ -110,6 +119,29 @@ void CAdminControl::DrawOutline (CShape* shape)
     if (shape != shape_tail)
     {
         DrawLine (shape->GetHead (), shape->GetTail ());
+    }
+}
+
+void CAdminControl::DrawSurface (CShape* shape)
+{
+    std::vector<CVertex*> drew_list;
+
+    for (CVertex* vp = shape->GetHead (); vp != shape->GetTail ()->GetPre (); vp = vp->GetNext ())
+    {
+        auto it = std::find (drew_list.begin (), drew_list.end (), vp->GetNext ());
+        // –¢•`‰æ‚Ì–Ê‚Ì‚Ý“h‚é
+        if (it == drew_list.end ())
+        {
+            glBegin (GL_TRIANGLES);
+            glColor3f (COLOR_ORANGE);
+            glVertex2f (vp->GetX (), vp->GetY ());
+            glVertex2f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
+            glVertex2f (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
+            glEnd ();
+            drew_list.push_back (vp->GetNext ());
+            // Å‰‚©‚ç‚à‚¤ˆê“x
+            vp = shape->GetHead ();
+        }
     }
 }
 
