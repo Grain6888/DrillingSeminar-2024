@@ -29,17 +29,6 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
 
     if (shape_num > 0)
     {
-        for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
-        {
-            // ’¸“_‚ğ•`‰æ‚·‚é
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
-            {
-                DrawVertex (vp);
-            }
-
-            // —ÖŠsü‚ğ•`‰æ‚·‚é
-            DrawOutline (sp);
-        }
 
         // –Ê‚ğ•`‰æ‚·‚é
         if (IsDrawingSurface ())
@@ -48,6 +37,17 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
             {
                 DrawSurface (sp);
             }
+        }
+
+        // ’¸“_‚Æ—ÖŠsü‚ğ•`‰æ‚·‚é
+        for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
+        {
+            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            {
+                DrawVertex (vp);
+            }
+
+            DrawOutline (sp);
         }
 
         // •â•ü‚ğ•\¦‚·‚é
@@ -139,7 +139,7 @@ void CAdminControl::DrawSurface (CShape* shape)
             glVertex2f (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
             glEnd ();
             drew_list.push_back (vp->GetNext ());
-            // Å‰‚©‚ç‚à‚¤ˆê“x
+            // Å‰‚©‚ç‚à‚¤ˆê“x’Tõ
             vp = shape->GetHead ();
         }
     }
