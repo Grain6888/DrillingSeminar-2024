@@ -36,6 +36,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_FREE_SHAPE_MODE, &CWinOGLView::OnUpdateFreeShapeMode)
     ON_WM_MOUSEWHEEL ()
     ON_WM_MBUTTONDOWN ()
+    ON_COMMAND (ID_DRAW_SURFACE, &CWinOGLView::OnDrawSurface)
+    ON_UPDATE_COMMAND_UI (ID_DRAW_SURFACE, &CWinOGLView::OnUpdateDrawSurface)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -617,4 +619,15 @@ BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 
     return TRUE;
     return CView::OnSetCursor (pWnd, nHitTest, message);
+}
+
+void CWinOGLView::OnDrawSurface ()
+{
+    AC.SwitchDrawSurface ();
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateDrawSurface (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsDrawingSurface ());
 }

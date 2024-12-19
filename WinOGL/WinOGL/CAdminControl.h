@@ -162,6 +162,13 @@ public:
     /// @return 表示中 true / 非表示中 false
     bool IsShowingAxis ();
 
+    /// @brief 面の描画の状態を切り替える．
+    void SwitchDrawSurface ();
+
+    /// @brief 面の描画の状態を取得する．
+    /// @return 描画する true / 描画しない false
+    bool IsDrawingSurface ();
+
     /// @brief 自由図形モードの状態を切り替える．
     void SwitchFreeShapeMode ();
 
@@ -288,6 +295,9 @@ private:
 
     /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;
+
+    /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
+    bool DrawSurfaceFlag = false;
 
     /// @brief 自由図形モードの状態フラグ（自由図形モードである true / 自由図形モードでない false）．
     bool FreeShapeModeFlag = true;

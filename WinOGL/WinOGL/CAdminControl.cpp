@@ -685,6 +685,16 @@ bool CAdminControl::IsShowingAxis ()
     return AxisFlag;
 }
 
+void CAdminControl::SwitchDrawSurface ()
+{
+    DrawSurfaceFlag = !DrawSurfaceFlag;
+}
+
+bool CAdminControl::IsDrawingSurface ()
+{
+    return DrawSurfaceFlag;
+}
+
 void CAdminControl::SwitchFreeShapeMode ()
 {
     FreeShapeModeFlag = !FreeShapeModeFlag;
