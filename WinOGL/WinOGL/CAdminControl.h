@@ -34,9 +34,12 @@ public:
     void DrawLine (CVertex* start, CVertex* end);
 
     /// @brief 図形の輪郭線の描画を行う．
-    /// @param start 図形の始点
-    /// @param end   図形の終点
+    /// @param shape 自図形
     void DrawOutline (CShape* shape);
+
+    /// @brief 図形の面の描画を行う．
+    /// @param shape 自図形
+    void DrawSurface (CShape* shape);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
@@ -68,6 +71,11 @@ public:
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した図形のアドレス / NULL
     CShape* SelectShape (CVertex* mouse);
+
+    /// @brief 図形をコピーする．
+    /// @param my_shape 自図形
+    /// @return 自図形のコピー
+    CShape* CopyShape (CShape* my_shape);
 
     /// @brief 頂点を平行移動する．
     /// @param mouse_before_x 移動前のマウスの X 座標
@@ -162,6 +170,13 @@ public:
     /// @return 表示中 true / 非表示中 false
     bool IsShowingAxis ();
 
+    /// @brief 面の描画の状態を切り替える．
+    void SwitchDrawSurface ();
+
+    /// @brief 面の描画の状態を取得する．
+    /// @return 描画する true / 描画しない false
+    bool IsDrawingSurface ();
+
     /// @brief 自由図形モードの状態を切り替える．
     void SwitchFreeShapeMode ();
 
@@ -239,6 +254,12 @@ public:
     /// @return 内包する true / 内包しない false
     bool IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex);
 
+    /// @brief 面塗りが可能かを判定する．
+    /// @param my_shape 自図形
+    /// @param surface  面
+    /// @return 面塗可能 true / 面塗不可 false
+    bool CanDrawSurface (CShape* my_shape, CShape* surface);
+
     /// @brief すべての図形を選択状態にする．
     void SelectAllShape ();
 
@@ -288,6 +309,9 @@ private:
 
     /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;
+
+    /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
+    bool DrawSurfaceFlag = false;
 
     /// @brief 自由図形モードの状態フラグ（自由図形モードである true / 自由図形モードでない false）．
     bool FreeShapeModeFlag = true;

@@ -3,7 +3,7 @@
 
 float CMath::VertexDis (CVertex* p1, CVertex* p2)
 {
-    return float (sqrt (pow ((p2->GetX () - p1->GetX ()), 2) + pow ((p2->GetY () - p1->GetY ()), 2)));
+    return sqrtf (pow ((p2->GetX () - p1->GetX ()), 2) + pow ((p2->GetY () - p1->GetY ()), 2));
 }
 
 float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
@@ -42,6 +42,20 @@ float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
         cy = ay + t * aby;
     }
     return sqrtf ((powf ((px - cx), 2) + powf ((py - cy), 2)));
+}
+
+float CMath::TriangleArea (CShape* triangle)
+{
+    CVertex* v_a = PositionVec (triangle->GetHead (), triangle->GetHead ()->GetNext ());
+    CVertex* v_b = PositionVec (triangle->GetHead (), triangle->GetTail ());
+
+    float size_2_v_a = powf (v_a->GetX (), 2) + powf (v_a->GetY (), 2);
+    float size_2_v_b = powf (v_b->GetX (), 2) * powf (v_b->GetY (), 2);
+    float inner_a_b = Inner (triangle->GetHead (), triangle->GetHead ()->GetNext (), triangle->GetHead (), triangle->GetTail ());
+
+    v_a->FreeVertex ();
+    v_b->FreeVertex ();
+    return sqrtf (size_2_v_a * size_2_v_b - powf (inner_a_b, 2)) / 2;
 }
 
 void CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result)

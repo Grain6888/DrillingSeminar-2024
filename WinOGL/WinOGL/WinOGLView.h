@@ -80,6 +80,8 @@ public:
     afx_msg BOOL OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message);
     afx_msg BOOL OnMouseWheel (UINT nFlags, short zDelta, CPoint pt);
     afx_msg void OnMButtonDown (UINT nFlags, CPoint point);
+    afx_msg void OnDrawSurface ();
+    afx_msg void OnUpdateDrawSurface (CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
