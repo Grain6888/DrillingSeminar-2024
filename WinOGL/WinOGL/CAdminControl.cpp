@@ -124,24 +124,45 @@ void CAdminControl::DrawOutline (CShape* shape)
 
 void CAdminControl::DrawSurface (CShape* shape)
 {
-    std::vector<CVertex*> drew_list;
-
-    for (CVertex* vp = shape->GetHead (); vp != shape->GetTail ()->GetPre (); vp = vp->GetNext ())
+    if (shape->GetVertexNum () < 3)
     {
-        auto it = std::find (drew_list.begin (), drew_list.end (), vp->GetNext ());
-        // –¢•`‰æ‚Ì–Ê‚Ì‚Ý“h‚é
-        if (it == drew_list.end ())
+        return;
+    }
+    else if (CanMoveVertex () == false)
+    {
+        return;
+    }
+    else
+    {
+        CShape* copy_shape = CopyShape (shape);
+
+        CVertex* vp = copy_shape->GetHead ();
+        while (copy_shape->GetVertexNum () >= 3)
         {
-            glBegin (GL_TRIANGLES);
-            glColor3f (COLOR_ORANGE);
-            glVertex2f (vp->GetX (), vp->GetY ());
-            glVertex2f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
-            glVertex2f (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
-            glEnd ();
-            drew_list.push_back (vp->GetNext ());
-            // Å‰‚©‚ç‚à‚¤ˆê“x’Tõ
-            vp = shape->GetHead ();
+            CShape surface;
+            surface.PushVertex (vp->GetX (), vp->GetY ());
+            surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
+            surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
+
+            if (CanDrawSurface (copy_shape, &surface) == true)
+            {
+                glBegin (GL_TRIANGLES);
+                glColor3f (COLOR_BLUE);
+                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                {
+                    glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                }
+                glEnd ();
+                copy_shape->RemoveVertex (vp->GetNext ());
+                vp = copy_shape->GetHead ();
+            }
+            else
+            {
+                vp = vp->GetNext ();
+            }
         }
+
+        copy_shape->FreeShape ();
     }
 }
 
@@ -333,6 +354,17 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
     }
 
     return NULL;
+}
+
+CShape* CAdminControl::CopyShape (CShape* my_shape)
+{
+    CShape* copy_shape = new CShape;
+    for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
+    {
+        copy_shape->PushVertex (vp->GetX (), vp->GetY ());
+    }
+
+    return copy_shape;
 }
 
 void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
@@ -1122,6 +1154,27 @@ bool CAdminControl::IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_v
     }
 
     return false;
+}
+
+bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
+{
+    CVertex gravity_point;
+    CMath::GravityPoint (surface, &gravity_point);
+
+    if (CMath::IsContained (my_shape, &gravity_point) == false)
+    {
+        return false;
+    }
+
+    for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
+    {
+        if (CMath::IsContained (surface, vp) == true)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void CAdminControl::SelectAllShape ()

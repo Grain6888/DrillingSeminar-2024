@@ -27,7 +27,7 @@ public:
     /// @return 点の垂線と直線間の交点 (X,Y)
     static void CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result);
 
-    /// @brief 自図形の重心を計算する
+    /// @brief 自図形の重心を計算する．
     /// @param my_shape 自図形
     /// @param result   重心
     static void GravityPoint (CShape* my_shape, CVertex* result);

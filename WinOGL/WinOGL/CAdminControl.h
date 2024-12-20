@@ -2,7 +2,6 @@
 #include "pch.h"
 #include <gl/GL.h>
 #include "CShape.h"
-#include <vector>
 
 #define COLOR_WHITE 0.95f, 0.95f, 0.95f
 #define COLOR_BLACK 0.15f, 0.15f, 0.15f
@@ -72,6 +71,11 @@ public:
     /// @param mouse マウスの座標 (X,Y)
     /// @return 選択した図形のアドレス / NULL
     CShape* SelectShape (CVertex* mouse);
+
+    /// @brief 図形をコピーする．
+    /// @param my_shape 自図形
+    /// @return 自図形のコピー
+    CShape* CopyShape (CShape* my_shape);
 
     /// @brief 頂点を平行移動する．
     /// @param mouse_before_x 移動前のマウスの X 座標
@@ -249,6 +253,12 @@ public:
     /// @param remove_vertex 削除する頂点
     /// @return 内包する true / 内包しない false
     bool IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex);
+
+    /// @brief 面塗りが可能かを判定する．
+    /// @param my_shape 自図形
+    /// @param surface  面
+    /// @return 面塗可能 true / 面塗不可 false
+    bool CanDrawSurface (CShape* my_shape, CShape* surface);
 
     /// @brief すべての図形を選択状態にする．
     void SelectAllShape ();
