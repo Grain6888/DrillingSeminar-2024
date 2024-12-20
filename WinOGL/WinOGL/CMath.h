@@ -19,6 +19,11 @@ public:
     /// @return 点と直線間の距離 (0~1)
     static float LineDis (CVertex* p, CVertex* line_s, CVertex* line_e);
 
+    /// @brief 三角形の面積を計算する．
+    /// @param triangle 三角形
+    /// @return 面積
+    static float TriangleArea (CShape* triangle);
+
     /// @brief 点の垂線と直線間の交点を計算する．
     /// @param p      頂点
     /// @param line_s 直線の視点

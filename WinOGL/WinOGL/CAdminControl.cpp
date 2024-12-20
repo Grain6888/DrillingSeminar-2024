@@ -1174,6 +1174,11 @@ bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
         }
     }
 
+    if (CMath::TriangleArea (surface) <= 0)
+    {
+        return false;
+    }
+
     return true;
 }
 
