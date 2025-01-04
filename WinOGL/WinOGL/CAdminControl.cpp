@@ -147,7 +147,7 @@ void CAdminControl::DrawSurface (CShape* shape)
             if (CanDrawSurface (copy_shape, &surface) == true)
             {
                 glBegin (GL_TRIANGLES);
-                glColor3f (COLOR_BLUE);
+                glColor3f (COLOR_LIGHT_BLUE);
                 for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
                 {
                     glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
