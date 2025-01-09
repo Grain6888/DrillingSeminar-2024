@@ -48,8 +48,12 @@ CWinOGLView::CWinOGLView () noexcept
     y_LR_down = 0.0;
     x_LR_over = 0.0;
     y_LR_over = 0.0;
+    x_LR_up = 0.0;
+    y_LR_up = 0.0;
     x_M_down = 0.0;
     y_M_down = 0.0;
+    x_last_viewport = 0.0;
+    y_last_viewport = 0.0;
     m_hRC = NULL;
 }
 
@@ -75,6 +79,17 @@ void CWinOGLView::OnDraw (CDC* pDC)
     wglMakeCurrent (pDC->m_hDC, m_hRC);
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
+
+    if (AC.IsViewportTrans ())
+    {
+        ShiftViewport ();
+    }
+    else
+    {
+        glLoadIdentity ();
+        x_last_viewport = 0.0;
+        y_last_viewport = 0.0;
+    }
 
     if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
@@ -200,7 +215,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    SetDown (point);
+    SetUp (point);
     CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
     if (AC.IsFreeShapeMode ())
@@ -558,6 +573,39 @@ void CWinOGLView::SetOver (CPoint point)
     }
 }
 
+void CWinOGLView::SetUp (CPoint point)
+{
+    // 描画領域の大きさを取得
+    CRect rect;
+    GetClientRect (rect);
+
+    // デバイス座標系
+    x_LR_up = (float)point.x;
+    y_LR_up = (float)point.y;
+
+    // デバイス座標系→正規化座標系
+    x_LR_up = x_LR_up / rect.Width ();
+    y_LR_up = 1 - (y_LR_up / rect.Height ());
+
+    // 正規化座標系→ワールド座標系
+    float aspect_ratio = 0.0;
+    if (rect.Width () > rect.Height ())
+    {
+        aspect_ratio = (float)rect.Width () / rect.Height ();
+        x_LR_up = (x_LR_up - (float)(1.0 - x_LR_up)) * aspect_ratio;
+        y_LR_up -= (float)(1.0 - y_LR_up);
+    }
+    else
+    {
+        aspect_ratio = (float)rect.Height () / rect.Width ();
+        x_LR_up = x_LR_up - (float)(1.0 - x_LR_up);
+        y_LR_up = (y_LR_up - (float)(1.0 - y_LR_up)) * aspect_ratio;
+    }
+
+    x_last_viewport += x_LR_over - x_LR_down;
+    y_last_viewport += y_LR_over - y_LR_down;
+}
+
 void CWinOGLView::SetMDown (CPoint point)
 {
     // 描画領域の大きさを取得
@@ -588,6 +636,17 @@ void CWinOGLView::SetMDown (CPoint point)
     }
 }
 
+void CWinOGLView::ShiftViewport ()
+{
+    float shift_x = x_LR_over - x_LR_down;
+    float shift_y = y_LR_over - y_LR_down;
+
+    if (DraggingFlag)
+    {
+        glLoadIdentity ();
+        glTranslatef (x_last_viewport + shift_x, y_last_viewport + shift_y, 0);
+    }
+}
 
 BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 {
