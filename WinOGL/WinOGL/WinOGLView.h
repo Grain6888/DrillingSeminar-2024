@@ -82,6 +82,8 @@ public:
     afx_msg void OnMButtonDown (UINT nFlags, CPoint point);
     afx_msg void OnDrawSurface ();
     afx_msg void OnUpdateDrawSurface (CCmdUI* pCmdUI);
+    afx_msg void OnViewportTrans ();
+    afx_msg void OnUpdateViewportTrans (CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

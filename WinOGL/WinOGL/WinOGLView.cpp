@@ -38,6 +38,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_MBUTTONDOWN ()
     ON_COMMAND (ID_DRAW_SURFACE, &CWinOGLView::OnDrawSurface)
     ON_UPDATE_COMMAND_UI (ID_DRAW_SURFACE, &CWinOGLView::OnUpdateDrawSurface)
+    ON_COMMAND (ID_VIEWPORT_TRANS, &CWinOGLView::OnViewportTrans)
+    ON_UPDATE_COMMAND_UI (ID_VIEWPORT_TRANS, &CWinOGLView::OnUpdateViewportTrans)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -460,7 +462,10 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
 
 void CWinOGLView::OnFreeShapeMode ()
 {
-    AC.SwitchFreeShapeMode ();
+    if (!AC.IsViewportTrans ())
+    {
+        AC.SwitchFreeShapeMode ();
+    }
     RedrawWindow ();
 }
 
@@ -630,4 +635,20 @@ void CWinOGLView::OnDrawSurface ()
 void CWinOGLView::OnUpdateDrawSurface (CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck (AC.IsDrawingSurface ());
+}
+
+
+void CWinOGLView::OnViewportTrans ()
+{
+    AC.SwitchViewportTrans ();
+    AC.ClearAddShapeMode ();
+    AC.DeSelectAllShape ();
+    AC.ClearAffineTransMode ();
+    RedrawWindow ();
+}
+
+
+void CWinOGLView::OnUpdateViewportTrans (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsViewportTrans ());
 }
