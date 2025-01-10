@@ -38,6 +38,10 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_MBUTTONDOWN ()
     ON_COMMAND (ID_DRAW_SURFACE, &CWinOGLView::OnDrawSurface)
     ON_UPDATE_COMMAND_UI (ID_DRAW_SURFACE, &CWinOGLView::OnUpdateDrawSurface)
+    ON_COMMAND (ID_VIEWPORT_TRANS, &CWinOGLView::OnViewportTrans)
+    ON_UPDATE_COMMAND_UI (ID_VIEWPORT_TRANS, &CWinOGLView::OnUpdateViewportTrans)
+    ON_WM_KEYDOWN ()
+    ON_WM_KEYUP ()
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -46,8 +50,11 @@ CWinOGLView::CWinOGLView () noexcept
     y_LR_down = 0.0;
     x_LR_over = 0.0;
     y_LR_over = 0.0;
+    x_LR_up = 0.0;
+    y_LR_up = 0.0;
     x_M_down = 0.0;
     y_M_down = 0.0;
+    wheel_scroll = 0;
     m_hRC = NULL;
 }
 
@@ -73,6 +80,26 @@ void CWinOGLView::OnDraw (CDC* pDC)
     wglMakeCurrent (pDC->m_hDC, m_hRC);
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
     glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
+
+    if (AC.IsViewportTrans ())
+    {
+        if (ShiftViewportFlag == true)
+        {
+            ShiftViewport ();
+        }
+        else if (ZoomViewportFlag == true)
+        {
+            ZoomViewport ();
+        }
+        else
+        {
+            RotateViewport ();
+        }
+    }
+    else
+    {
+        glLoadIdentity ();
+    }
 
     if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
@@ -198,7 +225,7 @@ void CWinOGLView::OnLButtonDblClk (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnLButtonUp (UINT nFlags, CPoint point)
 {
-    SetDown (point);
+    SetUp (point);
     CVertex mouse (x_LR_down, y_LR_down, NULL, NULL);
 
     if (AC.IsFreeShapeMode ())
@@ -317,6 +344,15 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
 BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 {
+    if (ZoomViewportFlag)
+    {
+        wheel_scroll = zDelta;
+    }
+    else
+    {
+        wheel_scroll = 0;
+    }
+
     CVertex base_p (x_M_down, y_M_down, NULL, NULL);
 
     if (AC.IsScaleMode ())
@@ -460,7 +496,10 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
 
 void CWinOGLView::OnFreeShapeMode ()
 {
-    AC.SwitchFreeShapeMode ();
+    if (!AC.IsViewportTrans ())
+    {
+        AC.SwitchFreeShapeMode ();
+    }
     RedrawWindow ();
 }
 
@@ -553,6 +592,36 @@ void CWinOGLView::SetOver (CPoint point)
     }
 }
 
+void CWinOGLView::SetUp (CPoint point)
+{
+    // 描画領域の大きさを取得
+    CRect rect;
+    GetClientRect (rect);
+
+    // デバイス座標系
+    x_LR_up = (float)point.x;
+    y_LR_up = (float)point.y;
+
+    // デバイス座標系→正規化座標系
+    x_LR_up = x_LR_up / rect.Width ();
+    y_LR_up = 1 - (y_LR_up / rect.Height ());
+
+    // 正規化座標系→ワールド座標系
+    float aspect_ratio = 0.0;
+    if (rect.Width () > rect.Height ())
+    {
+        aspect_ratio = (float)rect.Width () / rect.Height ();
+        x_LR_up = (x_LR_up - (float)(1.0 - x_LR_up)) * aspect_ratio;
+        y_LR_up -= (float)(1.0 - y_LR_up);
+    }
+    else
+    {
+        aspect_ratio = (float)rect.Height () / rect.Width ();
+        x_LR_up = x_LR_up - (float)(1.0 - x_LR_up);
+        y_LR_up = (y_LR_up - (float)(1.0 - y_LR_up)) * aspect_ratio;
+    }
+}
+
 void CWinOGLView::SetMDown (CPoint point)
 {
     // 描画領域の大きさを取得
@@ -583,6 +652,43 @@ void CWinOGLView::SetMDown (CPoint point)
     }
 }
 
+void CWinOGLView::ShiftViewport ()
+{
+    float shift_x = x_LR_over - x_LR_down;
+    float shift_y = y_LR_over - y_LR_down;
+
+    if (DraggingFlag)
+    {
+        glTranslatef (shift_x, shift_y, 0);
+        x_LR_down = x_LR_over;
+        y_LR_down = y_LR_over;
+    }
+}
+
+void CWinOGLView::ZoomViewport ()
+{
+    if (wheel_scroll > 0)
+    {
+        glScalef (1.1f, 1.1f, 1.1f);
+    }
+    else if (wheel_scroll < 0)
+    {
+        glScalef (0.9f, 0.9f, 0.9f);
+    }
+    wheel_scroll = 0;
+}
+
+void CWinOGLView::RotateViewport ()
+{
+    float shift_x = x_LR_over - x_LR_down;
+    float shift_y = y_LR_over - y_LR_down;
+    if (DraggingFlag)
+    {
+        glRotatef (1, shift_y, shift_x, 0.0f);
+        x_LR_down = x_LR_over;
+        y_LR_down = y_LR_over;
+    }
+}
 
 BOOL CWinOGLView::OnSetCursor (CWnd* pWnd, UINT nHitTest, UINT message)
 {
@@ -630,4 +736,47 @@ void CWinOGLView::OnDrawSurface ()
 void CWinOGLView::OnUpdateDrawSurface (CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck (AC.IsDrawingSurface ());
+}
+
+void CWinOGLView::OnViewportTrans ()
+{
+    AC.SwitchViewportTrans ();
+    AC.ClearAddShapeMode ();
+    AC.DeSelectAllShape ();
+    AC.ClearAffineTransMode ();
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateViewportTrans (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsViewportTrans ());
+}
+
+void CWinOGLView::OnKeyDown (UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if (nChar == VK_SHIFT)
+    {
+        ShiftViewportFlag = true;
+    }
+    else if (nChar == VK_CONTROL)
+    {
+        ZoomViewportFlag = true;
+    }
+
+    CView::OnKeyDown (nChar, nRepCnt, nFlags);
+}
+
+void CWinOGLView::OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if (nChar == VK_SHIFT)
+    {
+        ShiftViewportFlag = false;
+    }
+    else if (nChar == VK_CONTROL)
+    {
+        ZoomViewportFlag = false;
+        wheel_scroll = 0;
+    }
+
+    CView::OnKeyUp (nChar, nRepCnt, nFlags);
 }

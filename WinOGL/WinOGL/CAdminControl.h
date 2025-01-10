@@ -177,12 +177,22 @@ public:
     /// @return 描画する true / 描画しない false
     bool IsDrawingSurface ();
 
+    /// @brief 視点の変更の状態を切り替える．
+    void SwitchViewportTrans ();
+
+    /// @brief 視点の変更の状態を取得する．
+    /// @return 視点変更 true / 視点固定 false
+    bool IsViewportTrans ();
+
     /// @brief 自由図形モードの状態を切り替える．
     void SwitchFreeShapeMode ();
 
     /// @brief 自由図形モードの状態を取得する．
     /// @return 自由図形モードである true / 自由図形モードでない false
     bool IsFreeShapeMode ();
+
+    /// @brief 図形を追加するモードをすべて解除する．
+    void ClearAddShapeMode ();
 
     /// @brief アフィン変換のモードを変更する（拡大縮小 → 回転）．
     void SwitchAffineTransMode ();
@@ -312,6 +322,9 @@ private:
 
     /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
     bool DrawSurfaceFlag = false;
+
+    /// @brief 視点の変更の状態フラグ（視点変更 true / 視点固定 false）．
+    bool ViewportTransFlag = false;
 
     /// @brief 自由図形モードの状態フラグ（自由図形モードである true / 自由図形モードでない false）．
     bool FreeShapeModeFlag = true;

@@ -29,7 +29,6 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
 
     if (shape_num > 0)
     {
-
         // –Ê‚ð•`‰æ‚·‚é
         if (IsDrawingSurface ())
         {
@@ -51,26 +50,29 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
         }
 
         // •â•ü‚ð•\Ž¦‚·‚é
-        if (IsFreeShapeMode ())
+        if (!ViewportTransFlag)
         {
-            if (shape_tail->GetVertexNum () > 0)
+            if (IsFreeShapeMode ())
             {
-                DrawExLine (shape_tail->GetTail (), &mouse);
-            }
-        }
-        else
-        {
-            if (IsScaleMode ())
-            {
-                DrawScalingGuide (&mouse);
-            }
-            else if (IsRotateMode ())
-            {
-                DrawRotatingGuide (&mouse);
+                if (shape_tail->GetVertexNum () > 0)
+                {
+                    DrawExLine (shape_tail->GetTail (), &mouse);
+                }
             }
             else
             {
-                DrawNormalGuide ();
+                if (IsScaleMode ())
+                {
+                    DrawScalingGuide (&mouse);
+                }
+                else if (IsRotateMode ())
+                {
+                    DrawRotatingGuide (&mouse);
+                }
+                else
+                {
+                    DrawNormalGuide ();
+                }
             }
         }
     }
@@ -290,6 +292,11 @@ void CAdminControl::DrawRotatingGuide (CVertex* base_p)
 
 CVertex* CAdminControl::SelectVertex (CVertex* mouse)
 {
+    if (ViewportTransFlag)
+    {
+        return NULL;
+    }
+
     for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
@@ -308,6 +315,11 @@ CVertex* CAdminControl::SelectVertex (CVertex* mouse)
 
 CVertex* CAdminControl::SelectLine (CVertex* mouse)
 {
+    if (ViewportTransFlag)
+    {
+        return NULL;
+    }
+
     for (CShape* sp = shape_head; sp != NULL && sp->GetVertexNum () > 0; sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
@@ -336,6 +348,11 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
 
 CShape* CAdminControl::SelectShape (CVertex* mouse)
 {
+    if (ViewportTransFlag)
+    {
+        return NULL;
+    }
+
     for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
     {
         if (CMath::IsContained (sp, mouse))
@@ -754,6 +771,16 @@ void CAdminControl::SwitchDrawSurface ()
     DrawSurfaceFlag = !DrawSurfaceFlag;
 }
 
+void CAdminControl::SwitchViewportTrans ()
+{
+    ViewportTransFlag = !ViewportTransFlag;
+}
+
+bool CAdminControl::IsViewportTrans ()
+{
+    return ViewportTransFlag;
+}
+
 bool CAdminControl::IsDrawingSurface ()
 {
     return DrawSurfaceFlag;
@@ -770,6 +797,11 @@ void CAdminControl::SwitchFreeShapeMode ()
 bool CAdminControl::IsFreeShapeMode ()
 {
     return FreeShapeModeFlag;
+}
+
+void CAdminControl::ClearAddShapeMode ()
+{
+    FreeShapeModeFlag = false;
 }
 
 void CAdminControl::SwitchAffineTransMode ()

@@ -23,7 +23,7 @@ public:
 protected:
     DECLARE_MESSAGE_MAP ()
 public:
-    /// @brief 左右クリックした時の座標 (X,Y) を設定する．
+    /// @brief 左右クリックを押した時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
     void SetDown (CPoint point);
 
@@ -31,15 +31,28 @@ public:
     /// @param point デバイス座標 (X,Y)
     void SetOver (CPoint point);
 
+    /// @brief 左右クリックを離したしたときの座標 (X,Y) を設定する．
+    /// @param point デバイス座標 (X,Y)
+    void SetUp (CPoint point);
+
     /// @brief ホイールクリックしたときの座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
     void SetMDown (CPoint point);
 
+    /// @brief 視点を平行移動する．
+    void ShiftViewport ();
+
+    /// @brief 視点を拡大 / 縮小する．
+    void ZoomViewport ();
+
+    /// @brief 視点を回転する．
+    void RotateViewport ();
+
 private:
-    /// @brief 左右クリックした時の X 座標．
+    /// @brief 左右クリックを押した時の X 座標．
     float x_LR_down;
 
-    /// @brief 左右クリックした時の Y 座標．
+    /// @brief 左右クリックを押した時の Y 座標．
     float y_LR_down;
 
     /// @brief マウスオーバーした時の X 座標．
@@ -48,11 +61,26 @@ private:
     /// @brief マウスオーバーした時の Y 座標．
     float y_LR_over;
 
+    /// @brief 左右クリックを離した時の X 座標．
+    float x_LR_up;
+
+    /// @brief 左右クリックを離した時の Y 座標．
+    float y_LR_up;
+
     /// @brief ホイールクリックしたときの X 座標．
     float x_M_down;
 
     /// @brief ホイールクリックしたときの Y 座標．
     float y_M_down;
+
+    /// @brief ホイールスクロールの値．
+    short wheel_scroll;
+
+    bool ShiftViewportFlag = false;
+
+    bool ZoomViewportFlag = false;
+
+    bool RotateViewportFlag = false;
 
     /// @brief D&D 中の状態フラグ（D&D 中である true / D&D 中でない false）．
     bool DraggingFlag = false;
@@ -82,6 +110,10 @@ public:
     afx_msg void OnMButtonDown (UINT nFlags, CPoint point);
     afx_msg void OnDrawSurface ();
     afx_msg void OnUpdateDrawSurface (CCmdUI* pCmdUI);
+    afx_msg void OnViewportTrans ();
+    afx_msg void OnUpdateViewportTrans (CCmdUI* pCmdUI);
+    afx_msg void OnKeyDown (UINT nChar, UINT nRepCnt, UINT nFlags);
+    afx_msg void OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン
