@@ -40,6 +40,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_DRAW_SURFACE, &CWinOGLView::OnUpdateDrawSurface)
     ON_COMMAND (ID_VIEWPORT_TRANS, &CWinOGLView::OnViewportTrans)
     ON_UPDATE_COMMAND_UI (ID_VIEWPORT_TRANS, &CWinOGLView::OnUpdateViewportTrans)
+    ON_WM_KEYDOWN ()
+    ON_WM_KEYUP ()
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -52,8 +54,7 @@ CWinOGLView::CWinOGLView () noexcept
     y_LR_up = 0.0;
     x_M_down = 0.0;
     y_M_down = 0.0;
-    x_last_viewport = 0.0;
-    y_last_viewport = 0.0;
+    wheel_scroll = 0;
     m_hRC = NULL;
 }
 
@@ -82,13 +83,22 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     if (AC.IsViewportTrans ())
     {
-        ShiftViewport ();
+        if (ShiftViewportFlag == true)
+        {
+            ShiftViewport ();
+        }
+        else if (ZoomViewportFlag == true)
+        {
+            ZoomViewport ();
+        }
+        else
+        {
+            RotateViewport ();
+        }
     }
     else
     {
         glLoadIdentity ();
-        x_last_viewport = 0.0;
-        y_last_viewport = 0.0;
     }
 
     if (AC.IsScaleMode () || AC.IsRotateMode ())
@@ -334,6 +344,15 @@ void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 
 BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
 {
+    if (ZoomViewportFlag)
+    {
+        wheel_scroll = zDelta;
+    }
+    else
+    {
+        wheel_scroll = 0;
+    }
+
     CVertex base_p (x_M_down, y_M_down, NULL, NULL);
 
     if (AC.IsScaleMode ())
@@ -601,9 +620,6 @@ void CWinOGLView::SetUp (CPoint point)
         x_LR_up = x_LR_up - (float)(1.0 - x_LR_up);
         y_LR_up = (y_LR_up - (float)(1.0 - y_LR_up)) * aspect_ratio;
     }
-
-    x_last_viewport += x_LR_over - x_LR_down;
-    y_last_viewport += y_LR_over - y_LR_down;
 }
 
 void CWinOGLView::SetMDown (CPoint point)
@@ -643,8 +659,34 @@ void CWinOGLView::ShiftViewport ()
 
     if (DraggingFlag)
     {
-        glLoadIdentity ();
-        glTranslatef (x_last_viewport + shift_x, y_last_viewport + shift_y, 0);
+        glTranslatef (shift_x, shift_y, 0);
+        x_LR_down = x_LR_over;
+        y_LR_down = y_LR_over;
+    }
+}
+
+void CWinOGLView::ZoomViewport ()
+{
+    if (wheel_scroll > 0)
+    {
+        glScalef (1.1f, 1.1f, 1.1f);
+    }
+    else if (wheel_scroll < 0)
+    {
+        glScalef (0.9f, 0.9f, 0.9f);
+    }
+    wheel_scroll = 0;
+}
+
+void CWinOGLView::RotateViewport ()
+{
+    float shift_x = x_LR_over - x_LR_down;
+    float shift_y = y_LR_over - y_LR_down;
+    if (DraggingFlag)
+    {
+        glRotatef (5, 1.0f, 1.0f, 1.0f);
+        x_LR_down = x_LR_over;
+        y_LR_down = y_LR_over;
     }
 }
 
@@ -696,7 +738,6 @@ void CWinOGLView::OnUpdateDrawSurface (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsDrawingSurface ());
 }
 
-
 void CWinOGLView::OnViewportTrans ()
 {
     AC.SwitchViewportTrans ();
@@ -706,8 +747,36 @@ void CWinOGLView::OnViewportTrans ()
     RedrawWindow ();
 }
 
-
 void CWinOGLView::OnUpdateViewportTrans (CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck (AC.IsViewportTrans ());
+}
+
+void CWinOGLView::OnKeyDown (UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if (nChar == VK_SHIFT)
+    {
+        ShiftViewportFlag = true;
+    }
+    else if (nChar == VK_CONTROL)
+    {
+        ZoomViewportFlag = true;
+    }
+
+    CView::OnKeyDown (nChar, nRepCnt, nFlags);
+}
+
+void CWinOGLView::OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if (nChar == VK_SHIFT)
+    {
+        ShiftViewportFlag = false;
+    }
+    else if (nChar == VK_CONTROL)
+    {
+        ZoomViewportFlag = false;
+        wheel_scroll = 0;
+    }
+
+    CView::OnKeyUp (nChar, nRepCnt, nFlags);
 }
