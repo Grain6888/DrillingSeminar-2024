@@ -29,6 +29,16 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
 
     if (shape_num > 0)
     {
+        if (DrawDepthFlag)
+        {
+            float dif[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            glLightfv (GL_LIGHT0, GL_DIFFUSE, dif); // 拡散反射光の設定
+            glLightfv (GL_LIGHT0, GL_AMBIENT, amb); // 環境光の設定
+            glEnable (GL_LIGHT0); // LIGHT0を有効
+            glEnable (GL_LIGHTING); // ライティングを有効
+        }
+
         // 面を描画する
         if (IsDrawingSurface ())
         {
@@ -36,6 +46,12 @@ void CAdminControl::Draw (float mouse_x, float mouse_y)
             {
                 DrawSurface (sp);
             }
+        }
+
+        if (DrawDepthFlag)
+        {
+            glDisable (GL_LIGHTING); // ライティングを無効
+            glDisable (GL_LIGHT0); // LIGHT0を無効
         }
 
         // 頂点と輪郭線を描画する
@@ -93,7 +109,7 @@ void CAdminControl::DrawVertex (CVertex* vertex)
     if (DrawDepthFlag)
     {
         glVertex3f (vertex->GetX (), vertex->GetY (), -SHAPEDEPTH);
-        glVertex3f (vertex->GetX (), vertex->GetY (), SHAPEDEPTH);
+        glVertex3f (vertex->GetX (), vertex->GetY (), 0);
     }
     else
     {
@@ -119,13 +135,13 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
         glVertex3f (start->GetX (), start->GetY (), -SHAPEDEPTH);
         glVertex3f (end->GetX (), end->GetY (), -SHAPEDEPTH);
 
-        glVertex3f (start->GetX (), start->GetY (), SHAPEDEPTH);
-        glVertex3f (end->GetX (), end->GetY (), SHAPEDEPTH);
+        glVertex3f (start->GetX (), start->GetY (), 0);
+        glVertex3f (end->GetX (), end->GetY (), 0);
 
         glVertex3f (start->GetX (), start->GetY (), -SHAPEDEPTH);
-        glVertex3f (start->GetX (), start->GetY (), SHAPEDEPTH);
+        glVertex3f (start->GetX (), start->GetY (), 0);
         glVertex3f (end->GetX (), end->GetY (), -SHAPEDEPTH);
-        glVertex3f (end->GetX (), end->GetY (), SHAPEDEPTH);
+        glVertex3f (end->GetX (), end->GetY (), 0);
     }
     else
     {
@@ -182,25 +198,25 @@ void CAdminControl::DrawSurface (CShape* shape)
                     }
                     for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
                     {
-                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
                     }
 
                     for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
                     {
-                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
                         if (surface_vp == surface.GetTail ())
                         {
-                            glVertex3f (surface.GetHead ()->GetX (), surface.GetHead ()->GetY (), SHAPEDEPTH);
+                            glVertex3f (surface.GetHead ()->GetX (), surface.GetHead ()->GetY (), 0);
                         }
                         else
                         {
-                            glVertex3f (surface_vp->GetNext ()->GetX (), surface_vp->GetNext ()->GetY (), SHAPEDEPTH);
+                            glVertex3f (surface_vp->GetNext ()->GetX (), surface_vp->GetNext ()->GetY (), 0);
                         }
                         glVertex3f (surface_vp->GetX (), surface_vp->GetY (), -SHAPEDEPTH);
                     }
                     for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
                     {
-                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
                         if (surface_vp == surface.GetHead ())
                         {
                             glVertex3f (surface.GetTail ()->GetX (), surface.GetTail ()->GetY (), -SHAPEDEPTH);

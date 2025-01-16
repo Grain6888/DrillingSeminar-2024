@@ -81,7 +81,11 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     wglMakeCurrent (pDC->m_hDC, m_hRC);
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
-    glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // 陰線処理
+    glEnable (GL_DEPTH_TEST);
+    glDepthFunc (GL_LEQUAL);
 
     if (AC.IsViewportTrans ())
     {
@@ -111,6 +115,8 @@ void CWinOGLView::OnDraw (CDC* pDC)
     {
         AC.Draw (x_LR_over, y_LR_over);
     }
+
+    glDisable (GL_DEPTH_TEST);
 
     glFlush ();
     SwapBuffers (pDC->m_hDC);
