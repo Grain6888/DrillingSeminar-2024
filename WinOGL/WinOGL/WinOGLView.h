@@ -76,10 +76,13 @@ private:
     /// @brief ホイールスクロールの値．
     short wheel_scroll;
 
+    /// @brief 視点の平行移動の状態フラグ（操作可能 true / 操作不可 false）．
     bool ShiftViewportFlag = false;
 
+    /// @brief 視点のズームの状態フラグ（操作可能 true / 操作不可 false）．
     bool ZoomViewportFlag = false;
 
+    /// @brief 視点の回転の状態フラグ（操作可能 true / 操作不可 false）．
     bool RotateViewportFlag = false;
 
     /// @brief D&D 中の状態フラグ（D&D 中である true / D&D 中でない false）．
