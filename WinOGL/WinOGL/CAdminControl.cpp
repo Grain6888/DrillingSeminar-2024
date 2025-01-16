@@ -90,7 +90,15 @@ void CAdminControl::DrawVertex (CVertex* vertex)
     }
     glPointSize (POINTSIZE);
     glBegin (GL_POINTS);
-    glVertex2f (vertex->GetX (), vertex->GetY ());
+    if (DrawDepthFlag)
+    {
+        glVertex3f (vertex->GetX (), vertex->GetY (), -SHAPEDEPTH);
+        glVertex3f (vertex->GetX (), vertex->GetY (), SHAPEDEPTH);
+    }
+    else
+    {
+        glVertex2f (vertex->GetX (), vertex->GetY ());
+    }
     glEnd ();
 }
 
@@ -106,8 +114,24 @@ void CAdminControl::DrawLine (CVertex* start, CVertex* end)
     }
     glLineWidth (LINEWIDTH);
     glBegin (GL_LINES);
-    glVertex2f (start->GetX (), start->GetY ());
-    glVertex2f (end->GetX (), end->GetY ());
+    if (DrawDepthFlag)
+    {
+        glVertex3f (start->GetX (), start->GetY (), -SHAPEDEPTH);
+        glVertex3f (end->GetX (), end->GetY (), -SHAPEDEPTH);
+
+        glVertex3f (start->GetX (), start->GetY (), SHAPEDEPTH);
+        glVertex3f (end->GetX (), end->GetY (), SHAPEDEPTH);
+
+        glVertex3f (start->GetX (), start->GetY (), -SHAPEDEPTH);
+        glVertex3f (start->GetX (), start->GetY (), SHAPEDEPTH);
+        glVertex3f (end->GetX (), end->GetY (), -SHAPEDEPTH);
+        glVertex3f (end->GetX (), end->GetY (), SHAPEDEPTH);
+    }
+    else
+    {
+        glVertex2f (start->GetX (), start->GetY ());
+        glVertex2f (end->GetX (), end->GetY ());
+    }
     glEnd ();
 }
 
@@ -150,9 +174,50 @@ void CAdminControl::DrawSurface (CShape* shape)
             {
                 glBegin (GL_TRIANGLES);
                 glColor3f (COLOR_LIGHT_BLUE);
-                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                if (DrawDepthFlag)
                 {
-                    glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), -SHAPEDEPTH);
+                    }
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                    }
+
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                        if (surface_vp == surface.GetTail ())
+                        {
+                            glVertex3f (surface.GetHead ()->GetX (), surface.GetHead ()->GetY (), SHAPEDEPTH);
+                        }
+                        else
+                        {
+                            glVertex3f (surface_vp->GetNext ()->GetX (), surface_vp->GetNext ()->GetY (), SHAPEDEPTH);
+                        }
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), -SHAPEDEPTH);
+                    }
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                        if (surface_vp == surface.GetHead ())
+                        {
+                            glVertex3f (surface.GetTail ()->GetX (), surface.GetTail ()->GetY (), -SHAPEDEPTH);
+                        }
+                        else
+                        {
+                            glVertex3f (surface_vp->GetPre ()->GetX (), surface_vp->GetPre ()->GetY (), -SHAPEDEPTH);
+                        }
+                        glVertex3f (surface_vp->GetX (), surface_vp->GetY (), -SHAPEDEPTH);
+                    }
+                }
+                else
+                {
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                    }
                 }
                 glEnd ();
                 copy_shape->RemoveVertex (vp->GetNext ());
@@ -738,6 +803,22 @@ void CAdminControl::DrawSizeDown ()
     }
 }
 
+void CAdminControl::ShapeDepthUp ()
+{
+    if (SHAPEDEPTH <= 1.0)
+    {
+        SHAPEDEPTH += 0.05f;
+    }
+}
+
+void CAdminControl::ShapeDepthDown ()
+{
+    if (SHAPEDEPTH > 0.05)
+    {
+        SHAPEDEPTH -= 0.05f;
+    }
+}
+
 void CAdminControl::DrawAxis ()
 {
     glBegin (GL_LINES);
@@ -771,6 +852,21 @@ void CAdminControl::SwitchDrawSurface ()
     DrawSurfaceFlag = !DrawSurfaceFlag;
 }
 
+bool CAdminControl::IsDrawingSurface ()
+{
+    return DrawSurfaceFlag;
+}
+
+void CAdminControl::SwitchDrawDepth ()
+{
+    DrawDepthFlag = !DrawDepthFlag;
+}
+
+bool CAdminControl::IsDrawingDepth ()
+{
+    return DrawDepthFlag;
+}
+
 void CAdminControl::SwitchViewportTrans ()
 {
     ViewportTransFlag = !ViewportTransFlag;
@@ -779,11 +875,6 @@ void CAdminControl::SwitchViewportTrans ()
 bool CAdminControl::IsViewportTrans ()
 {
     return ViewportTransFlag;
-}
-
-bool CAdminControl::IsDrawingSurface ()
-{
-    return DrawSurfaceFlag;
 }
 
 void CAdminControl::SwitchFreeShapeMode ()

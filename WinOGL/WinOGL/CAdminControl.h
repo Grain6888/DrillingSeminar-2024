@@ -160,6 +160,12 @@ public:
     /// @brief 描画サイズを下げる．
     void DrawSizeDown ();
 
+    /// @brief 奥行きの長さを伸ばす．
+    void ShapeDepthUp ();
+
+    /// @brief 奥行きの長さを縮める．
+    void ShapeDepthDown ();
+
     /// @brief 座標軸を描画する．
     void DrawAxis ();
 
@@ -176,6 +182,13 @@ public:
     /// @brief 面の描画の状態を取得する．
     /// @return 描画する true / 描画しない false
     bool IsDrawingSurface ();
+
+    /// @brief 奥行きの描画の状態を切り替える．
+    void SwitchDrawDepth ();
+
+    /// @brief 奥行きの描画の状態を取得する．
+    /// @return 描画する true / 描画しない false
+    bool IsDrawingDepth ();
 
     /// @brief 視点の変更の状態を切り替える．
     void SwitchViewportTrans ();
@@ -305,6 +318,9 @@ private:
     /// @brief 線の描画幅．
     float LINEWIDTH = 2.0;
 
+    /// @brief 図形の奥行．
+    float SHAPEDEPTH = 0.5;
+
     /// @brief 先頭の図形．
     CShape* shape_head;
 
@@ -322,6 +338,9 @@ private:
 
     /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
     bool DrawSurfaceFlag = false;
+
+    /// @brief 奥行きの描画の状態フラグ（描画する true / 描画しない false）．
+    bool DrawDepthFlag = false;
 
     /// @brief 視点の変更の状態フラグ（視点変更 true / 視点固定 false）．
     bool ViewportTransFlag = false;

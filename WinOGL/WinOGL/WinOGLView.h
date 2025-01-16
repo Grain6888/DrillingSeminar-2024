@@ -117,6 +117,8 @@ public:
     afx_msg void OnUpdateViewportTrans (CCmdUI* pCmdUI);
     afx_msg void OnKeyDown (UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags);
+    afx_msg void OnDrawDepth ();
+    afx_msg void OnUpdateDrawDepth (CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

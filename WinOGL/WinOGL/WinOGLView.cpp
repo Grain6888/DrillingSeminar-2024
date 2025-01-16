@@ -42,6 +42,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_VIEWPORT_TRANS, &CWinOGLView::OnUpdateViewportTrans)
     ON_WM_KEYDOWN ()
     ON_WM_KEYUP ()
+    ON_COMMAND (ID_DRAW_DEPTH, &CWinOGLView::OnDrawDepth)
+    ON_UPDATE_COMMAND_UI (ID_DRAW_DEPTH, &CWinOGLView::OnUpdateDrawDepth)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -351,6 +353,18 @@ BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
     else
     {
         wheel_scroll = 0;
+    }
+
+    if (AC.IsDrawingDepth () && (nFlags & MK_SHIFT))
+    {
+        if (zDelta > 0)
+        {
+            AC.ShapeDepthUp ();
+        }
+        else
+        {
+            AC.ShapeDepthDown ();
+        }
     }
 
     CVertex base_p (x_M_down, y_M_down, NULL, NULL);
@@ -779,4 +793,17 @@ void CWinOGLView::OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags)
     }
 
     CView::OnKeyUp (nChar, nRepCnt, nFlags);
+}
+
+
+void CWinOGLView::OnDrawDepth ()
+{
+    AC.SwitchDrawDepth ();
+    RedrawWindow ();
+}
+
+
+void CWinOGLView::OnUpdateDrawDepth (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsDrawingDepth ());
 }
