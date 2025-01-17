@@ -700,11 +700,11 @@ void CWinOGLView::ZoomViewport ()
 
 void CWinOGLView::RotateViewport ()
 {
-    float shift_x = x_LR_over - x_LR_down;
-    float shift_y = y_LR_over - y_LR_down;
+    float shift_x = (x_LR_over - x_LR_down);
+    float shift_y = (y_LR_over - y_LR_down);
     if (DraggingFlag)
     {
-        glRotatef (1, shift_y, shift_x, 0.0f);
+        glRotatef (1.0f, shift_y, shift_x, 0.0f);
         x_LR_down = x_LR_over;
         y_LR_down = y_LR_over;
     }

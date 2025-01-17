@@ -90,6 +90,11 @@ public:
     /// @return 内包する true / 内包しない false
     static bool IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_vertex);
 
+    /// @brief 多角形の面の法線が逆転するかを判定する．
+    /// @param my_shape 多角形
+    /// @return 逆転する true / 逆転しない false
+    static bool IsReversed (CShape* my_shape);
+
     /// @brief 2 つのベクトルの内積を計算する．
     /// @param p_a_s 1 つ目のベクトルの始点
     /// @param p_a_e 1 つ目のベクトルの終点
@@ -104,7 +109,17 @@ public:
     /// @param p_b_s 2 つ目のベクトルの始点
     /// @param p_b_e 2 つ目のベクトルの終点
     /// @return 2 つのベクトルの外積
-    static float Outer (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
+    static float Outer2DSize (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
+
+    /// @brief 2 つのベクトルのなす面の法線を計算する．
+    /// @param p_a_s   1 つ目のベクトルの始点
+    /// @param p_a_e   1 つ目のベクトルの終点
+    /// @param p_b_s   2 つ目のベクトルの始点
+    /// @param p_b_e   2 つ目のベクトルの終点
+    /// @param depth   奥行
+    /// @param reverse 反転の有無
+    /// @return 2 つのベクトルの外積
+    static float* Normal (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e, float depth, bool reverse);
 
     /// @brief 位置ベクトルを計算する．
     /// @param p_s 始点
@@ -120,4 +135,3 @@ public:
     /// @return 2 つのベクトルのなす角度 (-π~π)
     static float VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
 };
-

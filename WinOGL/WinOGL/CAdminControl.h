@@ -3,15 +3,15 @@
 #include <gl/GL.h>
 #include "CShape.h"
 
-#define COLOR_WHITE 0.95f, 0.95f, 0.95f
-#define COLOR_BLACK 0.15f, 0.15f, 0.15f
-#define COLOR_PALE_BLUE 0.70f, 0.86f, 0.98f
-#define COLOR_BLUE 0.30f, 0.40f, 0.78f
-#define COLOR_LIGHT_BLUE 0.37f, 0.80f, 0.95f
-#define COLOR_LIGHT_GREEN 0.65f, 0.91f, 0.32f
-#define COLOR_GREEN 0.36f, 0.80f, 0.68f
-#define COLOR_ORANGE 1.00f, 0.50f, 0.13f
-#define COLOR_RED 0.94f, 0.25f, 0.14f
+const float COLOR_WHITE[3] = { 0.95f, 0.95f, 0.95f };
+const float COLOR_BLACK[3] = { 0.15f, 0.15f, 0.15f };
+const float COLOR_PALE_BLUE[3] = { 0.70f, 0.86f, 0.98f };
+const float COLOR_BLUE[3] = { 0.30f, 0.40f, 0.78f };
+const float COLOR_LIGHT_BLUE[3] = { 0.37f, 0.80f, 0.95f };
+const float COLOR_LIGHT_GREEN[3] = { 0.65f, 0.91f, 0.32f };
+const float COLOR_GREEN[3] = { 0.36f, 0.80f, 0.68f };
+const float COLOR_ORANGE[3] = { 1.00f, 0.50f, 0.13f };
+const float COLOR_RED[3] = { 0.94f, 0.25f, 0.14f };
 
 /// @brief 図形リストの管理（追加・削除・描画）を行うクラス．
 class CAdminControl {
@@ -40,6 +40,12 @@ public:
     /// @brief 図形の面の描画を行う．
     /// @param shape 自図形
     void DrawSurface (CShape* shape);
+
+    void DrawFront (CShape* shape);
+
+    void DrawBack (CShape* shape);
+
+    void DrawSide (CShape* shape);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
