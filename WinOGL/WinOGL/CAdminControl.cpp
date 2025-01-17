@@ -183,7 +183,7 @@ void CAdminControl::DrawSurface (CShape* shape)
     {
         return;
     }
-    else if (CanMoveVertex () == false)
+    else if (!CanMoveVertex ())
     {
         return;
     }
@@ -200,7 +200,7 @@ void CAdminControl::DrawSurface (CShape* shape)
             surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
             bool reverse = CMath::IsReversed (&surface);
 
-            if (CanDrawSurface (copy_shape, &surface) == true)
+            if (CanDrawSurface (copy_shape, &surface))
             {
                 glBegin (GL_TRIANGLES);
                 glColor3fv (COLOR_LIGHT_BLUE);
@@ -230,7 +230,7 @@ void CAdminControl::DrawFront (CShape* shape)
     {
         return;
     }
-    else if (CanMoveVertex () == false)
+    else if (!CanMoveVertex ())
     {
         return;
     }
@@ -246,7 +246,7 @@ void CAdminControl::DrawFront (CShape* shape)
             surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
             surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
 
-            if (CanDrawSurface (copy_shape, &surface) == true)
+            if (CanDrawSurface (copy_shape, &surface))
             {
                 glBegin (GL_TRIANGLES);
                 glColor3fv (COLOR_LIGHT_BLUE);
@@ -278,7 +278,7 @@ void CAdminControl::DrawBack (CShape* shape)
     {
         return;
     }
-    else if (CanMoveVertex () == false)
+    else if (!CanMoveVertex ())
     {
         return;
     }
@@ -294,7 +294,7 @@ void CAdminControl::DrawBack (CShape* shape)
             surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
             surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
 
-            if (CanDrawSurface (copy_shape, &surface) == true)
+            if (CanDrawSurface (copy_shape, &surface))
             {
                 glBegin (GL_TRIANGLES);
                 glColor3fv (COLOR_LIGHT_BLUE);
@@ -326,7 +326,7 @@ void CAdminControl::DrawSide (CShape* shape)
     {
         return;
     }
-    else if (CanMoveVertex () == false)
+    else if (!CanMoveVertex ())
     {
         return;
     }
@@ -519,7 +519,7 @@ CVertex* CAdminControl::SelectLine (CVertex* mouse)
                 return vp;
             }
         }
-        if (sp->IsClosed () == true && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < MIN_DISTANCE)
+        if (sp->IsClosed () && CMath::LineDis (mouse, sp->GetTail (), sp->GetHead ()) < MIN_DISTANCE)
         {
             sp->GetHead ()->Select ();
             sp->GetHead ()->SetLastXY (sp->GetHead ()->GetX (), sp->GetHead ()->GetY ());
@@ -575,7 +575,7 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
     CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
     CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
 
-    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+    for (CShape* sp = shape_head; sp != NULL && sp->IsClosed (); sp = sp->GetNext ())
     {
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
@@ -596,7 +596,7 @@ void CAdminControl::ScaleShape (CVertex* base_p, float mouse_before_x, float mou
         CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
         CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
 
-        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed (); sp = sp->GetNext ())
         {
             if (sp->IsSelected ())
             {
@@ -650,7 +650,7 @@ void CAdminControl::RotateShape (CVertex* base_p, float mouse_before_x, float mo
         CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
         CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
 
-        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed () == true; sp = sp->GetNext ())
+        for (CShape* sp = shape_head; sp != NULL && sp->IsClosed (); sp = sp->GetNext ())
         {
             if (sp->IsSelected ())
             {
@@ -1222,7 +1222,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
                     }
                 }
             }
-            if (sp->IsClosed () == true && moved_vertex == my_shape->GetHead ())
+            if (sp->IsClosed () && moved_vertex == my_shape->GetHead ())
             {
                 if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), moved_vertex, moved_vertex->GetNext ()))
                 {
@@ -1233,7 +1233,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
                     return true;
                 }
             }
-            else if (sp->IsClosed () == true && moved_vertex == my_shape->GetTail ())
+            else if (sp->IsClosed () && moved_vertex == my_shape->GetTail ())
             {
                 if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), moved_vertex, my_shape->GetHead ()))
                 {
@@ -1244,7 +1244,7 @@ bool CAdminControl::IsMovedVertexOtherCross (CShape* my_shape, CVertex* moved_ve
                     return true;
                 }
             }
-            else if (sp->IsClosed () == true)
+            else if (sp->IsClosed ())
             {
                 if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), moved_vertex, moved_vertex->GetNext ()))
                 {
@@ -1280,7 +1280,7 @@ bool CAdminControl::IsMovedVertexContained (CShape* my_shape, CVertex* moved_ver
 
 bool CAdminControl::IsMovedShapeContaining (CShape* moved_shape)
 {
-    if (moved_shape->IsClosed () == false)
+    if (!moved_shape->IsClosed ())
     {
         return false;
     }
@@ -1328,21 +1328,21 @@ bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_
     CVertex* pre_vertex;
     CVertex* next_vertex;
 
-    if (my_shape->IsClosed () == true && remove_vertex == my_shape->GetHead ())
+    if (my_shape->IsClosed () && remove_vertex == my_shape->GetHead ())
     {
         pre_vertex = my_shape->GetTail ();
         next_vertex = remove_vertex->GetNext ();
     }
-    else if (my_shape->IsClosed () == false && remove_vertex == my_shape->GetHead ())
+    else if (!my_shape->IsClosed () && remove_vertex == my_shape->GetHead ())
     {
         return false;
     }
-    else if (my_shape->IsClosed () == true && remove_vertex == my_shape->GetTail ())
+    else if (my_shape->IsClosed () && remove_vertex == my_shape->GetTail ())
     {
         pre_vertex = remove_vertex->GetPre ();
         next_vertex = my_shape->GetHead ();
     }
-    else if (my_shape->IsClosed () == false && remove_vertex == my_shape->GetTail ())
+    else if (!my_shape->IsClosed () && remove_vertex == my_shape->GetTail ())
     {
         return false;
     }
@@ -1385,7 +1385,7 @@ bool CAdminControl::IsRemoveVertexOtherCross (CShape* my_shape, CVertex* remove_
 
 bool CAdminControl::IsRemoveShapeContaining (CShape* my_shape, CVertex* remove_vertex)
 {
-    if (my_shape->IsClosed () == false)
+    if (!my_shape->IsClosed ())
     {
         return false;
     }
@@ -1410,14 +1410,14 @@ bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
     CVertex gravity_point;
     CMath::GravityPoint (surface, &gravity_point);
 
-    if (CMath::IsContained (my_shape, &gravity_point) == false)
+    if (!CMath::IsContained (my_shape, &gravity_point))
     {
         return false;
     }
 
     for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
     {
-        if (CMath::IsContained (surface, vp) == true)
+        if (CMath::IsContained (surface, vp))
         {
             return false;
         }

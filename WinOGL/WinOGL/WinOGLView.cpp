@@ -77,7 +77,9 @@ void CWinOGLView::OnDraw (CDC* pDC)
     CWinOGLDoc* pDoc = GetDocument ();
     ASSERT_VALID (pDoc);
     if (!pDoc)
+    {
         return;
+    }
 
     wglMakeCurrent (pDC->m_hDC, m_hRC);
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
@@ -89,11 +91,11 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     if (AC.IsViewportTrans ())
     {
-        if (ShiftViewportFlag == true)
+        if (ShiftViewportFlag)
         {
             ShiftViewport ();
         }
-        else if (ZoomViewportFlag == true)
+        else if (ZoomViewportFlag)
         {
             ZoomViewport ();
         }

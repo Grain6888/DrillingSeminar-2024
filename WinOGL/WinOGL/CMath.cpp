@@ -310,7 +310,7 @@ float* CMath::Normal (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p
     float normal_z = c_z / c_size;
 
     float normal[3] = { 0.0f, 0.0f, 0.0f };
-    if (reverse == true)
+    if (reverse )
     {
         normal[0] = -normal_x;
         normal[1] = -normal_y;
