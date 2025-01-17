@@ -20,9 +20,10 @@ public:
     ~CAdminControl ();
 
     /// @brief すべての描画を行う．
-    /// @param mouse_x マウスの X 座標
-    /// @param mouse_y マウスの Y 座標
-    void Draw (float mouse_x, float mouse_y);
+    /// @param mouse_x  マウスの X 座標
+    /// @param mouse_y  マウスの Y 座標
+    /// @param dragging D&D の状態フラグ
+    void Draw (float mouse_x, float mouse_y, bool dragging);
 
     /// @brief 頂点の描画を行う．
     /// @param vertex 頂点
@@ -195,6 +196,9 @@ public:
     /// @brief 奥行きの描画の状態を取得する．
     /// @return 描画する true / 描画しない false
     bool IsDrawingDepth ();
+
+    /// @brief 奥行きの描画の状態を解除する．
+    void ClearDrawDepth ();
 
     /// @brief 視点の変更の状態を切り替える．
     void SwitchViewportTrans ();

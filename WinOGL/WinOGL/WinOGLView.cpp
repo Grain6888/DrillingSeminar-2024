@@ -109,11 +109,11 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
-        AC.Draw (x_M_down, y_M_down);
+        AC.Draw (x_M_down, y_M_down, DraggingFlag);
     }
     else
     {
-        AC.Draw (x_LR_over, y_LR_over);
+        AC.Draw (x_LR_over, y_LR_over, DraggingFlag);
     }
 
     glDisable (GL_DEPTH_TEST);
@@ -700,11 +700,12 @@ void CWinOGLView::ZoomViewport ()
 
 void CWinOGLView::RotateViewport ()
 {
-    float shift_x = (x_LR_over - x_LR_down);
-    float shift_y = (y_LR_over - y_LR_down);
+    float shift_x = (y_LR_down - y_LR_over) * 50;
+    float shift_y = (x_LR_over - x_LR_down) * 50;
     if (DraggingFlag)
     {
-        glRotatef (1.0f, shift_y, shift_x, 0.0f);
+        glRotatef (shift_x, 1.0f, 0.0f, 0.0f);
+        glRotatef (shift_y, 0.0f, 1.0f, 0.0f);
         x_LR_down = x_LR_over;
         y_LR_down = y_LR_over;
     }
@@ -762,6 +763,7 @@ void CWinOGLView::OnViewportTrans ()
 {
     AC.SwitchViewportTrans ();
     AC.ClearAddShapeMode ();
+    AC.ClearDrawDepth ();
     AC.DeSelectAllShape ();
     AC.ClearAffineTransMode ();
     RedrawWindow ();
@@ -804,7 +806,10 @@ void CWinOGLView::OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CWinOGLView::OnDrawDepth ()
 {
-    AC.SwitchDrawDepth ();
+    if (AC.IsViewportTrans ())
+    {
+        AC.SwitchDrawDepth ();
+    }
     RedrawWindow ();
 }
 
