@@ -20,10 +20,10 @@ public:
     ~CAdminControl ();
 
     /// @brief すべての描画を行う．
-    /// @param mouse_x  マウスの X 座標
-    /// @param mouse_y  マウスの Y 座標
-    /// @param dragging D&D の状態フラグ
-    void Draw (float mouse_x, float mouse_y, bool dragging);
+    /// @param mouse_x      マウスの X 座標
+    /// @param mouse_y      マウスの Y 座標
+    /// @param DraggingFlag D&D の状態フラグ
+    void Draw (float mouse_x, float mouse_y, bool DraggingFlag);
 
     /// @brief 頂点の描画を行う．
     /// @param vertex 頂点
@@ -42,10 +42,16 @@ public:
     /// @param shape 自図形
     void DrawSurface (CShape* shape);
 
+    /// @brief 図形の前面の描画を行う．
+    /// @param shape 自図形
     void DrawFront (CShape* shape);
 
+    /// @brief 図形の背面の描画を行う．
+    /// @param shape 自図形
     void DrawBack (CShape* shape);
 
+    /// @brief 図形の側面の描画を行う．
+    /// @param shape 自図形
     void DrawSide (CShape* shape);
 
     /// @brief 予測線の描画を行う．

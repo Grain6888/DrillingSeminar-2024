@@ -17,7 +17,7 @@ CAdminControl::~CAdminControl ()
     DestroyBoundingBox ();
 }
 
-void CAdminControl::Draw (float mouse_x, float mouse_y, bool dragging)
+void CAdminControl::Draw (float mouse_x, float mouse_y, bool DraggingFlag)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
@@ -50,7 +50,11 @@ void CAdminControl::Draw (float mouse_x, float mouse_y, bool dragging)
                     DrawBack (sp);
                     DrawSide (sp);
                 }
-                else if (ViewportTransFlag || !dragging)
+                else if (ViewportTransFlag)
+                {
+                    DrawSurface (sp);
+                }
+                else if (!DraggingFlag)
                 {
                     DrawSurface (sp);
                 }
