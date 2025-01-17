@@ -3,7 +3,7 @@
 
 float CMath::VertexDis (CVertex* p1, CVertex* p2)
 {
-    return sqrtf (pow ((p2->GetX () - p1->GetX ()), 2) + pow ((p2->GetY () - p1->GetY ()), 2));
+    return sqrtf (powf ((p2->GetX () - p1->GetX ()), 2) + powf ((p2->GetY () - p1->GetY ()), 2));
 }
 
 float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
@@ -153,10 +153,10 @@ void CMath::RotatePoint (float degree, CVertex* base_p, CVertex* result)
 
 bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b_e)
 {
-    float outer_a_1 = Outer (a_s, a_e, a_s, b_s);
-    float outer_a_2 = Outer (a_s, a_e, a_s, b_e);
-    float outer_b_1 = Outer (b_s, b_e, b_s, a_s);
-    float outer_b_2 = Outer (b_s, b_e, b_s, a_e);
+    float outer_a_1 = Outer2DSize (a_s, a_e, a_s, b_s);
+    float outer_a_2 = Outer2DSize (a_s, a_e, a_s, b_e);
+    float outer_b_1 = Outer2DSize (b_s, b_e, b_s, a_s);
+    float outer_b_2 = Outer2DSize (b_s, b_e, b_s, a_e);
 
     if ((outer_a_1 * outer_a_2 <= 0) && (outer_b_1 * outer_b_2 <= 0))
     {
@@ -179,6 +179,28 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
 
     double difference = 2 * M_PI - fabs (angle_sum);
     if (difference >= -0.001 && difference <= 0.001)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool CMath::IsReversed (CShape* my_shape)
+{
+    double angle_sum = 0.0;
+    CVertex* g = new CVertex;
+    GravityPoint (my_shape, g);
+    for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail (); vp = vp->GetNext ())
+    {
+        angle_sum += VecAngle (g, vp, g, vp->GetNext ());
+    }
+    angle_sum += VecAngle (my_shape->GetTail (), g, my_shape->GetHead (), g);
+
+    g->FreeVertex ();
+    if (angle_sum > 0)
     {
         return true;
     }
@@ -254,7 +276,7 @@ float CMath::Inner (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b
     return result;
 }
 
-float CMath::Outer (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+float CMath::Outer2DSize (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
     CVertex* v_a = PositionVec (p_a_s, p_a_e);
     CVertex* v_b = PositionVec (p_b_s, p_b_e);
@@ -263,6 +285,45 @@ float CMath::Outer (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b
     v_a->FreeVertex ();
     v_b->FreeVertex ();
     return result;
+}
+
+float* CMath::Normal (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e, float depth, bool reverse)
+{
+    float a_x = 0.0;
+    float a_y = 0.0;
+    float a_z = depth;
+    float a_size = sqrtf (powf (a_x, 2) + powf (a_y, 2) + powf (a_z, 2));
+    float b_x = p_b_e->GetX () - p_b_s->GetX ();
+    float b_y = p_b_e->GetY () - p_b_s->GetY ();
+    float b_z = 0.0;
+    float b_size = sqrtf (powf (b_x, 2) + powf (b_y, 2) + powf (b_z, 2));
+
+    float c_x = a_y * b_z - a_z * b_y;
+    float c_y = a_z * b_x - a_x * b_z;
+    float c_z = a_x * b_y - a_y * b_x;
+    float c_size = a_size * b_size;
+
+    double angle_sum = 0.0;
+
+    float normal_x = c_x / c_size;
+    float normal_y = c_y / c_size;
+    float normal_z = c_z / c_size;
+
+    float normal[3] = { 0.0f, 0.0f, 0.0f };
+    if (reverse == true)
+    {
+        normal[0] = -normal_x;
+        normal[1] = -normal_y;
+        normal[2] = -normal_z;
+    }
+    else
+    {
+        normal[0] = normal_x;
+        normal[1] = normal_y;
+        normal[2] = normal_z;
+    }
+
+    return normal;
 }
 
 CVertex* CMath::PositionVec (CVertex* p_s, CVertex* p_e)
@@ -274,7 +335,7 @@ CVertex* CMath::PositionVec (CVertex* p_s, CVertex* p_e)
 
 float CMath::VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
-    float outer_product = Outer (p_a_s, p_a_e, p_b_s, p_b_e);
+    float outer_product = Outer2DSize (p_a_s, p_a_e, p_b_s, p_b_e);
     float inner_product = Inner (p_a_s, p_a_e, p_b_s, p_b_e);
     return atan2f (outer_product, inner_product);
 }

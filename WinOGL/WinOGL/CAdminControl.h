@@ -3,15 +3,15 @@
 #include <gl/GL.h>
 #include "CShape.h"
 
-#define COLOR_WHITE 0.95f, 0.95f, 0.95f
-#define COLOR_BLACK 0.15f, 0.15f, 0.15f
-#define COLOR_PALE_BLUE 0.70f, 0.86f, 0.98f
-#define COLOR_BLUE 0.30f, 0.40f, 0.78f
-#define COLOR_LIGHT_BLUE 0.37f, 0.80f, 0.95f
-#define COLOR_LIGHT_GREEN 0.65f, 0.91f, 0.32f
-#define COLOR_GREEN 0.36f, 0.80f, 0.68f
-#define COLOR_ORANGE 1.00f, 0.50f, 0.13f
-#define COLOR_RED 0.94f, 0.25f, 0.14f
+const float COLOR_WHITE[3] = { 0.95f, 0.95f, 0.95f };
+const float COLOR_BLACK[3] = { 0.15f, 0.15f, 0.15f };
+const float COLOR_PALE_BLUE[3] = { 0.70f, 0.86f, 0.98f };
+const float COLOR_BLUE[3] = { 0.30f, 0.40f, 0.78f };
+const float COLOR_LIGHT_BLUE[3] = { 0.37f, 0.80f, 0.95f };
+const float COLOR_LIGHT_GREEN[3] = { 0.65f, 0.91f, 0.32f };
+const float COLOR_GREEN[3] = { 0.36f, 0.80f, 0.68f };
+const float COLOR_ORANGE[3] = { 1.00f, 0.50f, 0.13f };
+const float COLOR_RED[3] = { 0.94f, 0.25f, 0.14f };
 
 /// @brief 図形リストの管理（追加・削除・描画）を行うクラス．
 class CAdminControl {
@@ -20,9 +20,10 @@ public:
     ~CAdminControl ();
 
     /// @brief すべての描画を行う．
-    /// @param mouse_x マウスの X 座標
-    /// @param mouse_y マウスの Y 座標
-    void Draw (float mouse_x, float mouse_y);
+    /// @param mouse_x      マウスの X 座標
+    /// @param mouse_y      マウスの Y 座標
+    /// @param DraggingFlag D&D の状態フラグ
+    void Draw (float mouse_x, float mouse_y, bool DraggingFlag);
 
     /// @brief 頂点の描画を行う．
     /// @param vertex 頂点
@@ -40,6 +41,18 @@ public:
     /// @brief 図形の面の描画を行う．
     /// @param shape 自図形
     void DrawSurface (CShape* shape);
+
+    /// @brief 図形の前面の描画を行う．
+    /// @param shape 自図形
+    void DrawFront (CShape* shape);
+
+    /// @brief 図形の背面の描画を行う．
+    /// @param shape 自図形
+    void DrawBack (CShape* shape);
+
+    /// @brief 図形の側面の描画を行う．
+    /// @param shape 自図形
+    void DrawSide (CShape* shape);
 
     /// @brief 予測線の描画を行う．
     /// @param start 予測線の始点
@@ -160,6 +173,12 @@ public:
     /// @brief 描画サイズを下げる．
     void DrawSizeDown ();
 
+    /// @brief 奥行きの長さを伸ばす．
+    void ShapeDepthUp ();
+
+    /// @brief 奥行きの長さを縮める．
+    void ShapeDepthDown ();
+
     /// @brief 座標軸を描画する．
     void DrawAxis ();
 
@@ -176,6 +195,16 @@ public:
     /// @brief 面の描画の状態を取得する．
     /// @return 描画する true / 描画しない false
     bool IsDrawingSurface ();
+
+    /// @brief 奥行きの描画の状態を切り替える．
+    void SwitchDrawDepth ();
+
+    /// @brief 奥行きの描画の状態を取得する．
+    /// @return 描画する true / 描画しない false
+    bool IsDrawingDepth ();
+
+    /// @brief 奥行きの描画の状態を解除する．
+    void ClearDrawDepth ();
 
     /// @brief 視点の変更の状態を切り替える．
     void SwitchViewportTrans ();
@@ -305,6 +334,9 @@ private:
     /// @brief 線の描画幅．
     float LINEWIDTH = 2.0;
 
+    /// @brief 図形の奥行．
+    float SHAPEDEPTH = 0.5;
+
     /// @brief 先頭の図形．
     CShape* shape_head;
 
@@ -322,6 +354,9 @@ private:
 
     /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
     bool DrawSurfaceFlag = false;
+
+    /// @brief 奥行きの描画の状態フラグ（描画する true / 描画しない false）．
+    bool DrawDepthFlag = false;
 
     /// @brief 視点の変更の状態フラグ（視点変更 true / 視点固定 false）．
     bool ViewportTransFlag = false;

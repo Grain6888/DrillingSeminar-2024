@@ -42,6 +42,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_VIEWPORT_TRANS, &CWinOGLView::OnUpdateViewportTrans)
     ON_WM_KEYDOWN ()
     ON_WM_KEYUP ()
+    ON_COMMAND (ID_DRAW_DEPTH, &CWinOGLView::OnDrawDepth)
+    ON_UPDATE_COMMAND_UI (ID_DRAW_DEPTH, &CWinOGLView::OnUpdateDrawDepth)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -79,7 +81,11 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     wglMakeCurrent (pDC->m_hDC, m_hRC);
     glClearColor (0.95f, 0.95f, 0.95f, 1.00f);
-    glClear (GL_COLOR_BUFFER_BIT /* | GL_DEPTH_BUFFER_BIT*/);
+    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // 陰線処理
+    glEnable (GL_DEPTH_TEST);
+    glDepthFunc (GL_LEQUAL);
 
     if (AC.IsViewportTrans ())
     {
@@ -103,12 +109,14 @@ void CWinOGLView::OnDraw (CDC* pDC)
 
     if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
-        AC.Draw (x_M_down, y_M_down);
+        AC.Draw (x_M_down, y_M_down, DraggingFlag);
     }
     else
     {
-        AC.Draw (x_LR_over, y_LR_over);
+        AC.Draw (x_LR_over, y_LR_over, DraggingFlag);
     }
+
+    glDisable (GL_DEPTH_TEST);
 
     glFlush ();
     SwapBuffers (pDC->m_hDC);
@@ -353,6 +361,18 @@ BOOL CWinOGLView::OnMouseWheel (UINT nFlags, short zDelta, CPoint pt)
         wheel_scroll = 0;
     }
 
+    if (AC.IsDrawingDepth () && (nFlags & MK_SHIFT))
+    {
+        if (zDelta > 0)
+        {
+            AC.ShapeDepthUp ();
+        }
+        else
+        {
+            AC.ShapeDepthDown ();
+        }
+    }
+
     CVertex base_p (x_M_down, y_M_down, NULL, NULL);
 
     if (AC.IsScaleMode ())
@@ -522,7 +542,6 @@ void CWinOGLView::OnEditUndo ()
     RedrawWindow ();
 }
 
-
 void CWinOGLView::OnDeleteAll ()
 {
     AC.DeleteAllShape ();
@@ -530,126 +549,69 @@ void CWinOGLView::OnDeleteAll ()
     RedrawWindow ();
 }
 
-void CWinOGLView::SetDown (CPoint point)
+void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, const CRect& rectangle)
 {
-    // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
-
     // デバイス座標系
-    x_LR_down = (float)point.x;
-    y_LR_down = (float)point.y;
+    x = (float)point.x;
+    y = (float)point.y;
 
-    // デバイス座標系→正規化座標系
-    x_LR_down = x_LR_down / rect.Width ();
-    y_LR_down = 1 - (y_LR_down / rect.Height ());
+    // デバイス座標系 → 正規化座標系
+    x = x / rectangle.Width ();
+    y = 1 - (y / rectangle.Height ());
 
-    // 正規化座標系→ワールド座標系
+    //正規化座標系 → ワールド座標系
     float aspect_ratio = 0.0;
+
     // ウィンドウが横長の場合
-    if (rect.Width () > rect.Height ())
+    if (rectangle.Width () > rectangle.Height ())
     {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_LR_down = (x_LR_down - (float)(1.0 - x_LR_down)) * aspect_ratio;
-        y_LR_down -= (float)(1.0 - y_LR_down);
+        aspect_ratio = (float)rectangle.Width () / rectangle.Height ();
+        x = (x - (float)(1.0 - x)) * aspect_ratio;
+        y = y - (float)(1.0 - y);
     }
     // ウィンドウが縦長の場合
     else
     {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_LR_down = x_LR_down - (float)(1.0 - x_LR_down);
-        y_LR_down = (y_LR_down - (float)(1.0 - y_LR_down)) * aspect_ratio;
+        aspect_ratio = (float)rectangle.Height () / rectangle.Width ();
+        x = x - (float)(1.0 - x);
+        y = (y - (float)(1.0 - y)) * aspect_ratio;
     }
+}
+
+void CWinOGLView::SetDown (CPoint point)
+{
+    // 描画領域の大きさを取得
+    CRect rectangle;
+    GetClientRect (rectangle);
+
+    DeviceToWorldCoordinates (point, x_LR_down, y_LR_down, rectangle);
 }
 
 void CWinOGLView::SetOver (CPoint point)
 {
     // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
+    CRect rectangle;
+    GetClientRect (rectangle);
 
-    // デバイス座標系
-    x_LR_over = (float)point.x;
-    y_LR_over = (float)point.y;
-
-    // デバイス座標系→正規化座標系
-    x_LR_over = x_LR_over / rect.Width ();
-    y_LR_over = 1 - (y_LR_over / rect.Height ());
-
-    // 正規化座標系→ワールド座標系
-    float aspect_ratio = 0.0;
-    if (rect.Width () > rect.Height ())
-    {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_LR_over = (x_LR_over - (float)(1.0 - x_LR_over)) * aspect_ratio;
-        y_LR_over -= (float)(1.0 - y_LR_over);
-    }
-    else
-    {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_LR_over = x_LR_over - (float)(1.0 - x_LR_over);
-        y_LR_over = (y_LR_over - (float)(1.0 - y_LR_over)) * aspect_ratio;
-    }
+    DeviceToWorldCoordinates (point, x_LR_over, y_LR_over, rectangle);
 }
 
 void CWinOGLView::SetUp (CPoint point)
 {
     // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
+    CRect rectangle;
+    GetClientRect (rectangle);
 
-    // デバイス座標系
-    x_LR_up = (float)point.x;
-    y_LR_up = (float)point.y;
-
-    // デバイス座標系→正規化座標系
-    x_LR_up = x_LR_up / rect.Width ();
-    y_LR_up = 1 - (y_LR_up / rect.Height ());
-
-    // 正規化座標系→ワールド座標系
-    float aspect_ratio = 0.0;
-    if (rect.Width () > rect.Height ())
-    {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_LR_up = (x_LR_up - (float)(1.0 - x_LR_up)) * aspect_ratio;
-        y_LR_up -= (float)(1.0 - y_LR_up);
-    }
-    else
-    {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_LR_up = x_LR_up - (float)(1.0 - x_LR_up);
-        y_LR_up = (y_LR_up - (float)(1.0 - y_LR_up)) * aspect_ratio;
-    }
+    DeviceToWorldCoordinates (point, x_LR_up, y_LR_up, rectangle);
 }
 
 void CWinOGLView::SetMDown (CPoint point)
 {
     // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
+    CRect rectangle;
+    GetClientRect (rectangle);
 
-    // デバイス座標系
-    x_M_down = (float)point.x;
-    y_M_down = (float)point.y;
-
-    // デバイス座標系→正規化座標系
-    x_M_down = x_M_down / rect.Width ();
-    y_M_down = 1 - (y_M_down / rect.Height ());
-
-    // 正規化座標系→ワールド座標系
-    float aspect_ratio = 0.0;
-    if (rect.Width () > rect.Height ())
-    {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_M_down = (x_M_down - (float)(1.0 - x_M_down)) * aspect_ratio;
-        y_M_down -= (float)(1.0 - y_M_down);
-    }
-    else
-    {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_M_down = x_M_down - (float)(1.0 - x_M_down);
-        y_M_down = (y_M_down - (float)(1.0 - y_M_down)) * aspect_ratio;
-    }
+    DeviceToWorldCoordinates (point, x_M_down, y_M_down, rectangle);
 }
 
 void CWinOGLView::ShiftViewport ()
@@ -680,11 +642,12 @@ void CWinOGLView::ZoomViewport ()
 
 void CWinOGLView::RotateViewport ()
 {
-    float shift_x = x_LR_over - x_LR_down;
-    float shift_y = y_LR_over - y_LR_down;
+    float shift_x = (y_LR_down - y_LR_over) * 50;
+    float shift_y = (x_LR_over - x_LR_down) * 50;
     if (DraggingFlag)
     {
-        glRotatef (1, shift_y, shift_x, 0.0f);
+        glRotatef (shift_x, 1.0f, 0.0f, 0.0f);
+        glRotatef (shift_y, 0.0f, 1.0f, 0.0f);
         x_LR_down = x_LR_over;
         y_LR_down = y_LR_over;
     }
@@ -742,6 +705,7 @@ void CWinOGLView::OnViewportTrans ()
 {
     AC.SwitchViewportTrans ();
     AC.ClearAddShapeMode ();
+    AC.ClearDrawDepth ();
     AC.DeSelectAllShape ();
     AC.ClearAffineTransMode ();
     RedrawWindow ();
@@ -779,4 +743,18 @@ void CWinOGLView::OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags)
     }
 
     CView::OnKeyUp (nChar, nRepCnt, nFlags);
+}
+
+void CWinOGLView::OnDrawDepth ()
+{
+    if (AC.IsViewportTrans ())
+    {
+        AC.SwitchDrawDepth ();
+    }
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateDrawDepth (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsDrawingDepth ());
 }

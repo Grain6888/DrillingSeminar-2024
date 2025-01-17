@@ -20,14 +20,16 @@
 #define ID_VIEW                         32812
 #define ID_VIEWPORT                     32813
 #define ID_VIEWPORT_TRANS               32814
-#define ID_BUTTON32815                  32815
+#define ID_32816                        32816
+#define ID_DRAW_DEPTH                   32817
+#define ID_BUTTON32821                  32821
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        312
-#define _APS_NEXT_COMMAND_VALUE         32816
+#define _APS_NEXT_COMMAND_VALUE         32822
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
