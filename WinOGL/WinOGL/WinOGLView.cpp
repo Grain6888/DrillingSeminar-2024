@@ -542,7 +542,6 @@ void CWinOGLView::OnEditUndo ()
     RedrawWindow ();
 }
 
-
 void CWinOGLView::OnDeleteAll ()
 {
     AC.DeleteAllShape ();
@@ -550,126 +549,69 @@ void CWinOGLView::OnDeleteAll ()
     RedrawWindow ();
 }
 
-void CWinOGLView::SetDown (CPoint point)
+void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, const CRect& rectangle)
 {
-    // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
-
     // デバイス座標系
-    x_LR_down = (float)point.x;
-    y_LR_down = (float)point.y;
+    x = (float)point.x;
+    y = (float)point.y;
 
-    // デバイス座標系→正規化座標系
-    x_LR_down = x_LR_down / rect.Width ();
-    y_LR_down = 1 - (y_LR_down / rect.Height ());
+    // デバイス座標系 → 正規化座標系
+    x = x / rectangle.Width ();
+    y = 1 - (y / rectangle.Height ());
 
-    // 正規化座標系→ワールド座標系
+    //正規化座標系 → ワールド座標系
     float aspect_ratio = 0.0;
+
     // ウィンドウが横長の場合
-    if (rect.Width () > rect.Height ())
+    if (rectangle.Width () > rectangle.Height ())
     {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_LR_down = (x_LR_down - (float)(1.0 - x_LR_down)) * aspect_ratio;
-        y_LR_down -= (float)(1.0 - y_LR_down);
+        aspect_ratio = (float)rectangle.Width () / rectangle.Height ();
+        x = (x - (float)(1.0 - x)) * aspect_ratio;
+        y = y - (float)(1.0 - y);
     }
     // ウィンドウが縦長の場合
     else
     {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_LR_down = x_LR_down - (float)(1.0 - x_LR_down);
-        y_LR_down = (y_LR_down - (float)(1.0 - y_LR_down)) * aspect_ratio;
+        aspect_ratio = (float)rectangle.Height () / rectangle.Width ();
+        x = x - (float)(1.0 - x);
+        y = (y - (float)(1.0 - y)) * aspect_ratio;
     }
+}
+
+void CWinOGLView::SetDown (CPoint point)
+{
+    // 描画領域の大きさを取得
+    CRect rectangle;
+    GetClientRect (rectangle);
+
+    DeviceToWorldCoordinates (point, x_LR_down, y_LR_down, rectangle);
 }
 
 void CWinOGLView::SetOver (CPoint point)
 {
     // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
+    CRect rectangle;
+    GetClientRect (rectangle);
 
-    // デバイス座標系
-    x_LR_over = (float)point.x;
-    y_LR_over = (float)point.y;
-
-    // デバイス座標系→正規化座標系
-    x_LR_over = x_LR_over / rect.Width ();
-    y_LR_over = 1 - (y_LR_over / rect.Height ());
-
-    // 正規化座標系→ワールド座標系
-    float aspect_ratio = 0.0;
-    if (rect.Width () > rect.Height ())
-    {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_LR_over = (x_LR_over - (float)(1.0 - x_LR_over)) * aspect_ratio;
-        y_LR_over -= (float)(1.0 - y_LR_over);
-    }
-    else
-    {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_LR_over = x_LR_over - (float)(1.0 - x_LR_over);
-        y_LR_over = (y_LR_over - (float)(1.0 - y_LR_over)) * aspect_ratio;
-    }
+    DeviceToWorldCoordinates (point, x_LR_over, y_LR_over, rectangle);
 }
 
 void CWinOGLView::SetUp (CPoint point)
 {
     // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
+    CRect rectangle;
+    GetClientRect (rectangle);
 
-    // デバイス座標系
-    x_LR_up = (float)point.x;
-    y_LR_up = (float)point.y;
-
-    // デバイス座標系→正規化座標系
-    x_LR_up = x_LR_up / rect.Width ();
-    y_LR_up = 1 - (y_LR_up / rect.Height ());
-
-    // 正規化座標系→ワールド座標系
-    float aspect_ratio = 0.0;
-    if (rect.Width () > rect.Height ())
-    {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_LR_up = (x_LR_up - (float)(1.0 - x_LR_up)) * aspect_ratio;
-        y_LR_up -= (float)(1.0 - y_LR_up);
-    }
-    else
-    {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_LR_up = x_LR_up - (float)(1.0 - x_LR_up);
-        y_LR_up = (y_LR_up - (float)(1.0 - y_LR_up)) * aspect_ratio;
-    }
+    DeviceToWorldCoordinates (point, x_LR_up, y_LR_up, rectangle);
 }
 
 void CWinOGLView::SetMDown (CPoint point)
 {
     // 描画領域の大きさを取得
-    CRect rect;
-    GetClientRect (rect);
+    CRect rectangle;
+    GetClientRect (rectangle);
 
-    // デバイス座標系
-    x_M_down = (float)point.x;
-    y_M_down = (float)point.y;
-
-    // デバイス座標系→正規化座標系
-    x_M_down = x_M_down / rect.Width ();
-    y_M_down = 1 - (y_M_down / rect.Height ());
-
-    // 正規化座標系→ワールド座標系
-    float aspect_ratio = 0.0;
-    if (rect.Width () > rect.Height ())
-    {
-        aspect_ratio = (float)rect.Width () / rect.Height ();
-        x_M_down = (x_M_down - (float)(1.0 - x_M_down)) * aspect_ratio;
-        y_M_down -= (float)(1.0 - y_M_down);
-    }
-    else
-    {
-        aspect_ratio = (float)rect.Height () / rect.Width ();
-        x_M_down = x_M_down - (float)(1.0 - x_M_down);
-        y_M_down = (y_M_down - (float)(1.0 - y_M_down)) * aspect_ratio;
-    }
+    DeviceToWorldCoordinates (point, x_M_down, y_M_down, rectangle);
 }
 
 void CWinOGLView::ShiftViewport ()
@@ -803,7 +745,6 @@ void CWinOGLView::OnKeyUp (UINT nChar, UINT nRepCnt, UINT nFlags)
     CView::OnKeyUp (nChar, nRepCnt, nFlags);
 }
 
-
 void CWinOGLView::OnDrawDepth ()
 {
     if (AC.IsViewportTrans ())
@@ -812,7 +753,6 @@ void CWinOGLView::OnDrawDepth ()
     }
     RedrawWindow ();
 }
-
 
 void CWinOGLView::OnUpdateDrawDepth (CCmdUI* pCmdUI)
 {

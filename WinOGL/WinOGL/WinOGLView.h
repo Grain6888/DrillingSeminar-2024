@@ -23,6 +23,13 @@ public:
 protected:
     DECLARE_MESSAGE_MAP ()
 public:
+    /// @brief デバイス座標系 → 正規化座標系 → ワールド座標系の変換を行う．
+    /// @param point     デバイス (X,Y) 座標
+    /// @param x         ワールド X 座標
+    /// @param y         ワールド Y 座標
+    /// @param rectangle 描画領域の大きさ
+    void DeviceToWorldCoordinates (CPoint point, float& x, float& y, const CRect& rectangle);
+
     /// @brief 左右クリックを押した時の座標 (X,Y) を設定する．
     /// @param point デバイス座標 (X,Y)
     void SetDown (CPoint point);
