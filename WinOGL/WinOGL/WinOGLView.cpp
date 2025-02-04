@@ -466,29 +466,45 @@ BOOL CWinOGLView::OnEraseBkgnd (CDC* pDC)
 void CWinOGLView::OnSize (UINT nType, int cx, int cy)
 {
     CView::OnSize (nType, cx, cy);
-
     CClientDC clientDC (this);
     wglMakeCurrent (clientDC.m_hDC, m_hRC);
-    glViewport (0, 0, cx, cy);
+
+    // ウィンドウ全体をビューポートにする
+    GLint x = 0;
+    GLint y = 0;
+    GLsizei width = cx;
+    GLsizei height = cy;
+    glViewport (x, y, width, height);
+
+    // ウィンドウ全体をクリッピング領域にする
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
-
-    float aspect_ratio = 0.0;
-    //ウィンドウが横長の場合
-    if (cx > cy)
+    GLdouble aspect_ratio = 0.0;
+    GLdouble left = 0.0;
+    GLdouble right = 0.0;
+    GLdouble bottom = 0.0;
+    GLdouble top = 0.0;
+    GLdouble zNear = -100.0;
+    GLdouble zFar = 100.0;
+    if (width > height)
     {
-        aspect_ratio = (float)cx / cy;
-        glOrtho (-1.0 * aspect_ratio, 1.0 * aspect_ratio, -1.0, 1.0, -100.0, 100.0);
+        aspect_ratio = (GLdouble)width / height;
+        left = -aspect_ratio;
+        right = aspect_ratio;
+        bottom = -1.0;
+        top = 1.0;
     }
-    //ウィンドウが縦長の場合
     else
     {
-        aspect_ratio = (float)cy / cx;
-        glOrtho (-1.0, 1.0, -1.0 * aspect_ratio, 1.0 * aspect_ratio, -100.0, 100.0);
+        aspect_ratio = (GLdouble)height / width;
+        left = -1.0;
+        right = 1.0;
+        bottom = -aspect_ratio;
+        top = aspect_ratio;
     }
+    glOrtho (left, right, bottom, top, zNear, zFar);
 
     glMatrixMode (GL_MODELVIEW);
-
     RedrawWindow ();
     wglMakeCurrent (clientDC.m_hDC, NULL);
 }
