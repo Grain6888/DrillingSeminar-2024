@@ -71,7 +71,6 @@ BOOL CWinOGLView::PreCreateWindow (CREATESTRUCT& cs)
     return CView::PreCreateWindow (cs);
 }
 
-// CWinOGLView 描画
 void CWinOGLView::OnDraw (CDC* pDC)
 {
     CWinOGLDoc* pDoc = GetDocument ();
@@ -104,19 +103,25 @@ void CWinOGLView::OnDraw (CDC* pDC)
             RotateViewport ();
         }
     }
+    // 視点固定時には2Dモードに強制移行
     else
     {
         glLoadIdentity ();
     }
 
+    float mouse_x = 0.0f;
+    float mouse_y = 0.0f;
     if (AC.IsScaleMode () || AC.IsRotateMode ())
     {
-        AC.Draw (x_M_down, y_M_down, DraggingFlag);
+        mouse_x = x_M_down;
+        mouse_y = y_M_down;
     }
     else
     {
-        AC.Draw (x_LR_over, y_LR_over, DraggingFlag);
+        mouse_x = x_LR_over;
+        mouse_y = y_LR_over;
     }
+    AC.Draw (mouse_x, mouse_y, DraggingFlag);
 
     glDisable (GL_DEPTH_TEST);
 
@@ -577,7 +582,7 @@ void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, co
     x = x / rectangle.Width ();
     y = 1 - (y / rectangle.Height ());
 
-    //正規化座標系 → ワールド座標系
+    // 正規化座標系 → ワールド座標系
     float aspect_ratio = 0.0;
 
     // ウィンドウが横長の場合
