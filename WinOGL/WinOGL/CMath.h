@@ -3,6 +3,7 @@
 #include "CShape.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <gl/GL.h>
 
 class CMath {
 public:
@@ -119,7 +120,7 @@ public:
     /// @param depth   奥行
     /// @param reverse 反転の有無
     /// @return 2 つのベクトルの外積
-    static float* Normal (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e, float depth, bool reverse);
+    static void Normal (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e, float depth, bool reverse, GLfloat normal[]);
 
     /// @brief 位置ベクトルを計算する．
     /// @param p_s 始点

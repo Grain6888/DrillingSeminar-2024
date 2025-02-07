@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include <gl/GL.h>
 #include "CVertex.h"
 
 /// @brief Shape セルの中身と，それらに含まれる点リストの管理（追加・削除）を行うクラス．
@@ -43,14 +44,14 @@ public:
     /// @brief 末尾に頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void PushVertex (float new_x, float new_y);
+    void PushVertex (GLfloat new_x, GLfloat new_y);
 
     /// @brief 辺上に頂点を追加する．
     /// @param pre_vertex  辺の始点
     /// @param new_x       頂点の X 座標
     /// @param new_y       頂点の Y 座標
     /// @param next_vertex 辺の終点
-    void InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex);
+    void InsertVertex (CVertex* pre_vertex, GLfloat new_x, GLfloat new_y, CVertex* next_vertex);
 
     /// @brief 末尾の頂点を削除する．
     void PopVertex ();

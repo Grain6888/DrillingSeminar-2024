@@ -69,7 +69,7 @@ void CShape::FreeShape ()
     }
 }
 
-void CShape::PushVertex (float new_x, float new_y)
+void CShape::PushVertex (GLfloat new_x, GLfloat new_y)
 {
     CVertex* new_vertex = new CVertex;
     new_vertex->SetXY (new_x, new_y);
@@ -96,7 +96,7 @@ void CShape::PushVertex (float new_x, float new_y)
     vertex_num++;
 }
 
-void CShape::InsertVertex (CVertex* pre_vertex, float new_x, float new_y, CVertex* next_vertex)
+void CShape::InsertVertex (CVertex* pre_vertex, GLfloat new_x, GLfloat new_y, CVertex* next_vertex)
 {
     CVertex* new_vertex = new CVertex;
     new_vertex->SetXY (new_x, new_y);

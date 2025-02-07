@@ -1,38 +1,39 @@
 #pragma once
 #include "pch.h"
+#include <gl/GL.h>
 
 /// @brief 頂点の管理を行うクラス．
 class CVertex {
 public:
     CVertex ();
-    CVertex (float new_x, float new_y, CVertex* new_next, CVertex* new_pre);
+    CVertex (GLfloat new_x, GLfloat new_y, CVertex* new_next, CVertex* new_pre);
     ~CVertex ();
 
     /// @brief 頂点の X,Y 座標を設定する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void SetXY (float new_x, float new_y);
+    void SetXY (GLfloat new_x, GLfloat new_y);
 
     /// @brief 移動前の頂点の X,Y 座標を設定する．
     /// @param x 移動前の頂点の X 座標
     /// @param y 移動前の頂点の Y 座標
-    void SetLastXY (float x, float y);
+    void SetLastXY (GLfloat x, GLfloat y);
 
     /// @brief 頂点の X 座標を取得する．
     /// @return 頂点の X 座標
-    float GetX ();
+    GLfloat GetX ();
 
     /// @brief 移動前の頂点の X 座標を取得する．
     /// @return 移動前の頂点の X 座標
-    float GetLastX ();
+    GLfloat GetLastX ();
 
     /// @brief 頂点の Y 座標を取得する．
     /// @return 頂点の Y 座標
-    float GetY ();
+    GLfloat GetY ();
 
     /// @brief 移動前の頂点の Y 座標を取得する．
     /// @return 移動前の頂点の Y 座標
-    float GetLastY ();
+    GLfloat GetLastY ();
 
     /// @brief 次の頂点を設定する．
     /// @param new_next 次の頂点
@@ -65,16 +66,16 @@ public:
 
 private:
     /// @brief 頂点の X 座標．
-    float x;
+    GLfloat x;
 
     /// @brief 頂点の Y 座標．
-    float y;
+    GLfloat y;
 
     /// @brief 移動前の頂点の X 座標．
-    float last_x;
+    GLfloat last_x;
 
     /// @brief 移動前の頂点の Y 座標．
-    float last_y;
+    GLfloat last_y;
 
     /// @brief 次の頂点．
     CVertex* next_vertex;

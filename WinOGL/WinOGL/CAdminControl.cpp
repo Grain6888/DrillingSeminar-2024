@@ -17,7 +17,7 @@ CAdminControl::~CAdminControl ()
     DestroyBoundingBox ();
 }
 
-void CAdminControl::Draw (float mouse_x, float mouse_y, bool DraggingFlag)
+void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
@@ -31,8 +31,8 @@ void CAdminControl::Draw (float mouse_x, float mouse_y, bool DraggingFlag)
     {
         if (DrawDepthFlag)
         {
-            float dif[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-            float amb[4] = { 0.37f, 0.80f, 0.95f, 1.0f };
+            GLfloat dif[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            GLfloat amb[4] = { 0.37f, 0.80f, 0.95f, 1.0f };
             glLightfv (GL_LIGHT0, GL_DIFFUSE, dif); // ŠgŽU”½ŽËŒõ‚ÌÝ’è
             glLightfv (GL_LIGHT0, GL_AMBIENT, amb); // ŠÂ‹«Œõ‚ÌÝ’è
             glEnable (GL_LIGHT0); // LIGHT0‚ð—LŒø
@@ -336,15 +336,18 @@ void CAdminControl::DrawSide (CShape* shape)
         glColor3fv (COLOR_LIGHT_BLUE);
         bool reverse = CMath::IsReversed (shape);
 
+        GLfloat normal[3] = { 0.0f, 0.0f, 0.0f };
         for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
         {
-            glNormal3fv (CMath::Normal (vp, vp, vp, vp->GetNext (), SHAPEDEPTH, reverse));
+            CMath::Normal (vp, vp, vp, vp->GetNext (), SHAPEDEPTH, reverse, normal);
+            glNormal3fv (normal);
             glVertex3f (vp->GetX (), vp->GetY (), 0.0f);
             glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), 0.0f);
             glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), SHAPEDEPTH);
             glVertex3f (vp->GetX (), vp->GetY (), SHAPEDEPTH);
         }
-        glNormal3fv (CMath::Normal (shape->GetTail (), shape->GetTail (), shape->GetTail (), shape->GetHead (), SHAPEDEPTH, reverse));
+        CMath::Normal (shape->GetTail (), shape->GetTail (), shape->GetTail (), shape->GetHead (), SHAPEDEPTH, reverse, normal);
+        glNormal3fv (normal);
         glVertex3f (shape->GetTail ()->GetX (), shape->GetTail ()->GetY (), 0.0f);
         glVertex3f (shape->GetHead ()->GetX (), shape->GetHead ()->GetY (), 0.0f);
         glVertex3f (shape->GetHead ()->GetX (), shape->GetHead ()->GetY (), SHAPEDEPTH);
@@ -570,7 +573,7 @@ CShape* CAdminControl::CopyShape (CShape* my_shape)
     return copy_shape;
 }
 
-void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+void CAdminControl::ShiftVertex (GLfloat mouse_before_x, GLfloat mouse_before_y, GLfloat mouse_after_x, GLfloat mouse_after_y)
 {
     CVertex before (mouse_before_x, mouse_before_y, NULL, NULL);
     CVertex after (mouse_after_x, mouse_after_y, NULL, NULL);
@@ -589,7 +592,7 @@ void CAdminControl::ShiftVertex (float mouse_before_x, float mouse_before_y, flo
     UpdateBoundingBox ();
 }
 
-void CAdminControl::ScaleShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+void CAdminControl::ScaleShape (CVertex* base_p, GLfloat mouse_before_x, GLfloat mouse_before_y, GLfloat mouse_after_x, GLfloat mouse_after_y)
 {
     if (bounding_box != NULL)
     {
@@ -643,7 +646,7 @@ void CAdminControl::ScaleDownShape (CVertex* base_p)
     UpdateBoundingBox ();
 }
 
-void CAdminControl::RotateShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y)
+void CAdminControl::RotateShape (CVertex* base_p, GLfloat mouse_before_x, GLfloat mouse_before_y, GLfloat mouse_after_x, GLfloat mouse_after_y)
 {
     if (bounding_box != NULL)
     {
@@ -820,7 +823,7 @@ int CAdminControl::GetShapeNum ()
     return shape_num;
 }
 
-void CAdminControl::PushVertex (float new_x, float new_y)
+void CAdminControl::PushVertex (GLfloat new_x, GLfloat new_y)
 {
     CVertex new_vertex (new_x, new_y, NULL, NULL);
 
@@ -860,7 +863,7 @@ void CAdminControl::PopVertex ()
     }
 }
 
-void CAdminControl::AddVertex (float mouse_x, float mouse_y)
+void CAdminControl::AddVertex (GLfloat mouse_x, GLfloat mouse_y)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
@@ -1456,10 +1459,10 @@ void CAdminControl::CreateBoundingBox ()
         bounding_box = box;
 
         bool selected_flag = false;
-        float max_x = 0.0;
-        float min_x = 0.0;
-        float max_y = 0.0;
-        float min_y = 0.0;
+        GLfloat max_x = 0.0;
+        GLfloat min_x = 0.0;
+        GLfloat max_y = 0.0;
+        GLfloat min_y = 0.0;
 
         for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
         {
@@ -1508,10 +1511,10 @@ void CAdminControl::UpdateBoundingBox ()
     if (bounding_box != NULL)
     {
         bool selected_flag = false;
-        float max_x = 0.0;
-        float min_x = 0.0;
-        float max_y = 0.0;
-        float min_y = 0.0;
+        GLfloat max_x = 0.0;
+        GLfloat min_x = 0.0;
+        GLfloat max_y = 0.0;
+        GLfloat min_y = 0.0;
 
         for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
         {
