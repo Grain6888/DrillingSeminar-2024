@@ -11,7 +11,7 @@ CVertex::CVertex ()
     pre_vertex = NULL;
 };
 
-CVertex::CVertex (float new_x, float new_y, CVertex* new_next, CVertex* new_pre)
+CVertex::CVertex (GLfloat new_x, GLfloat new_y, CVertex* new_next, CVertex* new_pre)
 {
     SetXY (new_x, new_y);
     SetNext (new_next);
@@ -21,34 +21,34 @@ CVertex::CVertex (float new_x, float new_y, CVertex* new_next, CVertex* new_pre)
 CVertex::~CVertex ()
 { };
 
-void CVertex::SetXY (float new_x, float new_y)
+void CVertex::SetXY (GLfloat new_x, GLfloat new_y)
 {
     x = new_x;
     y = new_y;
 }
 
-void CVertex::SetLastXY (float x, float y)
+void CVertex::SetLastXY (GLfloat x, GLfloat y)
 {
     last_x = x;
     last_y = y;
 }
 
-float CVertex::GetX ()
+GLfloat CVertex::GetX ()
 {
     return x;
 }
 
-float CVertex::GetLastX ()
+GLfloat CVertex::GetLastX ()
 {
     return last_x;
 }
 
-float CVertex::GetY ()
+GLfloat CVertex::GetY ()
 {
     return y;
 }
 
-float CVertex::GetLastY ()
+GLfloat CVertex::GetLastY ()
 {
     return last_y;
 }

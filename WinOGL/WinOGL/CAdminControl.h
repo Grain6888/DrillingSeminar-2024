@@ -3,15 +3,15 @@
 #include <gl/GL.h>
 #include "CShape.h"
 
-const float COLOR_WHITE[3] = { 0.95f, 0.95f, 0.95f };
-const float COLOR_BLACK[3] = { 0.15f, 0.15f, 0.15f };
-const float COLOR_PALE_BLUE[3] = { 0.70f, 0.86f, 0.98f };
-const float COLOR_BLUE[3] = { 0.30f, 0.40f, 0.78f };
-const float COLOR_LIGHT_BLUE[3] = { 0.37f, 0.80f, 0.95f };
-const float COLOR_LIGHT_GREEN[3] = { 0.65f, 0.91f, 0.32f };
-const float COLOR_GREEN[3] = { 0.36f, 0.80f, 0.68f };
-const float COLOR_ORANGE[3] = { 1.00f, 0.50f, 0.13f };
-const float COLOR_RED[3] = { 0.94f, 0.25f, 0.14f };
+const GLfloat COLOR_WHITE[3] = { 0.95f, 0.95f, 0.95f };
+const GLfloat COLOR_BLACK[3] = { 0.15f, 0.15f, 0.15f };
+const GLfloat COLOR_PALE_BLUE[3] = { 0.70f, 0.86f, 0.98f };
+const GLfloat COLOR_BLUE[3] = { 0.30f, 0.40f, 0.78f };
+const GLfloat COLOR_LIGHT_BLUE[3] = { 0.37f, 0.80f, 0.95f };
+const GLfloat COLOR_LIGHT_GREEN[3] = { 0.65f, 0.91f, 0.32f };
+const GLfloat COLOR_GREEN[3] = { 0.36f, 0.80f, 0.68f };
+const GLfloat COLOR_ORANGE[3] = { 1.00f, 0.50f, 0.13f };
+const GLfloat COLOR_RED[3] = { 0.94f, 0.25f, 0.14f };
 
 /// @brief 図形リストの管理（追加・削除・描画）を行うクラス．
 class CAdminControl {
@@ -23,7 +23,7 @@ public:
     /// @param mouse_x      マウスの X 座標
     /// @param mouse_y      マウスの Y 座標
     /// @param DraggingFlag D&D の状態フラグ
-    void Draw (float mouse_x, float mouse_y, bool DraggingFlag);
+    void Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag);
 
     /// @brief 頂点の描画を行う．
     /// @param vertex 頂点
@@ -95,7 +95,7 @@ public:
     /// @param mouse_before_y 移動前のマウスの Y 座標
     /// @param mouse_after_x  移動後のマウスの X 座標
     /// @param mouse_after_y  移動後のマウスの Y 座標
-    void ShiftVertex (float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+    void ShiftVertex (GLfloat mouse_before_x, GLfloat mouse_before_y, GLfloat mouse_after_x, GLfloat mouse_after_y);
 
     /// @brief 形状を拡大縮小する．
     /// @param base_p         基点
@@ -103,7 +103,7 @@ public:
     /// @param mouse_before_y 移動前のマウスの Y 座標
     /// @param mouse_after_x  移動後のマウスの X 座標
     /// @param mouse_after_y  移動後のマウスの Y 座標
-    void ScaleShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+    void ScaleShape (CVertex* base_p, GLfloat mouse_before_x, GLfloat mouse_before_y, GLfloat mouse_after_x, GLfloat mouse_after_y);
 
     /// @brief 形状を拡大する．
     /// @param base_p 基点
@@ -119,7 +119,7 @@ public:
     /// @param mouse_before_y 移動前のマウスの Y 座標
     /// @param mouse_after_x  移動後のマウスの X 座標
     /// @param mouse_after_y  移動後のマウスの Y 座標
-    void RotateShape (CVertex* base_p, float mouse_before_x, float mouse_before_y, float mouse_after_x, float mouse_after_y);
+    void RotateShape (CVertex* base_p, GLfloat mouse_before_x, GLfloat mouse_before_y, GLfloat mouse_after_x, GLfloat mouse_after_y);
 
     /// @brief 形状を左回転する．
     /// @param base_p 基点
@@ -154,7 +154,7 @@ public:
     /// @brief 図形に基づいて頂点を追加する．
     /// @param new_x 頂点の X 座標
     /// @param new_y 頂点の Y 座標
-    void PushVertex (float new_x, float new_y);
+    void PushVertex (GLfloat new_x, GLfloat new_y);
 
     /// @brief 図形に基づいて頂点を削除する．
     void PopVertex ();
@@ -162,7 +162,7 @@ public:
     /// @brief 辺上に頂点を追加する．
     /// @param mouse_x マウスの X 座標
     /// @param mouse_y マウスの Y 座標
-    void AddVertex (float mouse_x, float mouse_y);
+    void AddVertex (GLfloat mouse_x, GLfloat mouse_y);
 
     /// @brief 辺上の頂点を削除する．
     void SubVertex ();
@@ -329,13 +329,13 @@ public:
 
 private:
     /// @brief 点の描画サイズ．
-    float POINTSIZE = 10.0;
+    GLfloat POINTSIZE = 10.0;
 
     /// @brief 線の描画幅．
-    float LINEWIDTH = 2.0;
+    GLfloat LINEWIDTH = 2.0;
 
     /// @brief 図形の奥行．
-    float SHAPEDEPTH = 0.5;
+    GLfloat SHAPEDEPTH = 0.5;
 
     /// @brief 先頭の図形．
     CShape* shape_head;
