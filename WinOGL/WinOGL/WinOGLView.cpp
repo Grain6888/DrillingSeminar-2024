@@ -599,6 +599,9 @@ void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, co
         x = x - (float)(1.0 - x);
         y = (y - (float)(1.0 - y)) * aspect_ratio;
     }
+
+    x = (float)(round (x * (1.0 / 0.2)) / (1.0 / 0.2));
+    y = (float)(round (y * (1.0 / 0.2)) / (1.0 / 0.2));
 }
 
 void CWinOGLView::SetDown (CPoint point)

@@ -163,14 +163,44 @@ bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b
     float outer_b_1 = Outer2DSize (b_s, b_e, b_s, a_s);
     float outer_b_2 = Outer2DSize (b_s, b_e, b_s, a_e);
 
-    if ((outer_a_1 * outer_a_2 <= 0) && (outer_b_1 * outer_b_2 <= 0))
+    if ((outer_a_1 * outer_a_2 < 0) && (outer_b_1 * outer_b_2 < 0))
     {
         return true;
     }
-    else
+
+    if (outer_a_1 == 0)
     {
-        return false;
+        if ((b_s->GetX () >= (std::min)(a_s->GetX (), a_e->GetX ()) && b_s->GetX () <= (std::max)(a_s->GetX (), a_e->GetX ())) &&
+            (b_s->GetY () >= (std::min)(a_s->GetY (), a_e->GetY ()) && b_s->GetY () <= (std::max)(a_s->GetY (), a_e->GetY ())))
+        {
+            return true;
+        }
     }
+    if (outer_a_2 == 0)
+    {
+        if ((b_e->GetX () >= (std::min)(a_s->GetX (), a_e->GetX ()) && b_e->GetX () <= (std::max)(a_s->GetX (), a_e->GetX ())) &&
+            (b_e->GetY () >= (std::min)(a_s->GetY (), a_e->GetY ()) && b_e->GetY () <= (std::max)(a_s->GetY (), a_e->GetY ())))
+        {
+            return true;
+        }
+    }
+    if (outer_b_1 == 0)
+    {
+        if ((a_s->GetX () >= (std::min)(b_s->GetX (), b_e->GetX ()) && a_s->GetX () <= (std::max)(b_s->GetX (), b_e->GetX ())) &&
+            (a_s->GetY () >= (std::min)(b_s->GetY (), b_e->GetY ()) && a_s->GetY () <= (std::max)(b_s->GetY (), b_e->GetY ())))
+        {
+            return true;
+        }
+    }
+    if (outer_b_2 == 0)
+    {
+        if ((a_e->GetX () >= (std::min)(b_s->GetX (), b_e->GetX ()) && a_e->GetX () <= (std::max)(b_s->GetX (), b_e->GetX ())) &&
+            (a_e->GetY () >= (std::min)(b_s->GetY (), b_e->GetY ()) && a_e->GetY () <= (std::max)(b_s->GetY (), b_e->GetY ())))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
