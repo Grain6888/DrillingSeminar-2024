@@ -40,7 +40,7 @@ public:
 
     /// @brief 図形の面の描画を行う．
     /// @param shape 自図形
-    void DrawSurface (CShape* shape);
+    void Draw2DSurface (CShape* shape);
 
     /// @brief 図形の前面の描画を行う．
     /// @param shape 自図形

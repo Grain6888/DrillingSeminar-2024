@@ -52,11 +52,11 @@ void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
                 }
                 else if (ViewportTransFlag)
                 {
-                    DrawSurface (sp);
+                    Draw2DSurface (sp);
                 }
                 else if (!DraggingFlag)
                 {
-                    DrawSurface (sp);
+                    Draw2DSurface (sp);
                 }
             }
         }
@@ -177,7 +177,7 @@ void CAdminControl::DrawOutline (CShape* shape)
     }
 }
 
-void CAdminControl::DrawSurface (CShape* shape)
+void CAdminControl::Draw2DSurface (CShape* shape)
 {
     if (shape->GetVertexNum () < 3)
     {
