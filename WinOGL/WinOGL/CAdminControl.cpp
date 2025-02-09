@@ -1082,7 +1082,26 @@ bool CAdminControl::IsNewShapeContaining ()
 
 bool CAdminControl::IsNewVertexOtherCross (CVertex* new_vertex)
 {
-    if (shape_tail->GetVertexNum () > 0)
+    if (shape_tail->GetVertexNum () == 0)
+    {
+        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        {
+            // 図形の始点から終点までに存在する辺を対象に，他交差判定を行う．
+            for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
+            {
+                if (CMath::IsLineCrossing (vp, vp->GetNext (), new_vertex, new_vertex))
+                {
+                    return true;
+                }
+            }
+            // 図形の終点から始点に伸びる辺を対象に，他交差判定を行う．
+            if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), new_vertex, new_vertex))
+            {
+                return true;
+            }
+        }
+    }
+    else
     {
         for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
         {
