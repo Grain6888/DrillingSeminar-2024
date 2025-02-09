@@ -38,9 +38,13 @@ public:
     /// @param shape 自図形
     void DrawOutline (CShape* shape);
 
-    /// @brief 図形の面の描画を行う．
+    /// @brief 平面図形の面の描画を行う．
     /// @param shape 自図形
-    void DrawSurface (CShape* shape);
+    void Draw2DSurface (CShape* shape);
+
+    /// @brief 立体図形の面の描画を行う．
+    /// @param shape 自図形
+    void Draw3DSurface (CShape* shape);
 
     /// @brief 図形の前面の描画を行う．
     /// @param shape 自図形

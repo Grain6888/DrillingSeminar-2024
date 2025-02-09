@@ -46,17 +46,16 @@ void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
             {
                 if (DrawDepthFlag)
                 {
-                    DrawFront (sp);
-                    DrawBack (sp);
+                    Draw3DSurface (sp);
                     DrawSide (sp);
                 }
                 else if (ViewportTransFlag)
                 {
-                    DrawSurface (sp);
+                    Draw2DSurface (sp);
                 }
                 else if (!DraggingFlag)
                 {
-                    DrawSurface (sp);
+                    Draw2DSurface (sp);
                 }
             }
         }
@@ -70,9 +69,12 @@ void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
         // ’¸“_‚Æ—ÖŠsü‚ð•`‰æ‚·‚é
         for (CShape* sp = shape_head; sp != NULL; sp = sp->GetNext ())
         {
-            for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+            if (!DrawDepthFlag)
             {
-                DrawVertex (vp);
+                for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
+                {
+                    DrawVertex (vp);
+                }
             }
 
             DrawOutline (sp);
@@ -177,7 +179,7 @@ void CAdminControl::DrawOutline (CShape* shape)
     }
 }
 
-void CAdminControl::DrawSurface (CShape* shape)
+void CAdminControl::Draw2DSurface (CShape* shape)
 {
     if (shape->GetVertexNum () < 3)
     {
@@ -224,7 +226,7 @@ void CAdminControl::DrawSurface (CShape* shape)
     }
 }
 
-void CAdminControl::DrawFront (CShape* shape)
+void CAdminControl::Draw3DSurface (CShape* shape)
 {
     if (shape->GetVertexNum () < 3)
     {
@@ -234,90 +236,44 @@ void CAdminControl::DrawFront (CShape* shape)
     {
         return;
     }
-    else
-    {
-        CShape* copy_shape = CopyShape (shape);
 
-        CVertex* vp = copy_shape->GetHead ();
-        while (copy_shape->GetVertexNum () >= 3)
+    CShape* copy_shape = CopyShape (shape);
+    CVertex* vp = copy_shape->GetHead ();
+    while (copy_shape->GetVertexNum () >= 3)
+    {
+        CShape surface;
+        surface.PushVertex (vp->GetX (), vp->GetY ());
+        surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
+        surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
+
+        if (CanDrawSurface (copy_shape, &surface))
         {
-            CShape surface;
-            surface.PushVertex (vp->GetX (), vp->GetY ());
-            surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
-            surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
-
-            if (CanDrawSurface (copy_shape, &surface))
+            glBegin (GL_TRIANGLES);
+            glColor3fv (COLOR_LIGHT_BLUE);
+            glNormal3f (0.0, 0.0, 1.0);
+            for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
             {
-                glBegin (GL_TRIANGLES);
-                glColor3fv (COLOR_LIGHT_BLUE);
-
-                glNormal3f (0.0, 0.0, 1.0);
-
-                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
-                {
-                    glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
-                }
-
-                glEnd ();
-                copy_shape->RemoveVertex (vp->GetNext ());
-                vp = copy_shape->GetHead ();
+                glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
             }
-            else
+            glEnd ();
+
+            glBegin (GL_TRIANGLES);
+            glColor3fv (COLOR_LIGHT_BLUE);
+            glNormal3f (0.0, 0.0, -1.0);
+            for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
             {
-                vp = vp->GetNext ();
+                glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
             }
+            glEnd ();
+            copy_shape->RemoveVertex (vp->GetNext ());
+            vp = copy_shape->GetHead ();
         }
-
-        copy_shape->FreeShape ();
-    }
-}
-
-void CAdminControl::DrawBack (CShape* shape)
-{
-    if (shape->GetVertexNum () < 3)
-    {
-        return;
-    }
-    else if (!CanMoveVertex ())
-    {
-        return;
-    }
-    else
-    {
-        CShape* copy_shape = CopyShape (shape);
-
-        CVertex* vp = copy_shape->GetHead ();
-        while (copy_shape->GetVertexNum () >= 3)
+        else
         {
-            CShape surface;
-            surface.PushVertex (vp->GetX (), vp->GetY ());
-            surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
-            surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
-
-            if (CanDrawSurface (copy_shape, &surface))
-            {
-                glBegin (GL_TRIANGLES);
-                glColor3fv (COLOR_LIGHT_BLUE);
-
-                glNormal3f (0.0, 0.0, -1.0);
-
-                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
-                {
-                    glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
-                }
-
-                glEnd ();
-                copy_shape->RemoveVertex (vp->GetNext ());
-                vp = copy_shape->GetHead ();
-            }
-            else
-            {
-                vp = vp->GetNext ();
-            }
+            vp = vp->GetNext ();
         }
-
-        copy_shape->FreeShape ();
     }
+    copy_shape->FreeShape ();
 }
 
 void CAdminControl::DrawSide (CShape* shape)
@@ -330,31 +286,29 @@ void CAdminControl::DrawSide (CShape* shape)
     {
         return;
     }
-    else
+
+    glBegin (GL_QUADS);
+    glColor3fv (COLOR_LIGHT_BLUE);
+    bool reverse = CMath::IsReversed (shape);
+
+    GLfloat normal[3] = { 0.0f, 0.0f, 0.0f };
+    for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
     {
-        glBegin (GL_QUADS);
-        glColor3fv (COLOR_LIGHT_BLUE);
-        bool reverse = CMath::IsReversed (shape);
-
-        GLfloat normal[3] = { 0.0f, 0.0f, 0.0f };
-        for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
-        {
-            CMath::Normal (vp, vp, vp, vp->GetNext (), SHAPEDEPTH, reverse, normal);
-            glNormal3fv (normal);
-            glVertex3f (vp->GetX (), vp->GetY (), 0.0f);
-            glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), 0.0f);
-            glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), SHAPEDEPTH);
-            glVertex3f (vp->GetX (), vp->GetY (), SHAPEDEPTH);
-        }
-        CMath::Normal (shape->GetTail (), shape->GetTail (), shape->GetTail (), shape->GetHead (), SHAPEDEPTH, reverse, normal);
+        CMath::Normal (vp, vp, vp, vp->GetNext (), SHAPEDEPTH, reverse, normal);
         glNormal3fv (normal);
-        glVertex3f (shape->GetTail ()->GetX (), shape->GetTail ()->GetY (), 0.0f);
-        glVertex3f (shape->GetHead ()->GetX (), shape->GetHead ()->GetY (), 0.0f);
-        glVertex3f (shape->GetHead ()->GetX (), shape->GetHead ()->GetY (), SHAPEDEPTH);
-        glVertex3f (shape->GetTail ()->GetX (), shape->GetTail ()->GetY (), SHAPEDEPTH);
-
-        glEnd ();
+        glVertex3f (vp->GetX (), vp->GetY (), 0.0f);
+        glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), 0.0f);
+        glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), SHAPEDEPTH);
+        glVertex3f (vp->GetX (), vp->GetY (), SHAPEDEPTH);
     }
+    CMath::Normal (shape->GetTail (), shape->GetTail (), shape->GetTail (), shape->GetHead (), SHAPEDEPTH, reverse, normal);
+    glNormal3fv (normal);
+    glVertex3f (shape->GetTail ()->GetX (), shape->GetTail ()->GetY (), 0.0f);
+    glVertex3f (shape->GetHead ()->GetX (), shape->GetHead ()->GetY (), 0.0f);
+    glVertex3f (shape->GetHead ()->GetX (), shape->GetHead ()->GetY (), SHAPEDEPTH);
+    glVertex3f (shape->GetTail ()->GetX (), shape->GetTail ()->GetY (), SHAPEDEPTH);
+
+    glEnd ();
 }
 
 void CAdminControl::DrawExLine (CVertex* start, CVertex* end)
