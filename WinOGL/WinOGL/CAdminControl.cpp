@@ -941,20 +941,20 @@ void CAdminControl::DrawGrid ()
 {
     GLint viewport[4];
     glGetIntegerv (GL_VIEWPORT, viewport);
-    GLfloat width = (GLfloat)viewport[2];
-    GLfloat height = (GLfloat)viewport[3];
+    GLfloat max_width = (GLfloat)viewport[2] / 10;
+    GLfloat max_height = (GLfloat)viewport[3] / 10;
 
     glBegin (GL_LINES);
     glColor3fv (COLOR_GRAY);
-    for (GLfloat i = -10.1f; i <= 10.0f; i += 0.2f)
+    for (GLfloat i = -max_width; i <= max_width; i += 0.2f)
     {
-        glVertex3f (-width / 2, i, 0.0);
-        glVertex3f (width / 2, i + 0.2f, 0.0);
+        glVertex3f (-max_width, i, 0.0);
+        glVertex3f (max_width, i, 0.0);
     }
-    for (GLfloat i = -10.1f; i <= 10.0f; i += 0.2f)
+    for (GLfloat i = -max_height; i <= max_height; i += 0.2f)
     {
-        glVertex3f (i, -height / 2, 0.0);
-        glVertex3f (i + 0.2f, height / 2, 0.0);
+        glVertex3f (i, -max_height, 0.0);
+        glVertex3f (i, max_height, 0.0);
     }
     glEnd ();
 }
