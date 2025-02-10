@@ -58,9 +58,18 @@ float CMath::TriangleArea (CShape* triangle)
     float size_2_v_b = powf (v_b->GetX (), 2) * powf (v_b->GetY (), 2);
     float inner_a_b = Inner (triangle->GetHead (), triangle->GetHead ()->GetNext (), triangle->GetHead (), triangle->GetTail ());
 
+    float length_a = sqrtf (size_2_v_a);
+    float length_b = sqrtf (size_2_v_b);
+
+    float cos_theta = inner_a_b / (length_a * length_b);
+    float sin_theta = sqrtf (1 - powf (cos_theta, 2));
+
+    float area = 0.5 * length_a * length_b * sin_theta;
+
     v_a->FreeVertex ();
     v_b->FreeVertex ();
-    return sqrtf (size_2_v_a * size_2_v_b - powf (inner_a_b, 2)) / 2;
+    //return sqrtf (size_2_v_a * size_2_v_b - powf (inner_a_b, 2)) / 2;
+    return area;
 }
 
 void CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result)

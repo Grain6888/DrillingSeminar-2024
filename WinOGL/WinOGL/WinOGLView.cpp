@@ -44,6 +44,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_KEYUP ()
     ON_COMMAND (ID_DRAW_DEPTH, &CWinOGLView::OnDrawDepth)
     ON_UPDATE_COMMAND_UI (ID_DRAW_DEPTH, &CWinOGLView::OnUpdateDrawDepth)
+    ON_COMMAND (ID_GRID, &CWinOGLView::OnGrid)
+    ON_UPDATE_COMMAND_UI (ID_GRID, &CWinOGLView::OnUpdateGrid)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -537,6 +539,17 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsShowingAxis ());
 }
 
+void CWinOGLView::OnGrid ()
+{
+    AC.SwitchGrid ();
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateGrid (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsDrawingGrid ());
+}
+
 void CWinOGLView::OnFreeShapeMode ()
 {
     if (!AC.IsViewportTrans ())
@@ -600,8 +613,11 @@ void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, co
         y = (y - (float)(1.0 - y)) * aspect_ratio;
     }
 
-    x = (float)(round (x * (1.0 / 0.2)) / (1.0 / 0.2));
-    y = (float)(round (y * (1.0 / 0.2)) / (1.0 / 0.2));
+    if (AC.IsDrawingGrid ())
+    {
+        x = (float)(round (x * (1.0 / 0.2)) / (1.0 / 0.2));
+        y = (float)(round (y * (1.0 / 0.2)) / (1.0 / 0.2));
+    }
 }
 
 void CWinOGLView::SetDown (CPoint point)

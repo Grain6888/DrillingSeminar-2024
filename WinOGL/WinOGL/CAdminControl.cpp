@@ -27,6 +27,12 @@ void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
         DrawAxis ();
     }
 
+    // グリッド線を表示する
+    if (IsDrawingGrid ())
+    {
+        DrawGrid ();
+    }
+
     if (shape_num > 0)
     {
         if (DrawDepthFlag)
@@ -200,7 +206,6 @@ void CAdminControl::Draw2DSurface (CShape* shape)
             surface.PushVertex (vp->GetX (), vp->GetY ());
             surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
             surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
-            bool reverse = CMath::IsReversed (&surface);
 
             if (CanDrawSurface (copy_shape, &surface))
             {
@@ -923,6 +928,38 @@ void CAdminControl::SwitchAxis ()
 bool CAdminControl::IsShowingAxis ()
 {
     return AxisFlag;
+}
+
+void CAdminControl::DrawGrid ()
+{
+    GLint viewport[4];
+    glGetIntegerv (GL_VIEWPORT, viewport);
+    GLfloat width = (GLfloat)viewport[2];
+    GLfloat height = (GLfloat)viewport[3];
+
+    glBegin (GL_LINES);
+    glColor3fv (COLOR_GRAY);
+    for (GLfloat i = -10.1f; i <= 10.0f; i += 0.2f)
+    {
+        glVertex3f (-width / 2, i, 0.0);
+        glVertex3f (width / 2, i + 0.2f, 0.0);
+    }
+    for (GLfloat i = -10.1f; i <= 10.0f; i += 0.2f)
+    {
+        glVertex3f (i, -height / 2, 0.0);
+        glVertex3f (i + 0.2f, height / 2, 0.0);
+    }
+    glEnd ();
+}
+
+void CAdminControl::SwitchGrid ()
+{
+    GridFlag = !GridFlag;
+}
+
+bool CAdminControl::IsDrawingGrid ()
+{
+    return GridFlag;
 }
 
 void CAdminControl::SwitchDrawSurface ()

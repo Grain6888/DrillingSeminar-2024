@@ -5,6 +5,7 @@
 
 const GLfloat COLOR_WHITE[3] = { 0.95f, 0.95f, 0.95f };
 const GLfloat COLOR_BLACK[3] = { 0.15f, 0.15f, 0.15f };
+const GLfloat COLOR_GRAY[3] = { 0.84f,0.85f,0.86f };
 const GLfloat COLOR_PALE_BLUE[3] = { 0.70f, 0.86f, 0.98f };
 const GLfloat COLOR_BLUE[3] = { 0.30f, 0.40f, 0.78f };
 const GLfloat COLOR_LIGHT_BLUE[3] = { 0.37f, 0.80f, 0.95f };
@@ -193,6 +194,16 @@ public:
     /// @return 表示中 true / 非表示中 false
     bool IsShowingAxis ();
 
+    /// @brief グリッド線を描画する．
+    void DrawGrid ();
+
+    /// @brief グリッド線の表示または非表示の状態を切り替える．
+    void SwitchGrid ();
+
+    /// @brief グリッド線の表示または非表示の状態を取得する．
+    /// @return 表示中 true / 非表示中 false
+    bool IsDrawingGrid ();
+
     /// @brief 面の描画の状態を切り替える．
     void SwitchDrawSurface ();
 
@@ -355,6 +366,9 @@ private:
 
     /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;
+
+    /// @brief グリッド線の表示または非表示の状態フラグ（表示 true / 非表示 false）．
+    bool GridFlag = false;
 
     /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
     bool DrawSurfaceFlag = false;
