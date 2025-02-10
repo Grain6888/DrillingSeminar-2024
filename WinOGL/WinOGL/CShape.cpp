@@ -180,6 +180,10 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
                 return true;
             }
         }
+        if (CMath::IsLineCrossing (vertex_tail, vertex_tail, new_vertex, new_vertex))
+        {
+            return true;
+        }
     }
 
     // 砂時計をチェック
