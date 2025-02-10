@@ -135,5 +135,5 @@ public:
     /// @param p_b_s 2 つ目のベクトルの始点
     /// @param p_b_e 2 つ目のベクトルの終点
     /// @return 2 つのベクトルのなす角度 (-π~π)
-    static float VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
+    static double VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
 };

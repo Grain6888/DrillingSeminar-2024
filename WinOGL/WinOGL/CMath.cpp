@@ -3,8 +3,8 @@
 
 float CMath::VertexDis (CVertex* p1, CVertex* p2)
 {
-    float x_dis = powf ((p2->GetX () - p1->GetX ()), 2);
-    float y_dis = powf ((p2->GetY () - p1->GetY ()), 2);
+    float x_dis = (p2->GetX () - p1->GetX ()) * (p2->GetX () - p1->GetX ());
+    float y_dis = (p2->GetY () - p1->GetY ()) * (p2->GetY () - p1->GetY ());
     return sqrtf (x_dis + y_dis);
 }
 
@@ -24,7 +24,7 @@ float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
     float apx = px - ax;
     float apy = py - ay;
 
-    float t = (apx * abx + apy * aby) / (powf (abx, 2) + powf (aby, 2));
+    float t = (apx * abx + apy * aby) / (abx * abx + aby * aby);
 
     float cx = 0.0;
     float cy = 0.0;
@@ -44,8 +44,8 @@ float CMath::LineDis (CVertex* p, CVertex* line_s, CVertex* line_e)
         cy = ay + t * aby;
     }
 
-    float x_dis = powf ((px - cx), 2);
-    float y_dis = powf ((py - cy), 2);
+    float x_dis = (px - cx) * (px - cx);
+    float y_dis = (py - cy) * (py - cy);
     return sqrtf (x_dis + y_dis);
 }
 
@@ -54,15 +54,15 @@ float CMath::TriangleArea (CShape* triangle)
     CVertex* v_a = PositionVec (triangle->GetHead (), triangle->GetHead ()->GetNext ());
     CVertex* v_b = PositionVec (triangle->GetHead (), triangle->GetTail ());
 
-    float size_2_v_a = powf (v_a->GetX (), 2) + powf (v_a->GetY (), 2);
-    float size_2_v_b = powf (v_b->GetX (), 2) * powf (v_b->GetY (), 2);
+    float size_2_v_a = v_a->GetX () * v_a->GetX () + v_a->GetY () * v_a->GetY ();
+    float size_2_v_b = v_b->GetX () * v_b->GetX () + v_b->GetY () * v_b->GetY ();
     float inner_a_b = Inner (triangle->GetHead (), triangle->GetHead ()->GetNext (), triangle->GetHead (), triangle->GetTail ());
 
     float length_a = sqrtf (size_2_v_a);
     float length_b = sqrtf (size_2_v_b);
 
     float cos_theta = inner_a_b / (length_a * length_b);
-    float sin_theta = sqrtf (1 - powf (cos_theta, 2));
+    float sin_theta = sqrtf (1 - cos_theta * cos_theta);
 
     float area = 0.5f * length_a * length_b * sin_theta;
 
@@ -87,7 +87,7 @@ void CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* r
     float apx = px - ax;
     float apy = py - ay;
 
-    float t = (apx * abx + apy * aby) / (powf (abx, 2) + powf (aby, 2));
+    float t = (apx * abx + apy * aby) / (abx * abx + aby * aby);
 
     GLfloat cx = 0.0;
     GLfloat cy = 0.0;
@@ -150,17 +150,17 @@ void CMath::ScalePoint (float scale, CVertex* base_p, CVertex* result)
 
 void CMath::RotatePoint (CVertex* base_p, CVertex* before, CVertex* after, CVertex* result)
 {
-    float theta = VecAngle (base_p, before, base_p, after);
-    GLfloat x = (result->GetLastX () - base_p->GetX ()) * cosf (theta) - (result->GetLastY () - base_p->GetY ()) * sinf (theta) + base_p->GetX ();
-    GLfloat y = (result->GetLastX () - base_p->GetX ()) * sinf (theta) + (result->GetLastY () - base_p->GetY ()) * cosf (theta) + base_p->GetY ();
+    double theta = VecAngle (base_p, before, base_p, after);
+    GLfloat x = (float)((result->GetLastX () - base_p->GetX ()) * cos (theta) - (result->GetLastY () - base_p->GetY ()) * sin (theta) + base_p->GetX ());
+    GLfloat y = (float)((result->GetLastX () - base_p->GetX ()) * sin (theta) + (result->GetLastY () - base_p->GetY ()) * cos (theta) + base_p->GetY ());
     result->SetXY (x, y);
 }
 
 void CMath::RotatePoint (float degree, CVertex* base_p, CVertex* result)
 {
-    float theta = degree / 180 * (float)M_PI;
-    GLfloat x = (result->GetLastX () - base_p->GetX ()) * cosf (theta) - (result->GetLastY () - base_p->GetY ()) * sinf (theta) + base_p->GetX ();
-    GLfloat y = (result->GetLastX () - base_p->GetX ()) * sinf (theta) + (result->GetLastY () - base_p->GetY ()) * cosf (theta) + base_p->GetY ();
+    double theta = degree / 180 * M_PI;
+    GLfloat x = (float)((result->GetLastX () - base_p->GetX ()) * cos (theta) - (result->GetLastY () - base_p->GetY ()) * sin (theta) + base_p->GetX ());
+    GLfloat y = (float)((result->GetLastX () - base_p->GetX ()) * sin (theta) + (result->GetLastY () - base_p->GetY ()) * cos (theta) + base_p->GetY ());
     result->SetXY (x, y);
 }
 
@@ -222,7 +222,7 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
     angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead (), new_vertex);
 
     double difference = 2 * M_PI - fabs (angle_sum);
-    if (fabsf (difference) <= 1e-6)
+    if (fabs (difference) <= 1e-6)
     {
         return true;
     }
@@ -299,7 +299,7 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_ve
     }
 
     double difference = 2 * M_PI - fabs (angle_sum);
-    if (fabsf (difference) <= 1e-6)
+    if (fabs (difference) <= 1e-6)
     {
         return true;
     }
@@ -336,11 +336,11 @@ void CMath::Normal (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b
     float a_x = 0.0;
     float a_y = 0.0;
     float a_z = depth;
-    float a_size = sqrtf (powf (a_x, 2) + powf (a_y, 2) + powf (a_z, 2));
+    float a_size = sqrtf (a_x * a_x + a_y * a_y + a_z * a_z);
     float b_x = p_b_e->GetX () - p_b_s->GetX ();
     float b_y = p_b_e->GetY () - p_b_s->GetY ();
     float b_z = 0.0;
-    float b_size = sqrtf (powf (b_x, 2) + powf (b_y, 2) + powf (b_z, 2));
+    float b_size = sqrtf (b_x * b_x + b_y * b_y + b_z * b_z);
 
     float c_x = a_y * b_z - a_z * b_y;
     float c_y = a_z * b_x - a_x * b_z;
@@ -372,9 +372,9 @@ CVertex* CMath::PositionVec (CVertex* p_s, CVertex* p_e)
     return new_point_vector;
 }
 
-float CMath::VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
+double CMath::VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e)
 {
-    float outer_product = Outer2DSize (p_a_s, p_a_e, p_b_s, p_b_e);
-    float inner_product = Inner (p_a_s, p_a_e, p_b_s, p_b_e);
-    return atan2f (outer_product, inner_product);
+    double outer_product = Outer2DSize (p_a_s, p_a_e, p_b_s, p_b_e);
+    double inner_product = Inner (p_a_s, p_a_e, p_b_s, p_b_e);
+    return atan2 (outer_product, inner_product);
 }
