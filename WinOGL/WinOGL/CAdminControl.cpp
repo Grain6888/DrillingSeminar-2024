@@ -301,11 +301,12 @@ void CAdminControl::DrawSide (CShape* shape)
 
     glBegin (GL_QUADS);
     glColor3fv (COLOR_LIGHT_BLUE);
-    bool reverse = CMath::IsReversed (shape);
 
     GLfloat normal[3] = { 0.0f, 0.0f, 0.0f };
+    bool reverse = false;
     for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
     {
+        reverse = CMath::IsReversed (shape);
         CMath::Normal (vp, vp, vp, vp->GetNext (), SHAPEDEPTH, reverse, normal);
         glNormal3fv (normal);
         glVertex3f (vp->GetX (), vp->GetY (), 0.0f);
@@ -313,6 +314,7 @@ void CAdminControl::DrawSide (CShape* shape)
         glVertex3f (vp->GetNext ()->GetX (), vp->GetNext ()->GetY (), SHAPEDEPTH);
         glVertex3f (vp->GetX (), vp->GetY (), SHAPEDEPTH);
     }
+    reverse = CMath::IsReversed (shape);
     CMath::Normal (shape->GetTail (), shape->GetTail (), shape->GetTail (), shape->GetHead (), SHAPEDEPTH, reverse, normal);
     glNormal3fv (normal);
     glVertex3f (shape->GetTail ()->GetX (), shape->GetTail ()->GetY (), 0.0f);
