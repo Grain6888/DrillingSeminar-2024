@@ -64,11 +64,10 @@ float CMath::TriangleArea (CShape* triangle)
     float cos_theta = inner_a_b / (length_a * length_b);
     float sin_theta = sqrtf (1 - powf (cos_theta, 2));
 
-    float area = 0.5 * length_a * length_b * sin_theta;
+    float area = 0.5f * length_a * length_b * sin_theta;
 
     v_a->FreeVertex ();
     v_b->FreeVertex ();
-    //return sqrtf (size_2_v_a * size_2_v_b - powf (inner_a_b, 2)) / 2;
     return area;
 }
 
@@ -177,7 +176,7 @@ bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b
         return true;
     }
 
-    if (outer_a_1 == 0)
+    if (fabsf (outer_a_1) <= 1e-6)
     {
         if ((b_s->GetX () >= (std::min)(a_s->GetX (), a_e->GetX ()) && b_s->GetX () <= (std::max)(a_s->GetX (), a_e->GetX ())) &&
             (b_s->GetY () >= (std::min)(a_s->GetY (), a_e->GetY ()) && b_s->GetY () <= (std::max)(a_s->GetY (), a_e->GetY ())))
@@ -185,7 +184,7 @@ bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b
             return true;
         }
     }
-    if (outer_a_2 == 0)
+    if (fabsf (outer_a_2) <= 1e-6)
     {
         if ((b_e->GetX () >= (std::min)(a_s->GetX (), a_e->GetX ()) && b_e->GetX () <= (std::max)(a_s->GetX (), a_e->GetX ())) &&
             (b_e->GetY () >= (std::min)(a_s->GetY (), a_e->GetY ()) && b_e->GetY () <= (std::max)(a_s->GetY (), a_e->GetY ())))
@@ -193,7 +192,7 @@ bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b
             return true;
         }
     }
-    if (outer_b_1 == 0)
+    if (fabsf (outer_b_1) <= 1e-6)
     {
         if ((a_s->GetX () >= (std::min)(b_s->GetX (), b_e->GetX ()) && a_s->GetX () <= (std::max)(b_s->GetX (), b_e->GetX ())) &&
             (a_s->GetY () >= (std::min)(b_s->GetY (), b_e->GetY ()) && a_s->GetY () <= (std::max)(b_s->GetY (), b_e->GetY ())))
@@ -201,7 +200,7 @@ bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b
             return true;
         }
     }
-    if (outer_b_2 == 0)
+    if (fabsf (outer_b_2) <= 1e-6)
     {
         if ((a_e->GetX () >= (std::min)(b_s->GetX (), b_e->GetX ()) && a_e->GetX () <= (std::max)(b_s->GetX (), b_e->GetX ())) &&
             (a_e->GetY () >= (std::min)(b_s->GetY (), b_e->GetY ()) && a_e->GetY () <= (std::max)(b_s->GetY (), b_e->GetY ())))
@@ -209,6 +208,7 @@ bool CMath::IsLineCrossing (CVertex* a_s, CVertex* a_e, CVertex* b_s, CVertex* b
             return true;
         }
     }
+
     return false;
 }
 
@@ -222,7 +222,7 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
     angle_sum += VecAngle (my_shape->GetTail (), new_vertex, my_shape->GetHead (), new_vertex);
 
     double difference = 2 * M_PI - fabs (angle_sum);
-    if (difference >= -0.001 && difference <= 0.001)
+    if (fabsf (difference) <= 1e-6)
     {
         return true;
     }
@@ -299,7 +299,7 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_ve
     }
 
     double difference = 2 * M_PI - fabs (angle_sum);
-    if (difference >= -0.001 && difference <= 0.001)
+    if (fabsf (difference) <= 1e-6)
     {
         return true;
     }

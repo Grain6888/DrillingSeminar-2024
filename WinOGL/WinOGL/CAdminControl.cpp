@@ -223,7 +223,14 @@ void CAdminControl::Draw2DSurface (CShape* shape)
             }
             else
             {
-                vp = vp->GetNext ();
+                if (copy_shape->GetVertexNum () <= 3)
+                {
+                    break;
+                }
+                else
+                {
+                    vp = vp->GetNext ();
+                }
             }
         }
 
