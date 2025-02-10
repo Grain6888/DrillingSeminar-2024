@@ -541,7 +541,10 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
 
 void CWinOGLView::OnGrid ()
 {
-    AC.SwitchGrid ();
+    if (!AC.IsViewportTrans ())
+    {
+        AC.SwitchGrid ();
+    }
     RedrawWindow ();
 }
 
@@ -748,6 +751,7 @@ void CWinOGLView::OnViewportTrans ()
     AC.SwitchViewportTrans ();
     AC.ClearAddShapeMode ();
     AC.ClearDrawDepth ();
+    AC.ClearDrawGrid ();
     AC.DeSelectAllShape ();
     AC.ClearAffineTransMode ();
     RedrawWindow ();

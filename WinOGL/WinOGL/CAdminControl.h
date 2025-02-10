@@ -204,6 +204,9 @@ public:
     /// @return 表示中 true / 非表示中 false
     bool IsDrawingGrid ();
 
+    /// @brief グリッド線の描画の状態を解除する．
+    void ClearDrawGrid ();
+
     /// @brief 面の描画の状態を切り替える．
     void SwitchDrawSurface ();
 

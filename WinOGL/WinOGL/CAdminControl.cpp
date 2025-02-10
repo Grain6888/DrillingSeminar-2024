@@ -21,16 +21,16 @@ void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
-    // 座標軸を表示する
-    if (IsShowingAxis ())
-    {
-        DrawAxis ();
-    }
-
     // グリッド線を表示する
     if (IsDrawingGrid ())
     {
         DrawGrid ();
+    }
+
+    // 座標軸を表示する
+    if (IsShowingAxis ())
+    {
+        DrawAxis ();
     }
 
     if (shape_num > 0)
@@ -960,6 +960,11 @@ void CAdminControl::SwitchGrid ()
 bool CAdminControl::IsDrawingGrid ()
 {
     return GridFlag;
+}
+
+void CAdminControl::ClearDrawGrid ()
+{
+    GridFlag = false;
 }
 
 void CAdminControl::SwitchDrawSurface ()
