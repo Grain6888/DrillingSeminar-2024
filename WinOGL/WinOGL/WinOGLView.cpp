@@ -618,8 +618,8 @@ void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, co
 
     if (AC.IsDrawingGrid ())
     {
-        x = (float)(round (x * (1.0 / 0.2)) / (1.0 / 0.2));
-        y = (float)(round (y * (1.0 / 0.2)) / (1.0 / 0.2));
+        x = (float)(roundf (x * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
+        y = (float)(roundf (y * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
     }
 }
 

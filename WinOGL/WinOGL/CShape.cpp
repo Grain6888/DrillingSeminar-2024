@@ -171,7 +171,7 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
     }
 
     // 自交差をチェック
-    if (vertex_num >= 3)
+    if (vertex_num >= 2)
     {
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
@@ -181,6 +181,10 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
             }
         }
         if (CMath::IsLineCrossing (vertex_tail, vertex_tail, new_vertex, new_vertex))
+        {
+            return true;
+        }
+        if (vertex_num == 2 && CMath::IsLineCrossing (new_vertex, vertex_tail, vertex_head, vertex_head))
         {
             return true;
         }

@@ -209,15 +209,16 @@ void CAdminControl::Draw2DSurface (CShape* shape)
 
             if (CanDrawSurface (copy_shape, &surface))
             {
-                glBegin (GL_TRIANGLES);
-                glColor3fv (COLOR_LIGHT_BLUE);
-
-                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                if (CMath::TriangleArea (&surface) > 0.0)
                 {
-                    glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                    glBegin (GL_TRIANGLES);
+                    glColor3fv (COLOR_LIGHT_BLUE);
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                    }
+                    glEnd ();
                 }
-
-                glEnd ();
                 copy_shape->RemoveVertex (vp->GetNext ());
                 vp = copy_shape->GetHead ();
             }
@@ -260,23 +261,26 @@ void CAdminControl::Draw3DSurface (CShape* shape)
 
         if (CanDrawSurface (copy_shape, &surface))
         {
-            glBegin (GL_TRIANGLES);
-            glColor3fv (COLOR_LIGHT_BLUE);
-            glNormal3f (0.0, 0.0, 1.0);
-            for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+            if (CMath::TriangleArea (&surface) > 1e-6)
             {
-                glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
-            }
-            glEnd ();
+                glBegin (GL_TRIANGLES);
+                glColor3fv (COLOR_LIGHT_BLUE);
+                glNormal3f (0.0, 0.0, 1.0);
+                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                {
+                    glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                }
+                glEnd ();
 
-            glBegin (GL_TRIANGLES);
-            glColor3fv (COLOR_LIGHT_BLUE);
-            glNormal3f (0.0, 0.0, -1.0);
-            for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
-            {
-                glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
+                glBegin (GL_TRIANGLES);
+                glColor3fv (COLOR_LIGHT_BLUE);
+                glNormal3f (0.0, 0.0, -1.0);
+                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                {
+                    glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
+                }
+                glEnd ();
             }
-            glEnd ();
             copy_shape->RemoveVertex (vp->GetNext ());
             vp = copy_shape->GetHead ();
         }
@@ -1413,22 +1417,20 @@ bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
     CVertex gravity_point;
     CMath::GravityPoint (surface, &gravity_point);
 
-    if (!CMath::IsContained (my_shape, &gravity_point))
+    if (CMath::TriangleArea (surface) > 0.0)
     {
-        return false;
-    }
-
-    for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
-    {
-        if (CMath::IsContained (surface, vp))
+        if (!CMath::IsContained (my_shape, &gravity_point))
         {
             return false;
         }
-    }
 
-    if (CMath::TriangleArea (surface) <= 0)
-    {
-        return false;
+        for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (CMath::IsContained (surface, vp))
+            {
+                return false;
+            }
+        }
     }
 
     return true;
