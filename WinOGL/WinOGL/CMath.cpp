@@ -252,15 +252,18 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
 
 bool CMath::IsReversed (CShape* my_shape)
 {
-    double angle_sum = 0.0;
-    CVertex* p = my_shape->GetHead ();
+    double size_sum = 0.0;
+    CVertex* g = new CVertex;
+    CMath::GravityPoint (my_shape, g);
     for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail (); vp = vp->GetNext ())
     {
-        angle_sum += VecAngle (p, vp, p, vp->GetNext ());
+        size_sum += CMath::Outer2DSize (g, vp, g, vp->GetNext ()) / 2;
     }
-    angle_sum += VecAngle (my_shape->GetTail (), p, my_shape->GetHead (), p);
+    size_sum += CMath::Outer2DSize (g, my_shape->GetTail (), g, my_shape->GetHead ()) / 2;
 
-    if (angle_sum > 0)
+    g->FreeVertex ();
+
+    if (size_sum > 0)
     {
         return true;
     }
