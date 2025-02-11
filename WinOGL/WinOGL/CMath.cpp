@@ -110,6 +110,13 @@ void CMath::CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* r
     result->SetXY (cx, cy);
 }
 
+void CMath::MidPoint (CVertex* line_s, CVertex* line_e, CVertex* result)
+{
+    GLfloat x = (line_e->GetX () + line_s->GetX ()) / 2;
+    GLfloat y = (line_e->GetY () + line_s->GetY ()) / 2;
+    result->SetXY (x, y);
+}
+
 void CMath::GravityPoint (CShape* my_shape, CVertex* result)
 {
     GLfloat sum_x = 0.0;

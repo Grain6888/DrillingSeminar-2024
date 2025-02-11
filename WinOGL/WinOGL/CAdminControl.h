@@ -47,14 +47,6 @@ public:
     /// @param shape ©}Œ`
     void Draw3DSurface (CShape* shape);
 
-    /// @brief }Œ`‚Ì‘O–Ê‚Ì•`‰æ‚ğs‚¤D
-    /// @param shape ©}Œ`
-    void DrawFront (CShape* shape);
-
-    /// @brief }Œ`‚Ì”w–Ê‚Ì•`‰æ‚ğs‚¤D
-    /// @param shape ©}Œ`
-    void DrawBack (CShape* shape);
-
     /// @brief }Œ`‚Ì‘¤–Ê‚Ì•`‰æ‚ğs‚¤D
     /// @param shape ©}Œ`
     void DrawSide (CShape* shape);

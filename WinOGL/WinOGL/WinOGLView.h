@@ -128,6 +128,7 @@ public:
     afx_msg void OnUpdateDrawDepth (CCmdUI* pCmdUI);
     afx_msg void OnGrid ();
     afx_msg void OnUpdateGrid (CCmdUI* pCmdUI);
+    afx_msg void OnUpdateEditUndo (CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

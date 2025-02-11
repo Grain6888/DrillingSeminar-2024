@@ -46,6 +46,7 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_UPDATE_COMMAND_UI (ID_DRAW_DEPTH, &CWinOGLView::OnUpdateDrawDepth)
     ON_COMMAND (ID_GRID, &CWinOGLView::OnGrid)
     ON_UPDATE_COMMAND_UI (ID_GRID, &CWinOGLView::OnUpdateGrid)
+    ON_UPDATE_COMMAND_UI (ID_EDIT_UNDO, &CWinOGLView::OnUpdateEditUndo)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -550,6 +551,10 @@ void CWinOGLView::OnGrid ()
 
 void CWinOGLView::OnUpdateGrid (CCmdUI* pCmdUI)
 {
+    if (AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
     pCmdUI->SetCheck (AC.IsDrawingGrid ());
 }
 
@@ -564,6 +569,10 @@ void CWinOGLView::OnFreeShapeMode ()
 
 void CWinOGLView::OnUpdateFreeShapeMode (CCmdUI* pCmdUI)
 {
+    if (AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
     pCmdUI->SetCheck (AC.IsFreeShapeMode ());
 }
 
@@ -802,5 +811,18 @@ void CWinOGLView::OnDrawDepth ()
 
 void CWinOGLView::OnUpdateDrawDepth (CCmdUI* pCmdUI)
 {
+    if (!AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
     pCmdUI->SetCheck (AC.IsDrawingDepth ());
+}
+
+
+void CWinOGLView::OnUpdateEditUndo (CCmdUI* pCmdUI)
+{
+    if (AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
 }

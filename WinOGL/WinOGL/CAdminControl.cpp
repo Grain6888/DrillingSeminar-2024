@@ -1430,6 +1430,17 @@ bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
             {
                 return false;
             }
+            double x_dis = fabs (vp->GetX () - surface->GetTail ()->GetX ());
+            double y_dis = fabs (vp->GetY () - surface->GetTail ()->GetY ());
+            if (x_dis <= 1e-6 && y_dis <= 1e-6 && vp != my_shape->GetTail ())
+            {
+                CVertex mid_point;
+                CMath::MidPoint (vp, vp->GetNext (), &mid_point);
+                if (CMath::IsContained (surface, &mid_point))
+                {
+                    return false;
+                }
+            }
         }
     }
 
