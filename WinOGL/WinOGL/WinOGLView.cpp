@@ -44,6 +44,9 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_WM_KEYUP ()
     ON_COMMAND (ID_DRAW_DEPTH, &CWinOGLView::OnDrawDepth)
     ON_UPDATE_COMMAND_UI (ID_DRAW_DEPTH, &CWinOGLView::OnUpdateDrawDepth)
+    ON_COMMAND (ID_GRID, &CWinOGLView::OnGrid)
+    ON_UPDATE_COMMAND_UI (ID_GRID, &CWinOGLView::OnUpdateGrid)
+    ON_UPDATE_COMMAND_UI (ID_EDIT_UNDO, &CWinOGLView::OnUpdateEditUndo)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -537,6 +540,24 @@ void CWinOGLView::OnUpdateAxis (CCmdUI* pCmdUI)
     pCmdUI->SetCheck (AC.IsShowingAxis ());
 }
 
+void CWinOGLView::OnGrid ()
+{
+    if (!AC.IsViewportTrans ())
+    {
+        AC.SwitchGrid ();
+    }
+    RedrawWindow ();
+}
+
+void CWinOGLView::OnUpdateGrid (CCmdUI* pCmdUI)
+{
+    if (AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
+    pCmdUI->SetCheck (AC.IsDrawingGrid ());
+}
+
 void CWinOGLView::OnFreeShapeMode ()
 {
     if (!AC.IsViewportTrans ())
@@ -548,6 +569,10 @@ void CWinOGLView::OnFreeShapeMode ()
 
 void CWinOGLView::OnUpdateFreeShapeMode (CCmdUI* pCmdUI)
 {
+    if (AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
     pCmdUI->SetCheck (AC.IsFreeShapeMode ());
 }
 
@@ -599,6 +624,12 @@ void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, co
         x = x - (float)(1.0 - x);
         y = (y - (float)(1.0 - y)) * aspect_ratio;
     }
+
+    //if (AC.IsDrawingGrid ())
+    //{
+    //    x = (float)(roundf (x * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
+    //    y = (float)(roundf (y * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
+    //}
 }
 
 void CWinOGLView::SetDown (CPoint point)
@@ -729,6 +760,7 @@ void CWinOGLView::OnViewportTrans ()
     AC.SwitchViewportTrans ();
     AC.ClearAddShapeMode ();
     AC.ClearDrawDepth ();
+    AC.ClearDrawGrid ();
     AC.DeSelectAllShape ();
     AC.ClearAffineTransMode ();
     RedrawWindow ();
@@ -779,5 +811,18 @@ void CWinOGLView::OnDrawDepth ()
 
 void CWinOGLView::OnUpdateDrawDepth (CCmdUI* pCmdUI)
 {
+    if (!AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
     pCmdUI->SetCheck (AC.IsDrawingDepth ());
+}
+
+
+void CWinOGLView::OnUpdateEditUndo (CCmdUI* pCmdUI)
+{
+    if (AC.IsViewportTrans ())
+    {
+        pCmdUI->Enable (0);
+    }
 }

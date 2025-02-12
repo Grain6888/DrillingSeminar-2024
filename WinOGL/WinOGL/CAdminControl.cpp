@@ -21,6 +21,12 @@ void CAdminControl::Draw (GLfloat mouse_x, GLfloat mouse_y, bool DraggingFlag)
 {
     CVertex mouse (mouse_x, mouse_y, NULL, NULL);
 
+    // グリッド線を表示する
+    if (IsDrawingGrid ())
+    {
+        DrawGrid ();
+    }
+
     // 座標軸を表示する
     if (IsShowingAxis ())
     {
@@ -200,25 +206,32 @@ void CAdminControl::Draw2DSurface (CShape* shape)
             surface.PushVertex (vp->GetX (), vp->GetY ());
             surface.PushVertex (vp->GetNext ()->GetX (), vp->GetNext ()->GetY ());
             surface.PushVertex (vp->GetNext ()->GetNext ()->GetX (), vp->GetNext ()->GetNext ()->GetY ());
-            bool reverse = CMath::IsReversed (&surface);
 
             if (CanDrawSurface (copy_shape, &surface))
             {
-                glBegin (GL_TRIANGLES);
-                glColor3fv (COLOR_LIGHT_BLUE);
-
-                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                if (CMath::TriangleArea (&surface) > 0.0)
                 {
-                    glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                    glBegin (GL_TRIANGLES);
+                    glColor3fv (COLOR_LIGHT_BLUE);
+                    for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                    {
+                        glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
+                    }
+                    glEnd ();
                 }
-
-                glEnd ();
                 copy_shape->RemoveVertex (vp->GetNext ());
                 vp = copy_shape->GetHead ();
             }
             else
             {
-                vp = vp->GetNext ();
+                if (copy_shape->GetVertexNum () <= 3)
+                {
+                    break;
+                }
+                else
+                {
+                    vp = vp->GetNext ();
+                }
             }
         }
 
@@ -248,23 +261,26 @@ void CAdminControl::Draw3DSurface (CShape* shape)
 
         if (CanDrawSurface (copy_shape, &surface))
         {
-            glBegin (GL_TRIANGLES);
-            glColor3fv (COLOR_LIGHT_BLUE);
-            glNormal3f (0.0, 0.0, 1.0);
-            for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+            if (CMath::TriangleArea (&surface) > 1e-6)
             {
-                glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
-            }
-            glEnd ();
+                glBegin (GL_TRIANGLES);
+                glColor3fv (COLOR_LIGHT_BLUE);
+                glNormal3f (0.0, 0.0, 1.0);
+                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                {
+                    glVertex3f (surface_vp->GetX (), surface_vp->GetY (), SHAPEDEPTH);
+                }
+                glEnd ();
 
-            glBegin (GL_TRIANGLES);
-            glColor3fv (COLOR_LIGHT_BLUE);
-            glNormal3f (0.0, 0.0, -1.0);
-            for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
-            {
-                glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
+                glBegin (GL_TRIANGLES);
+                glColor3fv (COLOR_LIGHT_BLUE);
+                glNormal3f (0.0, 0.0, -1.0);
+                for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
+                {
+                    glVertex3f (surface_vp->GetX (), surface_vp->GetY (), 0);
+                }
+                glEnd ();
             }
-            glEnd ();
             copy_shape->RemoveVertex (vp->GetNext ());
             vp = copy_shape->GetHead ();
         }
@@ -289,9 +305,9 @@ void CAdminControl::DrawSide (CShape* shape)
 
     glBegin (GL_QUADS);
     glColor3fv (COLOR_LIGHT_BLUE);
-    bool reverse = CMath::IsReversed (shape);
 
     GLfloat normal[3] = { 0.0f, 0.0f, 0.0f };
+    bool reverse = CMath::IsReversed (shape);
     for (CVertex* vp = shape->GetHead (); vp != shape->GetTail (); vp = vp->GetNext ())
     {
         CMath::Normal (vp, vp, vp, vp->GetNext (), SHAPEDEPTH, reverse, normal);
@@ -925,6 +941,44 @@ bool CAdminControl::IsShowingAxis ()
     return AxisFlag;
 }
 
+void CAdminControl::DrawGrid ()
+{
+    GLint viewport[4];
+    glGetIntegerv (GL_VIEWPORT, viewport);
+    GLfloat max_width = (GLfloat)viewport[2] / 10;
+    GLfloat max_height = (GLfloat)viewport[3] / 10;
+
+    glBegin (GL_LINES);
+    for (GLfloat i = -max_width; i <= max_width; i += 0.2f)
+    {
+        glColor3fv (COLOR_LIGHT_BLUE);
+        glVertex3f (-max_width, i, 0.0);
+        glVertex3f (max_width, i, 0.0);
+    }
+    for (GLfloat i = -max_height; i <= max_height; i += 0.2f)
+    {
+        glColor3fv (COLOR_LIGHT_GREEN);
+        glVertex3f (i, -max_height, 0.0);
+        glVertex3f (i, max_height, 0.0);
+    }
+    glEnd ();
+}
+
+void CAdminControl::SwitchGrid ()
+{
+    GridFlag = !GridFlag;
+}
+
+bool CAdminControl::IsDrawingGrid ()
+{
+    return GridFlag;
+}
+
+void CAdminControl::ClearDrawGrid ()
+{
+    GridFlag = false;
+}
+
 void CAdminControl::SwitchDrawSurface ()
 {
     DrawSurfaceFlag = !DrawSurfaceFlag;
@@ -1046,6 +1100,7 @@ bool CAdminControl::CanAddVertex (CVertex* new_vertex)
                 new_vertex->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
             }
         }
+
     }
 
     return true;
@@ -1082,23 +1137,20 @@ bool CAdminControl::IsNewShapeContaining ()
 
 bool CAdminControl::IsNewVertexOtherCross (CVertex* new_vertex)
 {
-    if (shape_tail->GetVertexNum () > 0)
+    for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
     {
-        for (CShape* sp = shape_head; sp != shape_tail; sp = sp->GetNext ())
+        // 図形の始点から終点までに存在する辺を対象に，他交差判定を行う．
+        for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
         {
-            // 図形の始点から終点までに存在する辺を対象に，他交差判定を行う．
-            for (CVertex* vp = sp->GetHead (); vp != sp->GetTail (); vp = vp->GetNext ())
-            {
-                if (CMath::IsLineCrossing (vp, vp->GetNext (), shape_tail->GetTail (), new_vertex))
-                {
-                    return true;
-                }
-            }
-            // 図形の終点から始点に伸びる辺を対象に，他交差判定を行う．
-            if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), shape_tail->GetTail (), new_vertex))
+            if (CMath::IsLineCrossing (vp, vp->GetNext (), shape_tail->GetVertexNum () == 0 ? new_vertex : shape_tail->GetTail (), new_vertex))
             {
                 return true;
             }
+        }
+        // 図形の終点から始点に伸びる辺を対象に，他交差判定を行う．
+        if (CMath::IsLineCrossing (sp->GetHead (), sp->GetTail (), shape_tail->GetVertexNum () == 0 ? new_vertex : shape_tail->GetTail (), new_vertex))
+        {
+            return true;
         }
     }
 
@@ -1367,22 +1419,31 @@ bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
     CVertex gravity_point;
     CMath::GravityPoint (surface, &gravity_point);
 
-    if (!CMath::IsContained (my_shape, &gravity_point))
+    if (CMath::TriangleArea (surface) > 0.0)
     {
-        return false;
-    }
-
-    for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
-    {
-        if (CMath::IsContained (surface, vp))
+        if (!CMath::IsContained (my_shape, &gravity_point))
         {
             return false;
         }
-    }
 
-    if (CMath::TriangleArea (surface) <= 0)
-    {
-        return false;
+        for (CVertex* vp = my_shape->GetHead (); vp != NULL; vp = vp->GetNext ())
+        {
+            if (CMath::IsContained (surface, vp))
+            {
+                return false;
+            }
+            //double x_dis = fabs (vp->GetX () - surface->GetTail ()->GetX ());
+            //double y_dis = fabs (vp->GetY () - surface->GetTail ()->GetY ());
+            //if (x_dis <= 1e-6 && y_dis <= 1e-6 && vp != my_shape->GetTail ())
+            //{
+            //    CVertex mid_point;
+            //    CMath::MidPoint (vp, vp->GetNext (), &mid_point);
+            //    if (CMath::IsContained (surface, &mid_point))
+            //    {
+            //        return false;
+            //    }
+            //}
+        }
     }
 
     return true;

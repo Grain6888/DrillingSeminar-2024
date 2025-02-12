@@ -164,14 +164,14 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
     // 自図形内の頂点との重なりをチェック
     if (vertex_num > 0 && vertex_num <= 2)
     {
-        if (CMath::VertexDis (vertex_head, new_vertex) < MIN_DISTANCE)
+        if (CMath::IsLineCrossing (vertex_head, vertex_num == 1 ? vertex_head : vertex_head->GetNext (), new_vertex, new_vertex))
         {
             return true;
         }
     }
 
     // 自交差をチェック
-    if (vertex_num >= 3)
+    if (vertex_num >= 2)
     {
         for (CVertex* vp = vertex_head; vp != vertex_tail->GetPre (); vp = vp->GetNext ())
         {
@@ -179,6 +179,14 @@ bool CShape::IsNewVertexSelfCross (CVertex* new_vertex)
             {
                 return true;
             }
+        }
+        if (CMath::IsLineCrossing (vertex_tail, vertex_tail, new_vertex, new_vertex))
+        {
+            return true;
+        }
+        if (vertex_num == 2 && CMath::IsLineCrossing (new_vertex, vertex_tail, vertex_head, vertex_head))
+        {
+            return true;
         }
     }
 

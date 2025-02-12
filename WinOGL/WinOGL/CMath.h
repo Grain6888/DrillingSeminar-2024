@@ -3,6 +3,7 @@
 #include "CShape.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <algorithm>
 #include <gl/GL.h>
 
 class CMath {
@@ -23,7 +24,7 @@ public:
     /// @brief 三角形の面積を計算する．
     /// @param triangle 三角形
     /// @return 面積
-    static float TriangleArea (CShape* triangle);
+    static double TriangleArea (CShape* triangle);
 
     /// @brief 点の垂線と直線間の交点を計算する．
     /// @param p      頂点
@@ -32,6 +33,8 @@ public:
     /// @param result 交点
     /// @return 点の垂線と直線間の交点 (X,Y)
     static void CrossPoint (CVertex* p, CVertex* line_s, CVertex* line_e, CVertex* result);
+
+    static void MidPoint (CVertex* line_s, CVertex* line_e, CVertex* result);
 
     /// @brief 自図形の重心を計算する．
     /// @param my_shape 自図形
@@ -110,7 +113,7 @@ public:
     /// @param p_b_s 2 つ目のベクトルの始点
     /// @param p_b_e 2 つ目のベクトルの終点
     /// @return 2 つのベクトルの外積
-    static float Outer2DSize (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
+    static double Outer2DSize (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
 
     /// @brief 2 つのベクトルのなす面の法線を計算する．
     /// @param p_a_s   1 つ目のベクトルの始点
@@ -134,5 +137,5 @@ public:
     /// @param p_b_s 2 つ目のベクトルの始点
     /// @param p_b_e 2 つ目のベクトルの終点
     /// @return 2 つのベクトルのなす角度 (-π~π)
-    static float VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
+    static double VecAngle (CVertex* p_a_s, CVertex* p_a_e, CVertex* p_b_s, CVertex* p_b_e);
 };
