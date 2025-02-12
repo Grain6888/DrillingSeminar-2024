@@ -625,11 +625,11 @@ void CWinOGLView::DeviceToWorldCoordinates (CPoint point, float& x, float& y, co
         y = (y - (float)(1.0 - y)) * aspect_ratio;
     }
 
-    if (AC.IsDrawingGrid ())
-    {
-        x = (float)(roundf (x * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
-        y = (float)(roundf (y * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
-    }
+    //if (AC.IsDrawingGrid ())
+    //{
+    //    x = (float)(roundf (x * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
+    //    y = (float)(roundf (y * (float)(1.0f / 0.2f)) / (float)(1.0f / 0.2f));
+    //}
 }
 
 void CWinOGLView::SetDown (CPoint point)

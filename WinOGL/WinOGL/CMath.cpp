@@ -260,15 +260,12 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex)
 bool CMath::IsReversed (CShape* my_shape)
 {
     double size_sum = 0.0;
-    CVertex* g = new CVertex;
-    CMath::GravityPoint (my_shape, g);
+    CVertex p (0.0, 0.0, NULL, NULL);
     for (CVertex* vp = my_shape->GetHead (); vp != my_shape->GetTail (); vp = vp->GetNext ())
     {
-        size_sum += CMath::Outer2DSize (g, vp, g, vp->GetNext ()) / 2;
+        size_sum += CMath::Outer2DSize (&p, vp, &p, vp->GetNext ()) / 2;
     }
-    size_sum += CMath::Outer2DSize (g, my_shape->GetTail (), g, my_shape->GetHead ()) / 2;
-
-    g->FreeVertex ();
+    size_sum += CMath::Outer2DSize (&p, my_shape->GetTail (), &p, my_shape->GetHead ()) / 2;
 
     if (size_sum > 0)
     {

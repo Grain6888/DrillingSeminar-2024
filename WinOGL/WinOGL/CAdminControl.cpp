@@ -949,14 +949,15 @@ void CAdminControl::DrawGrid ()
     GLfloat max_height = (GLfloat)viewport[3] / 10;
 
     glBegin (GL_LINES);
-    glColor3fv (COLOR_GRAY);
     for (GLfloat i = -max_width; i <= max_width; i += 0.2f)
     {
+        glColor3fv (COLOR_LIGHT_BLUE);
         glVertex3f (-max_width, i, 0.0);
         glVertex3f (max_width, i, 0.0);
     }
     for (GLfloat i = -max_height; i <= max_height; i += 0.2f)
     {
+        glColor3fv (COLOR_LIGHT_GREEN);
         glVertex3f (i, -max_height, 0.0);
         glVertex3f (i, max_height, 0.0);
     }
@@ -1099,6 +1100,7 @@ bool CAdminControl::CanAddVertex (CVertex* new_vertex)
                 new_vertex->SetXY (shape_tail->GetHead ()->GetX (), shape_tail->GetHead ()->GetY ());
             }
         }
+
     }
 
     return true;
@@ -1430,17 +1432,17 @@ bool CAdminControl::CanDrawSurface (CShape* my_shape, CShape* surface)
             {
                 return false;
             }
-            double x_dis = fabs (vp->GetX () - surface->GetTail ()->GetX ());
-            double y_dis = fabs (vp->GetY () - surface->GetTail ()->GetY ());
-            if (x_dis <= 1e-6 && y_dis <= 1e-6 && vp != my_shape->GetTail ())
-            {
-                CVertex mid_point;
-                CMath::MidPoint (vp, vp->GetNext (), &mid_point);
-                if (CMath::IsContained (surface, &mid_point))
-                {
-                    return false;
-                }
-            }
+            //double x_dis = fabs (vp->GetX () - surface->GetTail ()->GetX ());
+            //double y_dis = fabs (vp->GetY () - surface->GetTail ()->GetY ());
+            //if (x_dis <= 1e-6 && y_dis <= 1e-6 && vp != my_shape->GetTail ())
+            //{
+            //    CVertex mid_point;
+            //    CMath::MidPoint (vp, vp->GetNext (), &mid_point);
+            //    if (CMath::IsContained (surface, &mid_point))
+            //    {
+            //        return false;
+            //    }
+            //}
         }
     }
 
