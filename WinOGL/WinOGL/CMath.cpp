@@ -295,7 +295,7 @@ bool CMath::IsContained (CShape* my_shape, CVertex* new_vertex, CVertex* skip_ve
         {
             if (vp == skip_vertex->GetPre ())
             {
-                angle_sum += VecAngle (new_vertex, vp, new_vertex, my_shape->GetTail ());
+                angle_sum += VecAngle (new_vertex, vp, new_vertex, my_shape->GetHead ());
                 vp = vp->GetNext ();
             }
             else
