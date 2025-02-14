@@ -47,6 +47,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_GRID, &CWinOGLView::OnGrid)
     ON_UPDATE_COMMAND_UI (ID_GRID, &CWinOGLView::OnUpdateGrid)
     ON_UPDATE_COMMAND_UI (ID_EDIT_UNDO, &CWinOGLView::OnUpdateEditUndo)
+    ON_COMMAND (ID_JUGGLER, &CWinOGLView::OnJuggler)
+    ON_UPDATE_COMMAND_UI (ID_JUGGLER, &CWinOGLView::OnUpdateJuggler)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -825,4 +827,14 @@ void CWinOGLView::OnUpdateEditUndo (CCmdUI* pCmdUI)
     {
         pCmdUI->Enable (0);
     }
+}
+
+void CWinOGLView::OnJuggler ()
+{
+    AC.SwitchJuggler ();
+}
+
+void CWinOGLView::OnUpdateJuggler (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsJuggling ());
 }

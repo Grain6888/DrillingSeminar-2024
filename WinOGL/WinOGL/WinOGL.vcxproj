@@ -93,10 +93,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>OpenGL32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;WinMM.Lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -166,12 +168,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenGL32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;WinMM.Lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -188,6 +192,7 @@
     <ClInclude Include="CAdminControl.h" />
     <ClInclude Include="CMath.h" />
     <ClInclude Include="CShape.h" />
+    <ClInclude Include="CSound.h" />
     <ClInclude Include="CVertex.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainFrm.h" />
@@ -202,6 +207,7 @@
     <ClCompile Include="CAdminControl.cpp" />
     <ClCompile Include="CMath.cpp" />
     <ClCompile Include="CShape.cpp" />
+    <ClCompile Include="CSound.cpp" />
     <ClCompile Include="CVertex.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="pch.cpp">
@@ -224,6 +230,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\WinOGL.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\Sound\bet.wav" />
+    <Media Include="res\Sound\button.wav" />
+    <Media Include="res\Sound\lever.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

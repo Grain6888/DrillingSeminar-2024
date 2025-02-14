@@ -2,6 +2,7 @@
 #include "pch.h"
 #include <gl/GL.h>
 #include "CShape.h"
+#include "CSound.h"
 
 const GLfloat COLOR_WHITE[3] = { 0.95f, 0.95f, 0.95f };
 const GLfloat COLOR_BLACK[3] = { 0.15f, 0.15f, 0.15f };
@@ -199,6 +200,13 @@ public:
     /// @brief グリッド線の描画の状態を解除する．
     void ClearDrawGrid ();
 
+    /// @brief ジャグラーモードの有効または無効の状態を切り替える．
+    void SwitchJuggler ();
+
+    /// @brief ジャグラーモードの有効または無効の状態を取得する．
+    /// @return 有効 true / 無効 false
+    bool IsJuggling ();
+
     /// @brief 面の描画の状態を切り替える．
     void SwitchDrawSurface ();
 
@@ -338,6 +346,8 @@ public:
     bool IsHandleSelected ();
 
 private:
+    CSound Sound;
+
     /// @brief 点の描画サイズ．
     GLfloat POINTSIZE = 10.0;
 
@@ -364,6 +374,9 @@ private:
 
     /// @brief グリッド線の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool GridFlag = false;
+
+    /// @brief ジャグラーモードの状態フラグ（有効 true / 無効 false）．
+    bool JugglerFlag = false;
 
     /// @brief 面の描画の状態フラグ（描画する true / 描画しない false）．
     bool DrawSurfaceFlag = false;
