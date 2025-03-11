@@ -328,6 +328,12 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
+    if (AC.IsJuggling ())
+    {
+        AC.UpdateBonusTime ();
+        AC.UpdateRainbow ();
+    }
+
     SetOver (point);
     if (nFlags & MK_LBUTTON)
     {

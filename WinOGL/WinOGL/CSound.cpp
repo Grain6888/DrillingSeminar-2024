@@ -24,6 +24,8 @@ void CSound::JugglerSound (UINT name)
         case BET:
             PlaySound (MAKEINTRESOURCE (IDR_BET), hInstance, SND_RESOURCE | SND_ASYNC);
             break;
+        case GAKO:
+            PlaySound (MAKEINTRESOURCE (IDR_GAKO), hInstance, SND_RESOURCE | SND_ASYNC);
         default:
             break;
     }

@@ -207,6 +207,16 @@ public:
     /// @return 有効 true / 無効 false
     bool IsJuggling ();
 
+    /// @brief color_rainbow の色を更新する．
+    void UpdateRainbow ();
+
+    /// @brief ボーナスタイムをセットする．
+    /// @param time ボーナスタイムのカウント
+    void SetBonusTime (int time);
+
+    /// @brief ボーナスタイムを更新する．
+    void UpdateBonusTime ();
+
     /// @brief 面の描画の状態を切り替える．
     void SwitchDrawSurface ();
 
@@ -368,6 +378,13 @@ private:
 
     /// @brief 図形の数．
     int shape_num;
+
+    /// @brief ボーナスタイムのカウント
+    int bonus_time;
+
+    GLfloat color_rainbow[3] = { 0.0,0.0,0.0 };
+
+    bool color_rainbow_increment = true;
 
     /// @brief 座標軸の表示または非表示の状態フラグ（表示 true / 非表示 false）．
     bool AxisFlag = false;

@@ -10,6 +10,8 @@
 #define IDR_WAVE1                       314
 #define IDR_LEVER                       316
 #define IDR_BET                         321
+#define IDR_WAVE2                       322
+#define IDR_GAKO                        322
 #define ID_SIZEUP                       32772
 #define ID_SIZEDOWN                     32776
 #define ID_AXIS                         32781
@@ -34,13 +36,12 @@
 #define ID_32828                        32828
 #define ID_32829                        32829
 #define ID_JUGGLER                      32830
-#define ID_BUTTON32836                  32836
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        322
+#define _APS_NEXT_RESOURCE_VALUE        323
 #define _APS_NEXT_COMMAND_VALUE         32837
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           310

@@ -10,6 +10,7 @@ CAdminControl::CAdminControl ()
     shape_tail = NULL;
     shape_num = 0;
     bounding_box = NULL;
+    bonus_time = 0;
 }
 
 CAdminControl::~CAdminControl ()
@@ -213,7 +214,14 @@ void CAdminControl::Draw2DSurface (CShape* shape)
                 if (CMath::TriangleArea (&surface) > 0.0)
                 {
                     glBegin (GL_TRIANGLES);
-                    glColor3fv (COLOR_LIGHT_BLUE);
+                    if (JugglerFlag /*&& bonus_time > 0*/)
+                    {
+                        glColor3fv (color_rainbow);
+                    }
+                    else
+                    {
+                        glColor3fv (COLOR_LIGHT_BLUE);
+                    }
                     for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
                     {
                         glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
@@ -517,6 +525,10 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
     {
         if (CMath::IsContained (sp, mouse))
         {
+            if (JugglerFlag)
+            {
+                Sound.JugglerSound (GAKO);
+            }
             sp->Select ();
             if (bounding_box == NULL)
             {
@@ -1035,11 +1047,72 @@ void CAdminControl::SwitchJuggler ()
         Sound.JugglerSound (LEVER);
     }
     JugglerFlag = !JugglerFlag;
+    bonus_time = 0;
 }
 
 bool CAdminControl::IsJuggling ()
 {
     return JugglerFlag;
+}
+
+void CAdminControl::UpdateRainbow ()
+{
+    GLfloat& r = color_rainbow[0];
+    GLfloat& g = color_rainbow[1];
+    GLfloat& b = color_rainbow[2];
+
+    GLfloat dif = 0.1f;
+    if (color_rainbow_increment)
+    {
+        r += dif;
+        if (r >= 1.0)
+        {
+            r = 1.0f;
+            g += dif;
+            if (g >= 1.0)
+            {
+                g = 1.0f;
+                b += dif;
+                if (b >= 1.0)
+                {
+                    b = 1.0f;
+                    color_rainbow_increment = false;
+                }
+            }
+        }
+    }
+    else
+    {
+        r -= dif;
+        if (r <= 0.0)
+        {
+            r = 0.0f;
+            g -= dif;
+            if (g <= 0.0)
+            {
+                g = 0.0f;
+                b -= dif;
+                if (b <= 0.0)
+                {
+                    b = 0.0f;
+                    color_rainbow_increment = true;
+                }
+            }
+        }
+    }
+}
+
+void CAdminControl::SetBonusTime (int time)
+{
+    bonus_time = time;
+}
+
+void CAdminControl::UpdateBonusTime ()
+{
+    if (bonus_time > 0)
+    {
+        bonus_time--;
+    }
 }
 
 void CAdminControl::SwitchDrawSurface ()

@@ -118,5 +118,8 @@
     <Media Include="res\Sound\bet.wav">
       <Filter>リソース ファイル</Filter>
     </Media>
+    <Media Include="res\Sound\gako.wav">
+      <Filter>リソース ファイル</Filter>
+    </Media>
   </ItemGroup>
 </Project>

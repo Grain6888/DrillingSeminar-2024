@@ -234,6 +234,7 @@
   <ItemGroup>
     <Media Include="res\Sound\bet.wav" />
     <Media Include="res\Sound\button.wav" />
+    <Media Include="res\Sound\gako.wav" />
     <Media Include="res\Sound\lever.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
