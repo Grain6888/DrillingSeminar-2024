@@ -129,6 +129,8 @@ public:
     afx_msg void OnGrid ();
     afx_msg void OnUpdateGrid (CCmdUI* pCmdUI);
     afx_msg void OnUpdateEditUndo (CCmdUI* pCmdUI);
+    afx_msg void OnJuggler ();
+    afx_msg void OnUpdateJuggler (CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // WinOGLView.cpp のデバッグ バージョン

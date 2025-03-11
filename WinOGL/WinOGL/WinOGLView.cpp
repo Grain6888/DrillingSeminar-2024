@@ -47,6 +47,8 @@ BEGIN_MESSAGE_MAP (CWinOGLView, CView)
     ON_COMMAND (ID_GRID, &CWinOGLView::OnGrid)
     ON_UPDATE_COMMAND_UI (ID_GRID, &CWinOGLView::OnUpdateGrid)
     ON_UPDATE_COMMAND_UI (ID_EDIT_UNDO, &CWinOGLView::OnUpdateEditUndo)
+    ON_COMMAND (ID_JUGGLER, &CWinOGLView::OnJuggler)
+    ON_UPDATE_COMMAND_UI (ID_JUGGLER, &CWinOGLView::OnUpdateJuggler)
 END_MESSAGE_MAP ()
 
 CWinOGLView::CWinOGLView () noexcept
@@ -326,6 +328,12 @@ void CWinOGLView::OnRButtonDown (UINT nFlags, CPoint point)
 
 void CWinOGLView::OnMouseMove (UINT nFlags, CPoint point)
 {
+    if (AC.IsJuggling ())
+    {
+        AC.UpdateBonusTime ();
+        AC.UpdateRainbow ();
+    }
+
     SetOver (point);
     if (nFlags & MK_LBUTTON)
     {
@@ -825,4 +833,14 @@ void CWinOGLView::OnUpdateEditUndo (CCmdUI* pCmdUI)
     {
         pCmdUI->Enable (0);
     }
+}
+
+void CWinOGLView::OnJuggler ()
+{
+    AC.SwitchJuggler ();
+}
+
+void CWinOGLView::OnUpdateJuggler (CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck (AC.IsJuggling ());
 }

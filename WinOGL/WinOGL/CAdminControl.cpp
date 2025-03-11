@@ -2,6 +2,7 @@
 #include "CAdminControl.h"
 #include "CShape.h"
 #include "CMath.h"
+#include "CSound.h"
 
 CAdminControl::CAdminControl ()
 {
@@ -9,6 +10,7 @@ CAdminControl::CAdminControl ()
     shape_tail = NULL;
     shape_num = 0;
     bounding_box = NULL;
+    bonus_time = 0;
 }
 
 CAdminControl::~CAdminControl ()
@@ -212,7 +214,14 @@ void CAdminControl::Draw2DSurface (CShape* shape)
                 if (CMath::TriangleArea (&surface) > 0.0)
                 {
                     glBegin (GL_TRIANGLES);
-                    glColor3fv (COLOR_LIGHT_BLUE);
+                    if (JugglerFlag /*&& bonus_time > 0*/)
+                    {
+                        glColor3fv (color_rainbow);
+                    }
+                    else
+                    {
+                        glColor3fv (COLOR_LIGHT_BLUE);
+                    }
                     for (CVertex* surface_vp = surface.GetHead (); surface_vp != NULL; surface_vp = surface_vp->GetNext ())
                     {
                         glVertex2f (surface_vp->GetX (), surface_vp->GetY ());
@@ -516,6 +525,10 @@ CShape* CAdminControl::SelectShape (CVertex* mouse)
     {
         if (CMath::IsContained (sp, mouse))
         {
+            if (JugglerFlag)
+            {
+                Sound.JugglerSound (GAKO);
+            }
             sp->Select ();
             if (bounding_box == NULL)
             {
@@ -705,6 +718,10 @@ void CAdminControl::PushShape ()
     CShape* new_s = new CShape;
     CShape* pre_s = shape_tail;
 
+    if (JugglerFlag)
+    {
+        Sound.JugglerSound (LEVER);
+    }
     if (shape_num == 0)
     {
         shape_head = new_s;
@@ -726,6 +743,10 @@ void CAdminControl::PopShape ()
     }
     else if (shape_num == 1)
     {
+        if (JugglerFlag)
+        {
+            Sound.JugglerSound (BET);
+        }
         shape_head->FreeShape ();
         shape_head = NULL;
         shape_tail = NULL;
@@ -733,6 +754,10 @@ void CAdminControl::PopShape ()
     }
     else
     {
+        if (JugglerFlag)
+        {
+            Sound.JugglerSound (BET);
+        }
         CShape* pre_sp = shape_tail->GetPre ();
         pre_sp->SetNext (NULL);
         shape_tail->FreeShape ();
@@ -748,6 +773,10 @@ void CAdminControl::RemoveShape ()
 
     if (shape_head->IsSelected ())
     {
+        if (JugglerFlag)
+        {
+            Sound.JugglerSound (BET);
+        }
         next_shape = shape_head->GetNext ();
         next_shape->SetPre (NULL);
         shape_head->SetNext (NULL);
@@ -760,6 +789,10 @@ void CAdminControl::RemoveShape ()
         {
             if (sp->IsSelected ())
             {
+                if (JugglerFlag)
+                {
+                    Sound.JugglerSound (BET);
+                }
                 pre_shape = sp->GetPre ();
                 next_shape = sp->GetNext ();
                 pre_shape->SetNext (next_shape);
@@ -781,6 +814,10 @@ void CAdminControl::DeleteAllShape ()
 {
     if (shape_num > 0)
     {
+        if (JugglerFlag)
+        {
+            Sound.JugglerSound (BET);
+        }
         shape_head->FreeShape ();
         shape_head = NULL;
         shape_tail = NULL;
@@ -811,6 +848,10 @@ void CAdminControl::PushVertex (GLfloat new_x, GLfloat new_y)
         }
         else
         {
+            if (JugglerFlag)
+            {
+                Sound.JugglerSound (BUTTON);
+            }
             shape_tail->PushVertex (new_x, new_y);
         }
     }
@@ -828,6 +869,10 @@ void CAdminControl::PopVertex ()
     }
     else
     {
+        if (JugglerFlag)
+        {
+            Sound.JugglerSound (BET);
+        }
         shape_tail->Open ();
         shape_tail->PopVertex ();
     }
@@ -841,6 +886,10 @@ void CAdminControl::AddVertex (GLfloat mouse_x, GLfloat mouse_y)
     {
         if (sp->GetHead ()->IsSelected () && sp->GetTail ()->IsSelected ())
         {
+            if (JugglerFlag)
+            {
+                Sound.JugglerSound (BUTTON);
+            }
             CVertex new_vertex;
             CMath::CrossPoint (&mouse, sp->GetTail (), sp->GetHead (), &new_vertex);
             sp->PushVertex (new_vertex.GetX (), new_vertex.GetY ());
@@ -851,6 +900,10 @@ void CAdminControl::AddVertex (GLfloat mouse_x, GLfloat mouse_y)
         {
             if (vp->IsSelected ())
             {
+                if (JugglerFlag)
+                {
+                    Sound.JugglerSound (BUTTON);
+                }
                 CVertex new_vertex;
                 CMath::CrossPoint (&mouse, vp, vp->GetNext (), &new_vertex);
                 sp->InsertVertex (vp, new_vertex.GetX (), new_vertex.GetY (), vp->GetNext ());
@@ -866,12 +919,20 @@ void CAdminControl::SubVertex ()
     {
         if (sp->GetTail ()->IsSelected () && sp->GetVertexNum () > 3 && CanRemoveVertex ())
         {
+            if (JugglerFlag)
+            {
+                Sound.JugglerSound (BET);
+            }
             sp->PopVertex ();
         }
         for (CVertex* vp = sp->GetHead (); vp != NULL; vp = vp->GetNext ())
         {
             if (vp->IsSelected () && sp->GetVertexNum () > 3 && CanRemoveVertex ())
             {
+                if (JugglerFlag)
+                {
+                    Sound.JugglerSound (BET);
+                }
                 sp->RemoveVertex (vp);
                 return;
             }
@@ -977,6 +1038,81 @@ bool CAdminControl::IsDrawingGrid ()
 void CAdminControl::ClearDrawGrid ()
 {
     GridFlag = false;
+}
+
+void CAdminControl::SwitchJuggler ()
+{
+    if (!JugglerFlag)
+    {
+        Sound.JugglerSound (LEVER);
+    }
+    JugglerFlag = !JugglerFlag;
+    bonus_time = 0;
+}
+
+bool CAdminControl::IsJuggling ()
+{
+    return JugglerFlag;
+}
+
+void CAdminControl::UpdateRainbow ()
+{
+    GLfloat& r = color_rainbow[0];
+    GLfloat& g = color_rainbow[1];
+    GLfloat& b = color_rainbow[2];
+
+    GLfloat dif = 0.1f;
+    if (color_rainbow_increment)
+    {
+        r += dif;
+        if (r >= 1.0)
+        {
+            r = 1.0f;
+            g += dif;
+            if (g >= 1.0)
+            {
+                g = 1.0f;
+                b += dif;
+                if (b >= 1.0)
+                {
+                    b = 1.0f;
+                    color_rainbow_increment = false;
+                }
+            }
+        }
+    }
+    else
+    {
+        r -= dif;
+        if (r <= 0.0)
+        {
+            r = 0.0f;
+            g -= dif;
+            if (g <= 0.0)
+            {
+                g = 0.0f;
+                b -= dif;
+                if (b <= 0.0)
+                {
+                    b = 0.0f;
+                    color_rainbow_increment = true;
+                }
+            }
+        }
+    }
+}
+
+void CAdminControl::SetBonusTime (int time)
+{
+    bonus_time = time;
+}
+
+void CAdminControl::UpdateBonusTime ()
+{
+    if (bonus_time > 0)
+    {
+        bonus_time--;
+    }
 }
 
 void CAdminControl::SwitchDrawSurface ()

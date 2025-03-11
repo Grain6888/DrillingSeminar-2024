@@ -51,6 +51,9 @@
     <ClInclude Include="CMath.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="CSound.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinOGL.cpp">
@@ -80,6 +83,9 @@
     <ClCompile Include="CMath.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="CSound.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinOGL.rc">
@@ -101,5 +107,19 @@
     <None Include="res\WinOGL.rc2">
       <Filter>リソース ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\Sound\button.wav">
+      <Filter>リソース ファイル</Filter>
+    </Media>
+    <Media Include="res\Sound\lever.wav">
+      <Filter>リソース ファイル</Filter>
+    </Media>
+    <Media Include="res\Sound\bet.wav">
+      <Filter>リソース ファイル</Filter>
+    </Media>
+    <Media Include="res\Sound\gako.wav">
+      <Filter>リソース ファイル</Filter>
+    </Media>
   </ItemGroup>
 </Project>
