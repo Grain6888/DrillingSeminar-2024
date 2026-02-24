@@ -7,20 +7,20 @@
 
 | | 名称 | 役割 |
 | :---: | :---: | :--- |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/e5e88904-f503-4165-ae85-ee75f620c9c2" /> | 終了 | アプリケーションを終了する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/f883df8c-9c5a-4abc-a4b7-6603a3d1eeb3" /> | 元に戻す |	直前に行った動作を元に戻す |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/3d57ee22-8ad6-4aa9-80a8-d508fe9a4b07" /> | 初期化 | すべての頂点を削除する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/905405ec-b6e1-4c54-a71a-18bac10e1156" /> | 自由図形モード| 自由な形の図形を描く |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/9d54091a-a451-4365-8a1c-1339aac4ee78" /> | 点と線を大きく |	点と線のサイズを大きくする |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/c2aca2d1-82e1-48c1-9c38-61df03ed233f" /> | 点と線を小さく |	点と線のサイズを小さくする |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/c19b6d3c-50b4-4895-b99d-709f33eab884" /> | 座標軸の表示 |	座標軸を表示する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/a43741f4-1971-4dc7-88d9-83f76347eb86" /> | グリッド線の表示 |	グリッド線を表示する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/1043231d-9e56-40b5-a13e-54e5e8ac0584" /> | 面の表示 |	図形の面を表示する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/c15e4d9e-2edf-4687-90ff-0b744d53bb6b" /> | 奥行きの表示 |	図形の奥行きを表示する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/99c887ca-bccf-410d-922d-3516cc7aed5e" /> | 視点の変更 |	視点を変更する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/b1665b3d-deeb-454f-947c-0ef35a0a2252" /> | JUGGLERモード |	CADをJUGGLERにする |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/ee6fe4da-fd6f-4a89-944c-d42350eefd32" /> | 使い方 |	ソフトウェアの使い方を表示する |
-| <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/b0f5b590-e382-4480-a911-d8478d2ffb92" /> | バージョン情報 |	プログラム情報、バージョン、著作権を表示する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/e5e88904-f503-4165-ae85-ee75f620c9c2" /> | 終了 | アプリケーションを終了する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/f883df8c-9c5a-4abc-a4b7-6603a3d1eeb3" /> | 元に戻す |	直前に行った動作を元に戻す |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/3d57ee22-8ad6-4aa9-80a8-d508fe9a4b07" /> | 初期化 | すべての頂点を削除する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/905405ec-b6e1-4c54-a71a-18bac10e1156" /> | 自由図形モード| 自由な形の図形を描く |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/9d54091a-a451-4365-8a1c-1339aac4ee78" /> | 点と線を大きく |	点と線のサイズを大きくする |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/c2aca2d1-82e1-48c1-9c38-61df03ed233f" /> | 点と線を小さく |	点と線のサイズを小さくする |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/c19b6d3c-50b4-4895-b99d-709f33eab884" /> | 座標軸の表示 |	座標軸を表示する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/a43741f4-1971-4dc7-88d9-83f76347eb86" /> | グリッド線の表示 |	グリッド線を表示する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/1043231d-9e56-40b5-a13e-54e5e8ac0584" /> | 面の表示 |	図形の面を表示する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/c15e4d9e-2edf-4687-90ff-0b744d53bb6b" /> | 奥行きの表示 |	図形の奥行きを表示する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/99c887ca-bccf-410d-922d-3516cc7aed5e" /> | 視点の変更 |	視点を変更する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/b1665b3d-deeb-454f-947c-0ef35a0a2252" /> | JUGGLERモード |	CADをJUGGLERにする |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/ee6fe4da-fd6f-4a89-944c-d42350eefd32" /> | 使い方 |	ソフトウェアの使い方を表示する |
+| <img width="30" height="30" alt="image" src="https://github.com/user-attachments/assets/b0f5b590-e382-4480-a911-d8478d2ffb92" /> | バージョン情報 |	プログラム情報、バージョン、著作権を表示する |
 
 > [!warning]
 > ツールがグレーで表示されている場合，そのツールを使用することはできません．
