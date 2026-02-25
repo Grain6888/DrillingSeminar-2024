@@ -1,3 +1,13 @@
+# 本システムについて
+マウスやキーボードによる操作が可能な3次元CADアプリケーションです．
+
+> [!note]
+> + Windows11で動作することを確認しています．
+
+> [!warning]
+> + Arm版Windowsやその他のOSでは正しく動作しない可能性があります．
+
+
 # UI各部名称
 ![screenshot](https://github.com/user-attachments/assets/485ca0ba-749e-4f88-afc9-fbf02421d4a9)
 
